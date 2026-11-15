@@ -1,1 +1,523 @@
-ADMIN MERAKI
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>MeraKi Admin | Panel de Control &amp; Subidor de Fotos</title>
+    <meta name="robots" content="noindex, nofollow">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-canvas: #FFFFFF;
+            --bg-gallery: #F4F4F3;
+            --bg-ivory: #FAF9F7;
+            --ink-black: #000000;
+            --ink-primary: #141414;
+            --ink-muted: #666666;
+            --ink-light: #949494;
+            --meraki-vino: #600000;
+            --hairline: rgba(0, 0, 0, 0.09);
+            --hairline-strong: rgba(0, 0, 0, 0.22);
+            --font-sans: 'Plus Jakarta Sans', -apple-system, sans-serif;
+            --font-mono: 'Space Grotesk', monospace;
+            --ease-luxury: cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--bg-canvas);
+            color: var(--ink-primary);
+            min-height: 100vh;
+            padding: 20px 14px 60px;
+        }
+
+        .admin-shell {
+            max-width: 900px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .admin-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--hairline);
+            padding-bottom: 16px;
+        }
+
+        .admin-title {
+            font-family: var(--font-mono);
+            font-size: 0.95rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+
+        .admin-actions-top { display: flex; gap: 10px; }
+
+        .btn-admin-action {
+            font-family: var(--font-mono);
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            padding: 10px 16px;
+            background: var(--ink-black);
+            color: #FFFFFF;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-admin-action:hover { background: var(--meraki-vino); }
+        .btn-admin-outline {
+            background: transparent;
+            color: var(--ink-black);
+            border: 1px solid var(--ink-black);
+        }
+        .btn-admin-outline:hover { background: var(--bg-gallery); }
+
+        .admin-card {
+            background: var(--bg-ivory);
+            border: 1px solid var(--hairline);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .form-grid-admin {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+        }
+        @media (min-width: 640px) {
+            .form-grid-admin { grid-template-columns: 1fr 1fr; }
+        }
+        .form-group-full { grid-column: 1 / -1; }
+
+        .admin-label {
+            font-family: var(--font-mono);
+            font-size: 0.60rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--ink-muted);
+            margin-bottom: 4px;
+            display: block;
+        }
+
+        .admin-input {
+            width: 100%;
+            border: 1px solid var(--hairline-strong);
+            background: #FFFFFF;
+            padding: 10px 12px;
+            font-family: var(--font-sans);
+            font-size: 0.88rem;
+            color: var(--ink-black);
+            outline: none;
+        }
+        .admin-input:focus { border-color: var(--meraki-vino); }
+
+        /* ARRASTRADOR DE FOTOS (DROPZONE) */
+        .dropzone-box {
+            border: 2px dashed var(--hairline-strong);
+            background: #FFFFFF;
+            padding: 24px;
+            text-align: center;
+            cursor: pointer;
+            position: relative;
+            transition: border-color 0.2s, background 0.2s;
+        }
+        .dropzone-box:hover { border-color: var(--ink-black); background: var(--bg-gallery); }
+        .dropzone-box input[type="file"] {
+            position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+        }
+
+        .products-table-wrap { width: 100%; overflow-x: auto; }
+        .admin-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; text-align: left; }
+        .admin-table th {
+            font-family: var(--font-mono); font-size: 0.60rem; letter-spacing: 0.12em; text-transform: uppercase;
+            background: var(--bg-gallery); color: var(--ink-muted); padding: 10px 12px; border-bottom: 1px solid var(--hairline-strong);
+        }
+        .admin-table td { padding: 12px; border-bottom: 1px solid var(--hairline); vertical-align: middle; }
+        .thumb-preview { width: 44px; height: 56px; object-fit: cover; background: var(--bg-gallery); }
+        .table-input { border: 1px solid transparent; background: transparent; font-family: inherit; font-size: inherit; color: inherit; width: 100%; padding: 4px; }
+        .table-input:focus { background: #FFFFFF; border-color: var(--meraki-vino); outline: none; }
+
+        .toast-msg {
+            position: fixed; bottom: 20px; right: 20px; background: var(--ink-black); color: #FFFFFF;
+            padding: 12px 20px; font-family: var(--font-mono); font-size: 0.70rem; font-weight: 700;
+            letter-spacing: 0.1em; text-transform: uppercase; z-index: 9999; opacity: 0; transform: translateY(15px); transition: all 0.25s ease;
+        }
+        .toast-msg.show { opacity: 1; transform: translateY(0); }
+    </style>
+</head>
+<body>
+
+    <main class="admin-shell">
+        <header class="admin-header">
+            <div>
+                <h1 class="admin-title">MeraKi · Panel &amp; Subidor Web</h1>
+                <span style="font-size: 0.75rem; color: var(--ink-muted);">Subida automática a WebP + GitHub</span>
+            </div>
+            <div class="admin-actions-top">
+                <a href="index.html" class="btn-admin-action btn-admin-outline" target="_blank">Ver Tienda ↗</a>
+                <button class="btn-admin-action" onclick="fetchCatalogData()">🔄 Recargar</button>
+            </div>
+        </header>
+
+        <!-- CONFIGURACIÓN DE TOKEN (SE GUARDA EN EL NAVEGADOR DE LA DUEÑA) -->
+        <section class="admin-card" style="padding: 16px; background: #FFFBEB; border-color: #FDE68A;">
+            <h3 style="font-family: var(--font-mono); font-size: 0.70rem; text-transform: uppercase; margin-bottom: 6px;">🔑 Configuración de Acceso GitHub (Solo 1 vez)</h3>
+            <div style="display: flex; gap: 8px;">
+                <input type="password" id="ghTokenInput" class="admin-input" placeholder="Pegá tu GitHub Personal Access Token (ghp_...)" style="background: #FFFFFF;">
+                <button class="btn-admin-action" onclick="saveGhToken()">Guardar Token</button>
+            </div>
+            <span style="font-size: 0.65rem; color: #78350F; margin-top: 2px; display: block;">Esto permite que el panel suba las fotos comprimidas directamente al repositorio sin que tengas que usar GitHub a mano.</span>
+        </section>
+
+        <!-- FORMULARIO CON ARRASTRADOR DE FOTOS Y COMPRESIÓN A WEBP -->
+        <section class="admin-card">
+            <h2 style="font-family: var(--font-mono); font-size: 0.76rem; letter-spacing: 0.1em; text-transform: uppercase;">+ Subir Nueva Foto &amp; Publicar</h2>
+            
+            <form id="addProductForm" class="form-grid-admin" onsubmit="handleUploadAndPublish(event)">
+                
+                <!-- ZONA DE ARRASTRE DE FOTO -->
+                <div class="form-group-full">
+                    <label class="admin-label">Arrastrá tu foto o hacé clic para seleccionar de la galería</label>
+                    <div class="dropzone-box" id="dropzoneBox">
+                        <input type="file" id="imageFilePicker" accept="image/*" onchange="handleImageSelected(this)" required>
+                        <span id="dropzoneText" style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--ink-muted);">📁 Elegir foto o arrastrar aquí (se convertirá a .webp automáticamente)</span>
+                    </div>
+                    <!-- Vista previa -->
+                    <div id="previewContainer" style="margin-top: 10px; display: none; align-items: center; gap: 12px;">
+                        <img id="imagePreview" src="" alt="Preview" style="width: 60px; height: 75px; object-fit: cover; border: 1px solid var(--hairline);">
+                        <span id="previewFileInfo" style="font-family: var(--font-mono); font-size: 0.70rem; color: var(--ink-primary);"></span>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="admin-label">Rubro (Categoría)</label>
+                    <select id="newRubro" class="admin-input" onchange="updateSubcatOptions()">
+                        <option value="Indumentaria">Indumentaria</option>
+                        <option value="Deco & Home">Deco & Home</option>
+                        <option value="Bazar">Bazar</option>
+                        <option value="Aromas">Aromas</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="admin-label">Subcategoría</label>
+                    <input type="text" id="newSubcat" class="admin-input" placeholder="Mujer / Hogar / etc." value="Mujer" required>
+                </div>
+                <div>
+                    <label class="admin-label">Nombre del Producto</label>
+                    <input type="text" id="newNombre" class="admin-input" placeholder="Ej. Vestido Lino Natural" required>
+                </div>
+                <div>
+                    <label class="admin-label">Precio ARS ($)</label>
+                    <input type="number" id="newArs" class="admin-input" placeholder="68000">
+                </div>
+                <div>
+                    <label class="admin-label">Precio PYG (₲)</label>
+                    <input type="number" id="newPyg" class="admin-input" placeholder="0">
+                </div>
+                <div>
+                    <label class="admin-label">Precio BRL (R$)</label>
+                    <input type="number" id="newBrl" class="admin-input" placeholder="0">
+                </div>
+                <div class="form-group-full">
+                    <label class="admin-label">Descripción</label>
+                    <input type="text" id="newDesc" class="admin-input" placeholder="Detalles de la pieza...">
+                </div>
+                <div>
+                    <label class="admin-label">Talles / Opciones</label>
+                    <input type="text" id="newTalles" class="admin-input" value="S, M, L, XL, A confirmar">
+                </div>
+                <div>
+                    <label class="admin-label">¿Destacar en el Home? (6 fotos)</label>
+                    <select id="newHome" class="admin-input">
+                        <option value="NO">NO</option>
+                        <option value="SI">SÍ (Mostrar en Home)</option>
+                    </select>
+                </div>
+
+                <div class="form-group-full" style="margin-top: 6px;">
+                    <button type="submit" id="publishBtn" class="btn-admin-action" style="width: 100%; padding: 14px;">Comprimir, Subir a GitHub y Publicar</button>
+                </div>
+            </form>
+        </section>
+
+        <!-- LISTADO DE PRODUCTOS EXISTENTES -->
+        <section class="admin-card" style="padding: 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <h2 style="font-family: var(--font-mono); font-size: 0.76rem; letter-spacing: 0.1em; text-transform: uppercase;">Inventario Sincronizado</h2>
+                <span id="productCounter" style="font-family: var(--font-mono); font-size: 0.68rem; color: var(--ink-muted);">0 productos</span>
+            </div>
+            <div class="products-table-wrap">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Foto</th>
+                            <th>Rubro</th>
+                            <th>Nombre</th>
+                            <th>Precio ARS ($)</th>
+                            <th>Home</th>
+                            <th>Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adminTableBody">
+                        <tr><td colspan="6" style="text-align: center; padding: 24px; color: var(--ink-muted);">Cargando inventario...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <div class="toast-msg" id="adminToast">Acción realizada con éxito</div>
+
+    <script>
+        // CONFIGURACIÓN: Pegá acá tu enlace CSV de Google Sheets (pestaña MERAKI WEB)
+        const CATALOG_CSV_URL = "";
+
+        const GH_CONFIG = {
+            owner: "linkuniversal",
+            repo: "meraki_web",
+            branch: "main"
+        };
+
+        let catalogData = [];
+        let selectedFileBlob = null;
+        let compressedWebpBase64 = null;
+        let generatedGithubPath = "";
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedToken = localStorage.getItem('meraki_gh_token') || '';
+            if (savedToken) document.getElementById('ghTokenInput').value = savedToken;
+            fetchCatalogData();
+        });
+
+        function saveGhToken() {
+            const token = document.getElementById('ghTokenInput').value.trim();
+            localStorage.setItem('meraki_gh_token', token);
+            showToast("Token de GitHub guardado con éxito");
+        }
+
+        // COMPRESIÓN AUTOMÁTICA EN CLIENTE A .WEBP (MÁX 1400PX, CALIDAD 82)
+        function handleImageSelected(input) {
+            const file = input.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    let width = img.width;
+                    let height = img.height;
+                    const maxDim = 1400;
+
+                    if (width > maxDim || height > maxDim) {
+                        if (width > height) {
+                            height = Math.round((height * maxDim) / width);
+                            width = maxDim;
+                        } else {
+                            width = Math.round((width * maxDim) / height);
+                            height = maxDim;
+                        }
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    // Convertir a WebP con calidad 0.82
+                    const dataUrl = canvas.toDataURL('image/webp', 0.82);
+                    compressedWebpBase64 = dataUrl.split(',')[1];
+
+                    // Mostrar vista previa
+                    const preview = document.getElementById('imagePreview');
+                    preview.src = dataUrl;
+                    document.getElementById('previewContainer').style.display = 'flex';
+                    
+                    const sizeKb = Math.round((compressedWebpBase64.length * 3) / 4 / 1024);
+                    document.getElementById('previewFileInfo').innerText = `${file.name} ➔ Optimizado a .webp (~${sizeKb} KB)`;
+                    document.getElementById('dropzoneText').innerText = '✓ Foto procesada y lista para subir';
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function updateSubcatOptions() {
+            const rubro = document.getElementById('newRubro').value;
+            const subInput = document.getElementById('newSubcat');
+            if (rubro === 'Indumentaria') subInput.value = 'Mujer';
+            else if (rubro === 'Deco & Home') subInput.value = 'Hogar';
+            else if (rubro === 'Bazar') subInput.value = 'Mesa & Cocina';
+            else if (rubro === 'Aromas') subInput.value = 'Ritual & Sahumado';
+        }
+
+        async function handleUploadAndPublish(e) {
+            e.preventDefault();
+            const token = localStorage.getItem('meraki_gh_token');
+            if (!token) {
+                alert("Por favor configurá y guardá tu Token de GitHub arriba antes de subir fotos.");
+                return;
+            }
+            if (!compressedWebpBase64) {
+                alert("Seleccioná una imagen primero.");
+                return;
+            }
+
+            const btn = document.getElementById('publishBtn');
+            btn.innerText = "SUBIENDO FOTO A GITHUB...";
+            btn.disabled = true;
+
+            const rubro = document.getElementById('newRubro').value;
+            const subcat = document.getElementById('newSubcat').value.trim().toLowerCase();
+            const nombre = document.getElementById('newNombre').value.trim();
+            const cleanFilename = nombre.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9\-_]/g, '') + '-' + Date.now() + '.webp';
+
+            let folderPath = 'media/indumentaria/mujer/';
+            if (rubro === 'Indumentaria') {
+                folderPath = subcat.includes('hombre') ? 'media/indumentaria/hombre/' : 'media/indumentaria/mujer/';
+            } else if (rubro === 'Deco & Home') folderPath = 'media/deco-home/';
+            else if (rubro === 'Bazar') folderPath = 'media/bazar/';
+            else if (rubro === 'Aromas') folderPath = 'media/aromas/';
+
+            const fullGithubPath = folderPath + cleanFilename;
+
+            try {
+                // 1. Subir a GitHub vía API
+                const ghUrl = `https://api.github.com/repos/${GH_CONFIG.owner}/${GH_CONFIG.repo}/contents/${fullGithubPath}`;
+                const ghRes = await fetch(ghUrl, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `token ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: `Admin upload: ${nombre}`,
+                        content: compressedWebpBase64,
+                        branch: GH_CONFIG.branch
+                    })
+                });
+
+                if (!ghRes.ok) throw new Error('Error al subir a GitHub. Verificá tu token.');
+
+                // 2. Agregar a la tabla local de catálogo
+                const newRow = [
+                    rubro,
+                    document.getElementById('newSubcat').value.trim(),
+                    nombre,
+                    document.getElementById('newArs').value,
+                    document.getElementById('newPyg').value,
+                    document.getElementById('newBrl').value,
+                    document.getElementById('newDesc').value,
+                    fullGithubPath,
+                    '',
+                    document.getElementById('newTalles').value,
+                    document.getElementById('newHome').value
+                ];
+
+                catalogData.push(newRow);
+                renderTable();
+                document.getElementById('addProductForm').reset();
+                document.getElementById('previewContainer').style.display = 'none';
+                document.getElementById('dropzoneText').innerText = '✓ Foto elegida o arrastrar aquí';
+                showToast("¡Foto comprimida, subida a GitHub y publicada!");
+
+            } catch (err) {
+                alert("Error: " + err.message);
+            } finally {
+                btn.innerText = "Comprimir, Subir a GitHub y Publicar";
+                btn.disabled = false;
+            }
+        }
+
+        async function fetchCatalogData() {
+            if (!CATALOG_CSV_URL) {
+                document.getElementById('adminTableBody').innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 24px; color: var(--meraki-vino);"><b>Falta configurar CATALOG_CSV_URL</b> en el admin.html</td></tr>`;
+                return;
+            }
+            try {
+                const res = await fetch(CATALOG_CSV_URL + '&cacheBuster=' + Date.now());
+                const text = await res.text();
+                catalogData = parseCSV(text);
+                renderTable();
+            } catch(e) {
+                document.getElementById('adminTableBody').innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 24px; color: var(--meraki-vino);">Error al conectar con Google Sheets.</td></tr>`;
+            }
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('adminTableBody');
+            const counter = document.getElementById('productCounter');
+            
+            if (catalogData.length <= 1) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 24px; color: var(--ink-muted);">No hay productos registrados todavía.</td></tr>`;
+                counter.innerText = '0 productos';
+                return;
+            }
+
+            const rows = catalogData.slice(1);
+            counter.innerText = `${rows.length} productos`;
+
+            tbody.innerHTML = rows.map((row, idx) => {
+                const rubro = row[0] || '';
+                const nombre = row[2] || '';
+                const precio = row[3] || '';
+                const foto = row[7] || '';
+                const home = row[10] || 'NO';
+                const resolvedImg = foto.startsWith('http') ? foto : `https://raw.githubusercontent.com/${GH_CONFIG.owner}/${GH_CONFIG.repo}/${GH_CONFIG.branch}/${foto}`;
+
+                return `
+                    <tr>
+                        <td><img src="${resolvedImg}" class="thumb-preview" onerror="this.src='chica1.webp'"></td>
+                        <td style="font-family: var(--font-mono); font-size: 0.65rem; text-transform: uppercase;">${rubro}</td>
+                        <td><input type="text" class="table-input" value="${nombre}" onchange="updateCell(${idx + 1}, 2, this.value)"></td>
+                        <td><input type="number" class="table-input" value="${precio}" onchange="updateCell(${idx + 1}, 3, this.value)" style="font-family:var(--font-mono);"></td>
+                        <td>
+                            <select class="table-input" onchange="updateCell(${idx + 1}, 10, this.value)" style="font-family:var(--font-mono);">
+                                <option value="SI" ${home.toUpperCase() === 'SI' ? 'selected' : ''}>SÍ</option>
+                                <option value="NO" ${home.toUpperCase() !== 'SI' ? 'selected' : ''}>NO</option>
+                            </select>
+                        </td>
+                        <td><button class="btn-admin-outline" style="padding: 4px 8px; font-size: 0.58rem;" onclick="deleteRow(${idx + 1})">Eliminar</button></td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function updateCell(rowIdx, colIdx, val) {
+            if (catalogData[rowIdx]) {
+                catalogData[rowIdx][colIdx] = val;
+                showToast("Cambio guardado en memoria");
+            }
+        }
+
+        function deleteRow(rowIdx) {
+            if (confirm("¿Eliminar este producto de la lista?")) {
+                catalogData.splice(rowIdx, 1);
+                renderTable();
+                showToast("Producto eliminado");
+            }
+        }
+
+        function showToast(msg) {
+            const t = document.getElementById('adminToast');
+            t.innerText = msg;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 2500);
+        }
+    </script>
+</body>
+</html>
