@@ -10,32 +10,38 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
 
-    <!-- TIPOGRAFÍA CONTEMPORÁNEA DE ALTA COSTURA (ESTILO PRADA / FERRAGAMO) -->
+    <!-- TIPOGRAFÍAS CONTEMPORÁNEAS DE ALTA COSTURA -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,500;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 
     <style>
         /* ==========================================================================
-           1. SISTEMA CROMÁTICO CONTEMPORÁNEO: BLANCO PURO + NEGRO + VINO MERAKI
+           1. SISTEMA CROMÁTICO MERAKI HAUTE COUTURE (BLANCO PURO + BORRAVINO + SKY)
            ========================================================================== */
         :root {
             --bg-canvas: #FFFFFF;
-            --bg-gallery: #F4F4F3;        /* Gris museo Prada */
+            --bg-gallery: #F4F4F3;
             --bg-ivory: #FAF9F7;
             --bg-dark: #0A0A0A;
 
             --ink-black: #000000;
-            --ink-primary: #121212;
+            --ink-primary: #141414;
             --ink-muted: #666666;
-            --ink-light: #999999;
+            --ink-light: #949494;
 
-            --meraki-vino: #600000;       /* Acento Carmine / Ferragamo */
-            --meraki-vino-hover: #420000;
+            /* Colores Oficiales de Marca MeraKi (Fusionados con elegancia) */
+            --meraki-vino: #600000;
+            --meraki-vino-deep: #3D0000;
+            --meraki-sky: #C3D6FF;
+            --meraki-sky-dot: #8CADF6;
+            --meraki-arena: #DCCDB6;
+            --meraki-marfil: #F7F3E8;
             --meraki-aroma: #98C7CD;
+            --meraki-ice: #CEE8E9;
 
             --hairline: rgba(0, 0, 0, 0.08);
-            --hairline-strong: rgba(0, 0, 0, 0.20);
+            --hairline-strong: rgba(0, 0, 0, 0.22);
 
             --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
             --font-mono: 'Space Grotesk', monospace;
@@ -44,6 +50,8 @@
             --ease-luxury: cubic-bezier(0.16, 1, 0.3, 1);
             --promo-h: 30px;
             --header-h: 58px;
+            --catbar-h: 42px;
+            --sticky-total-h: calc(var(--header-h) + var(--catbar-h) + 16px);
         }
 
         *, *::before, *::after {
@@ -61,6 +69,7 @@
             -webkit-text-size-adjust: 100%;
             text-size-adjust: 100%;
             overflow-x: clip;
+            max-width: 100%;
         }
 
         body {
@@ -70,6 +79,7 @@
             min-height: 100vh;
             min-height: 100dvh;
             width: 100%;
+            max-width: 100%;
             overflow-x: clip;
             letter-spacing: -0.015em;
             line-height: 1.45;
@@ -79,13 +89,44 @@
         a { color: inherit; text-decoration: none; }
         button { font-family: inherit; background: none; border: none; cursor: pointer; color: inherit; }
 
+        /* Margen de anclaje perfecto para que ningún bloque se corte debajo del header fijo */
+        #catalogo, #bienestar, #contacto, #ubicacion, #pageCategoryView {
+            scroll-margin-top: var(--sticky-total-h);
+        }
+
         /* ==========================================================================
-           2. CINTILLO SUPERIOR FINO
+           2. ANIMACIONES AWWWWARDS (REVEAL EN SCROLL + MICRO-INTERACCIONES)
+           ========================================================================== */
+        .reveal-block {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.75s var(--ease-luxury), transform 0.75s var(--ease-luxury);
+            will-change: opacity, transform;
+        }
+
+        .reveal-block.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @keyframes viewFadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .view-panel { display: none; }
+        .view-panel.active {
+            display: block;
+            animation: viewFadeIn 0.45s var(--ease-luxury) forwards;
+        }
+
+        /* ==========================================================================
+           3. CINTILLO SUPERIOR CON ACENTO BORRAVINO MERAKI
            ========================================================================== */
         .top-announcement-bar {
             width: 100%;
             height: var(--promo-h);
-            background-color: var(--ink-black);
+            background-color: var(--meraki-vino);
             color: #FFFFFF;
             display: flex;
             align-items: center;
@@ -113,7 +154,7 @@
             gap: 14px;
         }
 
-        .promo-accent { color: #FCA5A5; }
+        .promo-sky-accent { color: var(--meraki-sky); font-weight: 700; }
 
         @keyframes marqueeRun {
             0%   { transform: translateX(0); }
@@ -121,7 +162,7 @@
         }
 
         /* ==========================================================================
-           3. HEADER STICKY DUAL: BARRA PRINCIPAL + CATEGORÍAS VISIBLES EN TODO DISPOSITIVO
+           4. HEADER STICKY DUAL (LOGO + BARRA TÁCTIL DE PÁGINAS)
            ========================================================================== */
         .luxury-header-wrapper {
             position: sticky;
@@ -132,23 +173,29 @@
             -webkit-backdrop-filter: blur(16px);
             border-bottom: 1px solid var(--hairline);
             z-index: 50;
+            transition: box-shadow 0.3s ease;
+        }
+
+        .luxury-header-wrapper.scrolled {
+            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.04);
         }
 
         .header-main-row {
             max-width: 1400px;
             height: var(--header-h);
             margin: 0 auto;
-            padding: 0 clamp(12px, 3vw, 36px);
+            padding: 0 clamp(10px, 3vw, 36px);
             display: grid;
             grid-template-columns: 1fr auto 1fr;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
         }
 
         .header-left {
             display: flex;
             align-items: center;
-            gap: clamp(10px, 2vw, 18px);
+            gap: clamp(8px, 2vw, 18px);
+            min-width: 0;
         }
 
         .icon-btn-clean {
@@ -156,32 +203,38 @@
             align-items: center;
             gap: 6px;
             font-family: var(--font-mono);
-            font-size: 0.66rem;
+            font-size: 0.64rem;
             font-weight: 600;
             letter-spacing: 0.12em;
             text-transform: uppercase;
             color: var(--ink-black);
             padding: 6px 2px;
             position: relative;
-            transition: opacity 0.2s;
+            transition: opacity 0.2s, transform 0.2s var(--ease-luxury);
         }
 
-        .icon-btn-clean:hover { opacity: 0.55; }
-        .icon-btn-clean svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.75; }
+        .icon-btn-clean:active { transform: scale(0.94); }
+        @media (hover: hover) {
+            .icon-btn-clean:hover { opacity: 0.55; }
+        }
+        .icon-btn-clean svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.75; flex-shrink: 0; }
 
         .btn-label-desktop { display: none; }
         @media (min-width: 768px) { .btn-label-desktop { display: inline; } }
 
-        /* LOGO CENTRAL OFICIAL SVG */
         .header-logo-anchor {
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
+            transition: transform 0.3s var(--ease-luxury);
+        }
+        @media (hover: hover) {
+            .header-logo-anchor:hover { transform: scale(1.03); }
         }
 
         .meraki-header-svg {
-            height: 40px;
+            height: 38px;
             width: auto;
             display: block;
             color: var(--ink-black);
@@ -195,7 +248,8 @@
             display: flex;
             align-items: center;
             justify-content: flex-end;
-            gap: clamp(8px, 2vw, 16px);
+            gap: clamp(6px, 1.8vw, 16px);
+            min-width: 0;
         }
 
         /* SELECTOR DE MONEDA TRIPLE FRONTERA (ARS · PYG · BRL) */
@@ -208,7 +262,7 @@
 
         .curr-btn {
             font-family: var(--font-mono);
-            font-size: 0.60rem;
+            font-size: 0.58rem;
             font-weight: 700;
             letter-spacing: 0.06em;
             padding: 4px 7px;
@@ -222,10 +276,9 @@
         }
 
         @media (max-width: 390px) {
-            .curr-btn { padding: 4px 5px; font-size: 0.55rem; }
+            .curr-btn { padding: 3px 5px; font-size: 0.54rem; }
         }
 
-        /* BOLSA DE COMPRA COUNTER */
         .bag-badge-count {
             position: absolute;
             top: 0;
@@ -247,30 +300,33 @@
             transition: all 0.25s var(--ease-luxury);
         }
 
-        .bag-badge-count.visible {
-            opacity: 1;
-            transform: scale(1);
-        }
+        .bag-badge-count.visible { opacity: 1; transform: scale(1); }
 
-        /* BARRA SUPERIOR PERMANENTE DE CATEGORÍAS (VISIBLE Y TOUCH-READY EN MÓVIL Y PC) */
+        /* BARRA SUPERIOR DE PÁGINAS & SECCIONES (SIEMPRE VISIBLE Y TÁCTIL) */
         .header-categories-bar {
             width: 100%;
+            height: var(--catbar-h);
             border-top: 1px solid var(--hairline);
             background: #FFFFFF;
+            display: flex;
+            align-items: center;
         }
 
         .categories-bar-inner {
             max-width: 1400px;
+            width: 100%;
+            height: 100%;
             margin: 0 auto;
-            padding: 0 clamp(12px, 3vw, 36px);
+            padding: 0 clamp(10px, 3vw, 36px);
             display: flex;
             align-items: center;
             justify-content: flex-start;
-            gap: clamp(16px, 3vw, 30px);
+            gap: clamp(16px, 3vw, 32px);
             overflow-x: auto;
             scrollbar-width: none;
             -webkit-overflow-scrolling: touch;
         }
+
         @media (min-width: 768px) {
             .categories-bar-inner { justify-content: center; }
         }
@@ -278,19 +334,36 @@
 
         .top-cat-pill {
             font-family: var(--font-mono);
-            font-size: 0.68rem;
+            font-size: 0.66rem;
             font-weight: 600;
             letter-spacing: 0.14em;
             text-transform: uppercase;
             color: var(--ink-muted);
-            padding: 11px 2px;
+            height: 100%;
+            display: inline-flex;
+            align-items: center;
+            padding: 0 2px;
             white-space: nowrap;
             position: relative;
             flex-shrink: 0;
-            transition: color 0.2s ease;
+            transition: color 0.22s ease;
         }
 
-        .top-cat-pill:hover { color: var(--ink-black); }
+        .top-cat-pill::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            height: 2px;
+            background: var(--meraki-vino);
+            transform: scaleX(0);
+            transform-origin: center;
+            transition: transform 0.28s var(--ease-luxury);
+        }
+
+        @media (hover: hover) {
+            .top-cat-pill:hover { color: var(--ink-black); }
+            .top-cat-pill:hover::after { transform: scaleX(0.6); }
+        }
 
         .top-cat-pill.active {
             color: var(--ink-black);
@@ -298,14 +371,11 @@
         }
 
         .top-cat-pill.active::after {
-            content: '';
-            position: absolute;
-            bottom: 0; left: 0; right: 0;
-            height: 2px;
+            transform: scaleX(1);
             background: var(--ink-black);
         }
 
-        /* BARRA DE BÚSQUEDA EXPANSIBLE */
+        /* BARRA DE BÚSQUEDA DESPLEGABLE */
         .search-expand-bar {
             display: none;
             width: 100%;
@@ -336,7 +406,7 @@
         }
 
         /* ==========================================================================
-           4. HERO EDITORIAL CONTEMPORÁNEO (COOL, CANCHERO & SOFISTICADO)
+           5. HERO EDITORIAL CONTEMPORÁNEO
            ========================================================================== */
         .hero-editorial-section {
             max-width: 1400px;
@@ -350,13 +420,13 @@
 
         @media (min-width: 840px) {
             .hero-editorial-section {
-                grid-template-columns: 1.08fr 0.92fr;
+                grid-template-columns: 1.06fr 0.94fr;
             }
         }
 
         .hero-media-frame {
             width: 100%;
-            aspect-ratio: 4 / 4.6;
+            aspect-ratio: 4 / 4.5;
             max-height: 520px;
             background: var(--bg-gallery);
             position: relative;
@@ -373,6 +443,14 @@
             height: 100%;
             object-fit: cover;
             display: block;
+            transition: transform 0.8s var(--ease-luxury);
+        }
+
+        @media (hover: hover) {
+            .hero-media-frame:hover video,
+            .hero-media-frame:hover img {
+                transform: scale(1.03);
+            }
         }
 
         .hero-media-badge {
@@ -383,7 +461,7 @@
             color: var(--ink-black);
             padding: 5px 11px;
             font-family: var(--font-mono);
-            font-size: 0.60rem;
+            font-size: 0.58rem;
             font-weight: 700;
             letter-spacing: 0.14em;
             text-transform: uppercase;
@@ -399,7 +477,7 @@
 
         .hero-kicker {
             font-family: var(--font-mono);
-            font-size: 0.66rem;
+            font-size: 0.64rem;
             font-weight: 700;
             letter-spacing: 0.18em;
             text-transform: uppercase;
@@ -409,10 +487,9 @@
             gap: 8px;
         }
 
-        /* TITULAR MODERNO ESTILO PRADA / BALENCIAGA / COS (GROTESCA CON FUERZA) */
         .hero-headline-modern {
             font-family: var(--font-sans);
-            font-size: clamp(2.05rem, 6vw, 3.35rem);
+            font-size: clamp(1.95rem, 6vw, 3.3rem);
             font-weight: 700;
             line-height: 1.03;
             color: var(--ink-black);
@@ -431,7 +508,7 @@
             display: flex;
             flex-wrap: wrap;
             align-items: center;
-            gap: 12px 20px;
+            gap: 10px 16px;
             margin-top: 6px;
             width: 100%;
         }
@@ -449,12 +526,18 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
-            transition: background 0.25s ease, transform 0.25s var(--ease-luxury);
+            position: relative;
+            overflow: hidden;
+            transition: background 0.28s ease, transform 0.28s var(--ease-luxury), box-shadow 0.28s ease;
         }
 
-        .btn-luxury-primary:hover {
-            background: var(--meraki-vino);
-            transform: translateY(-2px);
+        .btn-luxury-primary:active { transform: scale(0.97); }
+        @media (hover: hover) {
+            .btn-luxury-primary:hover {
+                background: var(--meraki-vino);
+                transform: translateY(-2px);
+                box-shadow: 0 10px 24px rgba(96, 0, 0, 0.22);
+            }
         }
 
         .btn-luxury-outline {
@@ -469,12 +552,16 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.25s ease;
+            transition: all 0.28s var(--ease-luxury);
         }
 
-        .btn-luxury-outline:hover {
-            background: var(--ink-black);
-            color: #FFFFFF;
+        .btn-luxury-outline:active { transform: scale(0.97); }
+        @media (hover: hover) {
+            .btn-luxury-outline:hover {
+                background: var(--ink-black);
+                color: #FFFFFF;
+                transform: translateY(-2px);
+            }
         }
 
         .link-luxury-underline {
@@ -486,9 +573,11 @@
             color: var(--ink-black);
             border-bottom: 1px solid var(--ink-black);
             padding-bottom: 3px;
-            transition: opacity 0.2s ease;
+            transition: opacity 0.2s ease, color 0.2s ease, border-color 0.2s ease;
         }
-        .link-luxury-underline:hover { opacity: 0.55; }
+        @media (hover: hover) {
+            .link-luxury-underline:hover { color: var(--meraki-vino); border-color: var(--meraki-vino); }
+        }
 
         .hero-store-meta {
             display: flex;
@@ -499,7 +588,7 @@
             border-top: 1px solid var(--hairline);
             width: 100%;
             font-family: var(--font-mono);
-            font-size: 0.64rem;
+            font-size: 0.62rem;
             letter-spacing: 0.08em;
             text-transform: uppercase;
             color: var(--ink-muted);
@@ -514,7 +603,85 @@
         }
 
         /* ==========================================================================
-           5. CATÁLOGO PRINCIPAL (GRILLA PRADA DE ALTA GAMA)
+           6. SECCIÓN HOME: PORTALES DE UNIVERSOS CON PALETA MERAKI SUTIL
+           ========================================================================== */
+        .universes-section {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: clamp(16px, 3vw, 28px) clamp(12px, 3vw, 36px) clamp(24px, 4vw, 36px);
+        }
+
+        .universes-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+            width: 100%;
+        }
+
+        @media (min-width: 840px) {
+            .universes-grid {
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+                gap: 14px;
+            }
+        }
+
+        .universe-tile {
+            padding: clamp(16px, 2.5vw, 22px);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 112px;
+            border: 1px solid var(--hairline);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s var(--ease-luxury), border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .universe-tile:active { transform: scale(0.98); }
+        @media (hover: hover) {
+            .universe-tile:hover {
+                transform: translateY(-4px);
+                border-color: var(--ink-black);
+                box-shadow: 0 12px 28px rgba(0, 0, 0, 0.06);
+            }
+        }
+
+        /* Aplicación sutil y elegante de los colores originales de MeraKi */
+        .tile-indumentaria { background: var(--meraki-marfil); border-top: 3px solid var(--meraki-arena); }
+        .tile-deco         { background: #F5F8FF; border-top: 3px solid var(--meraki-sky-dot); }
+        .tile-bazar        { background: var(--bg-gallery); border-top: 3px solid var(--ink-black); }
+        .tile-aromas       { background: #F2F9F9; border-top: 3px solid var(--meraki-aroma); }
+
+        .tile-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-family: var(--font-mono);
+            font-size: 0.60rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--ink-muted);
+        }
+
+        .tile-name {
+            font-size: clamp(1rem, 3vw, 1.18rem);
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            color: var(--ink-black);
+            margin-top: 14px;
+            text-transform: uppercase;
+        }
+
+        .tile-sub {
+            font-size: 0.72rem;
+            color: var(--ink-muted);
+            margin-top: 3px;
+        }
+
+        /* ==========================================================================
+           7. GRILLA DE PRODUCTOS (6 CURADAS EN HOME + PÁGINAS DE CATEGORÍA)
            ========================================================================== */
         .catalog-section {
             max-width: 1400px;
@@ -526,7 +693,7 @@
         .catalog-header-row {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
             margin-bottom: 20px;
         }
 
@@ -540,7 +707,7 @@
 
         .catalog-heading-modern {
             font-family: var(--font-sans);
-            font-size: clamp(1.5rem, 3.8vw, 2.15rem);
+            font-size: clamp(1.4rem, 3.8vw, 2.05rem);
             font-weight: 700;
             color: var(--ink-black);
             letter-spacing: -0.03em;
@@ -550,7 +717,7 @@
 
         .catalog-count-label {
             font-family: var(--font-mono);
-            font-size: 0.64rem;
+            font-size: 0.62rem;
             letter-spacing: 0.12em;
             text-transform: uppercase;
             color: var(--ink-muted);
@@ -558,11 +725,37 @@
             display: block;
         }
 
+        /* Cabecera específica de Página de Categoría */
+        .category-page-banner {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: clamp(20px, 4vw, 40px) clamp(12px, 3vw, 36px) 18px;
+            border-bottom: 1px solid var(--hairline);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .breadcrumb-back-btn {
+            align-self: flex-start;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-family: var(--font-mono);
+            font-size: 0.66rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--ink-muted);
+            transition: color 0.2s;
+        }
+        .breadcrumb-back-btn:hover { color: var(--ink-black); }
+
         .subcat-pills-row {
             display: none;
             flex-wrap: wrap;
             gap: 8px;
-            margin-bottom: 20px;
+            margin-bottom: 22px;
         }
 
         .subcat-pills-row.visible { display: flex; }
@@ -585,7 +778,7 @@
             color: #FFFFFF;
         }
 
-        /* GRILLA RESPONSIVE PERFECCIONADA (MÓVIL 2 COL, TABLET 3 COL, DESKTOP 4 COL) */
+        /* GRILLA DE PASARELA (2 COL MÓVIL, 3 COL HOME/TABLET, 4 COL DESKTOP) */
         .products-runway-grid {
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -603,7 +796,11 @@
         @media (min-width: 1080px) {
             .products-runway-grid {
                 grid-template-columns: repeat(4, minmax(0, 1fr));
-                gap: 40px 20px;
+                gap: 38px 20px;
+            }
+            /* En Home (6 fotos), en desktop se ve espectacular en grilla de 3 columnas x 2 filas simétricas */
+            .products-runway-grid.home-six-grid {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
             }
         }
 
@@ -614,6 +811,11 @@
             cursor: pointer;
             position: relative;
             min-width: 0;
+            transition: transform 0.35s var(--ease-luxury);
+        }
+
+        @media (hover: hover) {
+            .product-card-minimal:hover { transform: translateY(-3px); }
         }
 
         .product-image-stage {
@@ -633,8 +835,10 @@
             transition: transform 0.65s var(--ease-luxury);
         }
 
-        .product-card-minimal:hover .product-image-stage img {
-            transform: scale(1.04);
+        @media (hover: hover) {
+            .product-card-minimal:hover .product-image-stage img {
+                transform: scale(1.05);
+            }
         }
 
         .product-tag-minimal {
@@ -656,24 +860,28 @@
             position: absolute;
             bottom: 8px;
             right: 8px;
-            width: 32px;
-            height: 32px;
-            background: rgba(255, 255, 255, 0.95);
+            width: 34px;
+            height: 34px;
+            background: rgba(255, 255, 255, 0.96);
             color: var(--ink-black);
             display: flex;
             align-items: center;
             justify-content: center;
             font-family: var(--font-mono);
-            font-size: 1rem;
+            font-size: 1.05rem;
             font-weight: 500;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-            transition: all 0.2s ease;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.10);
+            transition: all 0.22s var(--ease-luxury);
             z-index: 3;
         }
 
-        .product-quick-add:hover {
-            background: var(--ink-black);
-            color: #FFFFFF;
+        .product-quick-add:active { transform: scale(0.9); }
+        @media (hover: hover) {
+            .product-quick-add:hover {
+                background: var(--meraki-vino);
+                color: #FFFFFF;
+                transform: scale(1.08);
+            }
         }
 
         .product-meta-block {
@@ -685,7 +893,7 @@
 
         .product-sub-kicker {
             font-family: var(--font-mono);
-            font-size: 0.58rem;
+            font-size: 0.56rem;
             font-weight: 600;
             letter-spacing: 0.10em;
             text-transform: uppercase;
@@ -721,18 +929,105 @@
         }
 
         /* ==========================================================================
-           6. MÓDULO EDITORIAL DE CONTRASTE: "7 DÍAS · 7 INTENCIONES" (CON FILIGRANA ORIGINAL)
+           8. BLOQUE HERITAGE MERAKI: BORRAVINO #600000 + PATRÓN DE LUNARES #8CADF6
+           (APLICADO QUIRÚRGICAMENTE CON ESTÉTICA POLO / GOLDEN GOOSE)
+           ========================================================================== */
+        .meraki-heritage-wrapper {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 clamp(12px, 3vw, 36px) clamp(24px, 4vw, 38px);
+        }
+
+        .meraki-heritage-banner {
+            background-color: var(--meraki-vino);
+            color: #FFFFFF;
+            padding: clamp(26px, 4vw, 44px) clamp(20px, 4vw, 44px);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            align-items: flex-start;
+            justify-content: space-between;
+        }
+
+        @media (min-width: 840px) {
+            .meraki-heritage-banner {
+                flex-direction: row;
+                align-items: center;
+            }
+        }
+
+        /* Patrón original de lunares celestes (#8CADF6) flotando sutilmente sobre #600000 */
+        .meraki-heritage-banner::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Ccircle cx='15' cy='15' r='4.5' fill='%238CADF6' fill-opacity='0.22'/%3E%3Ccircle cx='45' cy='45' r='4.5' fill='%238CADF6' fill-opacity='0.22'/%3E%3C/svg%3E");
+            background-size: 60px 60px;
+            animation: driftBannerDots 28s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes driftBannerDots {
+            0%   { background-position: 0 0; }
+            100% { background-position: 600px 0; }
+        }
+
+        .heritage-content { position: relative; z-index: 2; max-width: 620px; }
+
+        .heritage-kicker {
+            font-family: var(--font-mono);
+            font-size: 0.64rem;
+            font-weight: 700;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: var(--meraki-sky);
+        }
+
+        .heritage-title {
+            font-size: clamp(1.5rem, 3.8vw, 2.2rem);
+            font-weight: 700;
+            letter-spacing: -0.025em;
+            line-height: 1.12;
+            margin-top: 6px;
+        }
+
+        .heritage-cta {
+            position: relative;
+            z-index: 2;
+            background: var(--meraki-sky);
+            color: #240000;
+            font-family: var(--font-mono);
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            padding: 14px 24px;
+            white-space: nowrap;
+            transition: transform 0.25s var(--ease-luxury), background 0.25s ease;
+        }
+
+        @media (hover: hover) {
+            .heritage-cta:hover {
+                background: #FFFFFF;
+                transform: translateY(-2px);
+            }
+        }
+
+        /* ==========================================================================
+           9. MÓDULO EDITORIAL CONTRASTE: "7 DÍAS · 7 INTENCIONES"
            ========================================================================== */
         .editorial-ritual-wrapper {
             max-width: 1400px;
-            margin: 12px auto 0;
-            padding: 0 clamp(12px, 3vw, 36px) clamp(28px, 4vw, 48px);
+            margin: 0 auto;
+            padding: 0 clamp(12px, 3vw, 36px) clamp(26px, 4vw, 44px);
         }
 
         .ritual-banner-card {
             background: linear-gradient(135deg, #16282B 0%, #0C1719 100%);
             color: #FFFFFF;
-            padding: clamp(26px, 4vw, 48px) clamp(20px, 4vw, 44px);
+            padding: clamp(26px, 4vw, 46px) clamp(20px, 4vw, 44px);
             position: relative;
             overflow: hidden;
             display: grid;
@@ -742,9 +1037,7 @@
         }
 
         @media (min-width: 840px) {
-            .ritual-banner-card {
-                grid-template-columns: 1fr 1fr;
-            }
+            .ritual-banner-card { grid-template-columns: 1fr 1fr; }
         }
 
         .ritual-banner-card::before {
@@ -768,7 +1061,7 @@
         }
         .ritual-title {
             font-family: var(--font-sans);
-            font-size: clamp(1.6rem, 3.8vw, 2.15rem);
+            font-size: clamp(1.55rem, 3.8vw, 2.1rem);
             font-weight: 700;
             letter-spacing: -0.025em;
             color: #FFFFFF;
@@ -789,7 +1082,7 @@
         }
         .ritual-tab-btn {
             font-family: var(--font-mono);
-            font-size: 0.64rem;
+            font-size: 0.62rem;
             font-weight: 700;
             letter-spacing: 0.08em;
             text-transform: uppercase;
@@ -828,17 +1121,93 @@
             background: var(--meraki-aroma);
             color: #0E1B1D;
             font-family: var(--font-mono);
-            font-size: 0.66rem;
+            font-size: 0.64rem;
             font-weight: 700;
             letter-spacing: 0.12em;
             text-transform: uppercase;
             padding: 11px 18px;
-            transition: opacity 0.2s;
+            transition: opacity 0.2s, transform 0.2s;
         }
-        .btn-ritual-wpp:hover { opacity: 0.88; }
+        @media (hover: hover) {
+            .btn-ritual-wpp:hover { opacity: 0.9; transform: translateY(-2px); }
+        }
 
         /* ==========================================================================
-           7. TIENDA FÍSICA (USHUAIA 196 ESQ. JANGADERO) & FOOTER MINIMALISTA
+           10. FORMULARIO DE CONTACTO EMAIL (CONECTADO A GOOGLE SHEETS)
+           ========================================================================== */
+        .contact-luxury-section {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: clamp(24px, 4vw, 48px) clamp(12px, 3vw, 36px);
+            border-top: 1px solid var(--hairline);
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 24px;
+            align-items: start;
+        }
+
+        @media (min-width: 840px) {
+            .contact-luxury-section {
+                grid-template-columns: 0.85fr 1.15fr;
+                gap: 48px;
+            }
+        }
+
+        .contact-form-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+            background: var(--bg-ivory);
+            padding: clamp(20px, 3.5vw, 32px);
+            border: 1px solid var(--hairline);
+        }
+
+        @media (min-width: 580px) {
+            .contact-form-grid { grid-template-columns: 1fr 1fr; }
+        }
+
+        .form-field-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .form-field-group.full { grid-column: 1 / -1; }
+
+        .form-label-mono {
+            font-family: var(--font-mono);
+            font-size: 0.60rem;
+            font-weight: 700;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--ink-muted);
+        }
+
+        .form-input-line {
+            width: 100%;
+            border: none;
+            border-bottom: 1px solid var(--hairline-strong);
+            background: transparent;
+            padding: 8px 0;
+            font-family: var(--font-sans);
+            font-size: 0.88rem;
+            color: var(--ink-black);
+            outline: none;
+            transition: border-color 0.2s ease;
+        }
+
+        .form-input-line:focus { border-bottom-color: var(--meraki-vino); }
+
+        .contact-feedback-msg {
+            grid-column: 1 / -1;
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            color: #15803D;
+            display: none;
+        }
+        .contact-feedback-msg.visible { display: block; }
+
+        /* ==========================================================================
+           11. SHOWROOM FÍSICO & FOOTER
            ========================================================================== */
         .boutique-location-section {
             max-width: 1400px;
@@ -854,15 +1223,11 @@
         @media (min-width: 840px) {
             .boutique-location-section {
                 grid-template-columns: 0.85fr 1.15fr;
-                gap: 44px;
+                gap: 48px;
             }
         }
 
-        .location-details-stack {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
+        .location-details-stack { display: flex; flex-direction: column; gap: 12px; }
 
         .location-map-frame {
             width: 100%;
@@ -882,7 +1247,7 @@
         .luxury-footer {
             border-top: 1px solid var(--hairline);
             background: var(--bg-ivory);
-            padding: 38px clamp(12px, 3vw, 36px) 52px;
+            padding: 38px clamp(12px, 3vw, 36px) 58px;
             text-align: center;
         }
 
@@ -910,7 +1275,7 @@
             justify-content: center;
             gap: 16px;
             font-family: var(--font-mono);
-            font-size: 0.66rem;
+            font-size: 0.64rem;
             letter-spacing: 0.12em;
             text-transform: uppercase;
         }
@@ -919,7 +1284,7 @@
 
         .footer-legal {
             font-family: var(--font-mono);
-            font-size: 0.60rem;
+            font-size: 0.58rem;
             letter-spacing: 0.10em;
             color: var(--ink-light);
             text-transform: uppercase;
@@ -927,7 +1292,7 @@
         }
 
         /* ==========================================================================
-           8. MODALES & DRAWERS (QUICK-VIEW, BOLSA WHATSAPP, MENÚ MÓVIL)
+           12. MODALES, BOLSA (CON BOTÓN BORRAR EXPLÍCITO) & BOTÓN FLOTANTE SMART
            ========================================================================== */
         .drawer-backdrop {
             position: fixed;
@@ -973,7 +1338,7 @@
             position: absolute;
             top: 12px; right: 12px;
             width: 34px; height: 34px;
-            background: rgba(255, 255, 255, 0.94);
+            background: rgba(255, 255, 255, 0.95);
             color: var(--ink-black);
             border: 1px solid var(--hairline);
             display: flex;
@@ -989,7 +1354,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            min-height: 260px;
+            min-height: 250px;
             max-height: 520px;
         }
         .pdp-media-col img {
@@ -1019,22 +1384,13 @@
 
         .pdp-price-frontier {
             font-family: var(--font-mono);
-            font-size: 0.64rem;
+            font-size: 0.62rem;
             color: var(--ink-muted);
             margin-top: 2px;
         }
 
-        .pdp-size-selector {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .pdp-size-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-        }
+        .pdp-size-selector { display: flex; flex-direction: column; gap: 6px; }
+        .pdp-size-grid { display: flex; flex-wrap: wrap; gap: 6px; }
 
         .size-chip {
             font-family: var(--font-mono);
@@ -1043,6 +1399,7 @@
             padding: 6px 12px;
             border: 1px solid var(--hairline-strong);
             color: var(--ink-primary);
+            transition: all 0.2s ease;
         }
         .size-chip.selected {
             background: var(--ink-black);
@@ -1050,12 +1407,7 @@
             border-color: var(--ink-black);
         }
 
-        .pdp-actions-stack {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            margin-top: 6px;
-        }
+        .pdp-actions-stack { display: flex; flex-direction: column; gap: 8px; margin-top: 6px; }
 
         .btn-wpp-solicitar {
             width: 100%;
@@ -1063,7 +1415,7 @@
             color: #FFFFFF;
             padding: 15px 18px;
             font-family: var(--font-mono);
-            font-size: 0.70rem;
+            font-size: 0.68rem;
             font-weight: 700;
             letter-spacing: 0.14em;
             text-transform: uppercase;
@@ -1071,9 +1423,11 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
-            transition: background 0.2s;
+            transition: background 0.25s ease, transform 0.25s var(--ease-luxury);
         }
-        .btn-wpp-solicitar:hover { background: var(--meraki-vino); }
+        @media (hover: hover) {
+            .btn-wpp-solicitar:hover { background: var(--meraki-vino); transform: translateY(-1px); }
+        }
 
         .btn-add-bag-outline {
             width: 100%;
@@ -1081,25 +1435,26 @@
             color: var(--ink-black);
             padding: 13px 18px;
             font-family: var(--font-mono);
-            font-size: 0.68rem;
+            font-size: 0.66rem;
             font-weight: 700;
             letter-spacing: 0.14em;
             text-transform: uppercase;
             transition: all 0.2s;
         }
-        .btn-add-bag-outline:hover { background: var(--bg-gallery); }
+        @media (hover: hover) {
+            .btn-add-bag-outline:hover { background: var(--bg-gallery); }
+        }
 
         .side-drawer {
             position: fixed;
-            top: 0;
-            bottom: 0;
+            top: 0; bottom: 0;
             width: min(420px, 92vw);
             background: #FFFFFF;
             z-index: 1020;
             display: flex;
             flex-direction: column;
             transition: transform 0.35s var(--ease-luxury);
-            box-shadow: 0 0 50px rgba(0,0,0,0.2);
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.2);
         }
 
         .side-drawer.right { right: 0; transform: translateX(100%); }
@@ -1116,7 +1471,7 @@
 
         .drawer-title {
             font-family: var(--font-mono);
-            font-size: 0.74rem;
+            font-size: 0.72rem;
             font-weight: 700;
             letter-spacing: 0.14em;
             text-transform: uppercase;
@@ -1136,6 +1491,7 @@
             gap: 12px;
             padding-bottom: 14px;
             border-bottom: 1px solid var(--hairline);
+            position: relative;
         }
 
         .bag-item-img {
@@ -1154,14 +1510,42 @@
             min-width: 0;
         }
 
+        .bag-item-top-row {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        /* BOTÓN EXPLÍCITO DE ELIMINAR ÍTEM */
+        .btn-remove-bag-item {
+            font-family: var(--font-mono);
+            font-size: 0.60rem;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: var(--ink-muted);
+            border-bottom: 1px solid transparent;
+            padding: 2px 0;
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            flex-shrink: 0;
+            transition: color 0.2s, border-color 0.2s;
+        }
+        .btn-remove-bag-item:hover {
+            color: var(--meraki-vino);
+            border-bottom-color: var(--meraki-vino);
+        }
+
         .qty-control {
             display: inline-flex;
             align-items: center;
             border: 1px solid var(--hairline-strong);
             width: fit-content;
         }
-        .qty-control button { padding: 3px 9px; font-family: var(--font-mono); font-size: 0.8rem; }
-        .qty-control span { padding: 3px 8px; font-family: var(--font-mono); font-size: 0.72rem; font-weight: 700; }
+        .qty-control button { padding: 4px 10px; font-family: var(--font-mono); font-size: 0.85rem; }
+        .qty-control span { padding: 4px 8px; font-family: var(--font-mono); font-size: 0.72rem; font-weight: 700; }
 
         .drawer-foot {
             padding: 18px 22px calc(22px + env(safe-area-inset-bottom, 0px));
@@ -1170,6 +1554,57 @@
             display: flex;
             flex-direction: column;
             gap: 10px;
+        }
+
+        /* BOTÓN FLOTANTE SUTIL WHATSAPP (APARECE SUAVE AL SCROLLEAR) */
+        .floating-wpp-concierge {
+            position: fixed;
+            bottom: calc(18px + env(safe-area-inset-bottom, 0px));
+            right: 16px;
+            z-index: 900;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.94);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--ink-black);
+            padding: 8px 14px 8px 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.14);
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(18px);
+            transition: opacity 0.35s ease, transform 0.35s var(--ease-luxury), background 0.25s ease, color 0.25s ease;
+        }
+
+        .floating-wpp-concierge.is-visible {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateY(0);
+        }
+
+        @media (hover: hover) {
+            .floating-wpp-concierge:hover {
+                background: var(--ink-black);
+                color: #FFFFFF;
+                transform: translateY(-3px);
+            }
+        }
+
+        .floating-wpp-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #25D366;
+            box-shadow: 0 0 8px rgba(37, 211, 102, 0.7);
+        }
+
+        .floating-wpp-label {
+            font-family: var(--font-mono);
+            font-size: 0.62rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
         }
 
         .toast-bar {
@@ -1195,21 +1630,21 @@
 </head>
 <body>
 
-    <!-- 1. CINTILLO PROMOCIONAL SUPERIOR -->
+    <!-- 1. CINTILLO SUPERIOR CON BORRAVINO OFICIAL MERAKI -->
     <div class="top-announcement-bar">
         <div class="announcement-track">
-            <span><b class="promo-accent">30% OFF</b> + 12 CUOTAS SIN INTERÉS</span><span>·</span>
+            <span><b class="promo-sky-accent">30% OFF</b> + 12 CUOTAS SIN INTERÉS</span><span>·</span>
             <span>PEDIDOS EN PESOS, GUARANÍES Y REALES</span><span>·</span>
             <span>USHUAIA 196 ESQ. JANGADERO — PUERTO IGUAZÚ</span><span>·</span>
             <span>TODOS LOS MEDIOS DE PAGO</span><span>·</span>
-            <span><b class="promo-accent">30% OFF</b> + 12 CUOTAS SIN INTERÉS</span><span>·</span>
+            <span><b class="promo-sky-accent">30% OFF</b> + 12 CUOTAS SIN INTERÉS</span><span>·</span>
             <span>PEDIDOS EN PESOS, GUARANÍES Y REALES</span><span>·</span>
             <span>USHUAIA 196 ESQ. JANGADERO — PUERTO IGUAZÚ</span><span>·</span>
         </div>
     </div>
 
-    <!-- 2. HEADER STICKY DUAL (LOGO + CATEGORÍAS SIEMPRE VISIBLES PARA TOCAR) -->
-    <header class="luxury-header-wrapper">
+    <!-- 2. HEADER STICKY DUAL (LOGO + BARRA DE SECCIONES SIEMPRE VISIBLE Y TÁCTIL) -->
+    <header class="luxury-header-wrapper" id="luxuryHeader">
         <div class="header-main-row">
             <div class="header-left">
                 <button class="icon-btn-clean" onclick="openMenuDrawer()" aria-label="Menú">
@@ -1222,8 +1657,8 @@
                 </button>
             </div>
 
-            <!-- Centro: SVG Oficial de MeraKi -->
-            <a href="#" class="header-logo-anchor" onclick="scrollToTop(event)" aria-label="MeraKi Inicio">
+            <!-- Centro: SVG Oficial MeraKi -->
+            <a href="#inicio" class="header-logo-anchor" onclick="navigateToHome(event)" aria-label="MeraKi Inicio">
                 <svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 295.51 184.32" class="meraki-header-svg">
                     <g fill="currentColor">
                         <path d="M68.89,41.68c3.92-6.23,7.47-12.27,11.42-18.03,2.12-3.08,4.87-5.75,7.45-8.49.97-1.03,2.2-1.86,3.43-2.6,7.05-4.27,12.28-2.01,13.75,6.11,1.52,8.36.37,16.7-1.06,24.94-1.56,9.02-3.54,17.96-5.46,27.5.65-1.17,1.06-1.94,1.49-2.7,8.53-14.99,16.98-30.03,25.67-44.93,1.83-3.15,4.47-5.84,6.85-8.65,1.84-2.17,4.04-2.85,6.64-1.09,1.93,1.3,4.07,2.32,5.91,3.73,5.32,4.07,6.78,9.17,3.89,15.25-1.68,3.53-4.02,6.8-6.4,9.93-9.87,12.9-16.26,27.29-18.52,43.39-.51,3.6-.48,7.4.06,11,1.38,9.26,7.24,13.56,16.53,12.63,3.88-.39,4.71.16,5.94,3.95,1.98,6.11-1.98,13.3-8.32,15.12-13.77,3.95-23.59-2.84-25.36-17.52-1.55-12.81,1.2-25.06,5.06-37.11,4.03-12.57,9.83-24.3,17.1-35.32,1.06-1.61,1.88-3.5,2.26-5.37.2-.97-.55-2.55-1.38-3.16-.65-.47-2.45-.26-3.12.34-2.98,2.69-6.1,5.36-8.52,8.53-10.11,13.29-17.33,28.33-25.7,42.69-7.32,12.57-10.11,26.18-12.13,40.19-.08.53-.18,1.06-.28,1.59-1.24,6.53-5.89,9.3-12.32,7.36-3.41-1.03-4.8-3.15-3.72-6.52,2.91-9.07,6.13-18.03,9.01-27.11,5.29-16.69,10.53-33.4,15.54-50.18,1.06-3.56,1.28-7.44,1.4-11.19.13-4.24-3.21-6.8-7.21-5.28-2.55.97-5.02,2.86-6.83,4.95-5.31,6.13-8.49,13.53-11.31,21.02-8.81,23.38-14.88,47.47-18.28,72.23-.25,1.84-1.11,3.21-2.92,3.36-2.27.19-4.67.3-6.85-.24-3.01-.75-4.2-2.71-3.47-5.72,2.16-8.9,4.2-17.85,6.96-26.57,3.25-10.27,7.21-20.31,10.87-30.45,2.83-7.85,4.62-15.88,4.06-24.28-.59-8.83-5.21-14.3-13.93-15.13-15.34-1.46-28.61,3.13-38.67,15.28-2.66,3.21-4.64,6.9-4.51,11.28.15,5.19,2.85,8.15,8.05,8.15,3.64,0,7.32-.65,10.92-1.31,2.64-.48,5.19-1.43,7.77-2.21,4.37-1.31,6.41.15,6.65,4.8.33,6.29-2.39,10.21-8.64,12.47-4.78,1.73-10.17,2.36-15.3,2.36-5.65,0-9.32-3.8-11.39-8.94-2.66-6.6-2.41-13.42-.88-20.17,3.41-15.06,10.5-27.87,24.47-35.49,14.66-7.99,29.32-5.5,38.14,10.04,2.34,4.12,3.26,9.06,4.8,13.63.19.56.21,1.18.34,1.94Z"/>
@@ -1253,10 +1688,10 @@
             </div>
         </div>
 
-        <!-- BARRA DE CATEGORÍAS SIEMPRE VISIBLE (SECCIONES PARA TOCAR EN MÓVIL Y PC) -->
-        <nav class="header-categories-bar" aria-label="Secciones de tienda">
+        <!-- BARRA DE PÁGINAS & SECCIONES SIEMPRE VISIBLE -->
+        <nav class="header-categories-bar" aria-label="Páginas y secciones">
             <div class="categories-bar-inner" id="topCategoriesBar">
-                <!-- Inyectado dinámicamente según carpetas y productos -->
+                <!-- Inyectado dinámicamente -->
             </div>
         </nav>
 
@@ -1269,121 +1704,193 @@
         </div>
     </header>
 
-    <!-- 3. HERO EDITORIAL CONTEMPORÁNEO -->
-    <section class="hero-editorial-section">
-        <div class="hero-media-frame" id="heroMediaStage">
-            <video id="heroVideoPlayer" autoplay muted loop playsinline preload="metadata">
-                <source src="media/editorial/moda.mp4" type="video/mp4">
-                <source src="moda.mp4" type="video/mp4">
-            </video>
-            <span class="hero-media-badge">Puerto Iguazú · Drop 2026</span>
-        </div>
+    <!-- ==========================================================================
+         VISTA 1: PÁGINA HOME (INICIO CURADO CON MIX DE 6 FOTOS)
+         ========================================================================== -->
+    <div id="pageHomeView" class="view-panel active">
 
-        <div class="hero-copy-stage">
-            <span class="hero-kicker">Básicas &amp; Divertidas · Concept Store</span>
-            <h1 class="hero-headline-modern">Moda, hogar &amp; rituales con actitud.</h1>
-            <p class="hero-body-text">
-                Prendas contemporáneas para todos los días, objetos curados para tu espacio y aromas que transforman el ambiente. Elegí tus piezas y solicitalas en segundos por WhatsApp.
-            </p>
-
-            <div class="hero-cta-row">
-                <a href="#catalogo" class="btn-luxury-primary" onclick="playTap()">Explorar Catálogo</a>
-                <a href="https://wa.me/5493757525802?text=%C2%A1Hola%20MeraKi!%20%E2%9C%A8%20Quisiera%20solicitar%20asesoramiento%20sobre%20las%20novedades." target="_blank" rel="noopener noreferrer" class="btn-luxury-outline" onclick="playTap()">Solicitar por WhatsApp</a>
+        <!-- HERO EDITORIAL -->
+        <section class="hero-editorial-section">
+            <div class="hero-media-frame" id="heroMediaStage">
+                <video id="heroVideoPlayer" autoplay muted loop playsinline preload="metadata">
+                    <source src="media/editorial/moda.mp4" type="video/mp4">
+                    <source src="moda.mp4" type="video/mp4">
+                </video>
+                <span class="hero-media-badge">Puerto Iguazú · Drop 2026</span>
             </div>
 
-            <div class="hero-store-meta">
-                <span class="live-dot" id="statusDot"></span>
-                <span id="statusText">Ushuaia 196 esq. Jangadero · Puerto Iguazú</span>
-            </div>
-        </div>
-    </section>
-
-    <!-- 4. CATÁLOGO DINÁMICO DE PASARELA -->
-    <section class="catalog-section" id="catalogo">
-        <div class="catalog-header-row">
-            <div>
-                <h2 class="catalog-heading-modern" id="activeCategoryTitle">Colección Completa</h2>
-                <span class="catalog-count-label" id="catalogCounterLabel">Sincronizando catálogo...</span>
-            </div>
-        </div>
-
-        <!-- Subcategorías dinámicas (ej: Todas | Mujer | Hombre) -->
-        <div class="subcat-pills-row" id="dynamicSubcatRow"></div>
-
-        <!-- Grilla de Productos -->
-        <div class="products-runway-grid" id="productsRunwayGrid"></div>
-    </section>
-
-    <!-- 5. MÓDULO EDITORIAL CONTRASTADO: "7 DÍAS · 7 INTENCIONES" -->
-    <section class="editorial-ritual-wrapper" id="bienestar">
-        <div class="ritual-banner-card">
-            <div class="ritual-left">
-                <span class="ritual-kicker">Luz, Aroma &amp; Sahumado</span>
-                <h2 class="ritual-title">7 Días · 7 Intenciones</h2>
-                <p class="ritual-desc">
-                    Cada día tiene su propia energía y merece una intención distinta. Elegí la tuya para sahumar y equilibrar tus espacios.
+            <div class="hero-copy-stage">
+                <span class="hero-kicker">Básicas &amp; Divertidas · Concept Store</span>
+                <h1 class="hero-headline-modern">Moda, hogar &amp; rituales con actitud.</h1>
+                <p class="hero-body-text">
+                    Prendas contemporáneas para todos los días, objetos curados para tu espacio y aromas que transforman el ambiente. Elegí tus piezas y solicitalas en segundos por WhatsApp.
                 </p>
-                <div class="ritual-tabs">
-                    <button class="ritual-tab-btn active" onclick="selectIntencion('abundancia', this)">Abundancia</button>
-                    <button class="ritual-tab-btn" onclick="selectIntencion('paz', this)">Paz &amp; Armonía</button>
-                    <button class="ritual-tab-btn" onclick="selectIntencion('meditacion', this)">Meditación</button>
-                    <button class="ritual-tab-btn" onclick="selectIntencion('soltar', this)">Soltar</button>
+
+                <div class="hero-cta-row">
+                    <a href="#catalogo" class="btn-luxury-primary" onclick="scrollToSection(event, 'catalogo')">Ver Selección</a>
+                    <a id="heroWhatsAppBtn" href="https://wa.me/5493757525802?text=%C2%A1Hola%20MeraKi!%20%E2%9C%A8%20Quisiera%20solicitar%20asesoramiento%20sobre%20las%20novedades." target="_blank" rel="noopener noreferrer" class="btn-luxury-outline" onclick="playTap()">Solicitar por WhatsApp</a>
+                </div>
+
+                <div class="hero-store-meta">
+                    <span class="live-dot" id="statusDot"></span>
+                    <span id="statusText">Ushuaia 196 esq. Jangadero · Puerto Iguazú</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- PORTALES DE UNIVERSOS (CON COLORIMETRÍA SUTIL MERAKI) -->
+        <section class="universes-section reveal-block">
+            <div class="universes-grid" id="universesPortalGrid">
+                <!-- Inyectado dinámicamente según categorías existentes -->
+            </div>
+        </section>
+
+        <!-- MIX CURADO DE LA SEMANA (EXACTAMENTE 6 FOTOS ELEGIBLES DESDE SHEETS) -->
+        <section class="catalog-section reveal-block" id="catalogo">
+            <div class="catalog-header-row">
+                <div>
+                    <h2 class="catalog-heading-modern">Selección de la Semana</h2>
+                    <span class="catalog-count-label" id="homeCuratedSubtitle">6 Piezas Curadas · Mix de Temporada</span>
+                </div>
+                <button class="link-luxury-underline" onclick="navigateToCategory('Indumentaria')">Explorar Indumentaria →</button>
+            </div>
+
+            <div class="products-runway-grid home-six-grid" id="homeCuratedGrid">
+                <!-- Inyectado por JS -->
+            </div>
+        </section>
+
+        <!-- BLOQUE HERITAGE MERAKI (BORRAVINO #600000 + PATRÓN ORIGINAL DE LUNARES #8CADF6) -->
+        <section class="meraki-heritage-wrapper reveal-block">
+            <div class="meraki-heritage-banner">
+                <div class="heritage-content">
+                    <span class="heritage-kicker">Beneficios Exclusivos · Triple Frontera</span>
+                    <h2 class="heritage-title">30% OFF + 12 Cuotas Sin Interés en todos los medios de pago.</h2>
+                </div>
+                <a href="https://wa.me/5493757525802?text=%C2%A1Hola%20MeraKi!%20Quisiera%20consultar%20por%20las%20promociones%20vigentes%20y%20cuotas." target="_blank" rel="noopener noreferrer" class="heritage-cta" onclick="playTap()">Consultar Medios de Pago ↗</a>
+            </div>
+        </section>
+
+        <!-- MÓDULO EDITORIAL CONTRASTADO: "7 DÍAS · 7 INTENCIONES" -->
+        <section class="editorial-ritual-wrapper reveal-block" id="bienestar">
+            <div class="ritual-banner-card">
+                <div class="ritual-left">
+                    <span class="ritual-kicker">Luz, Aroma &amp; Sahumado</span>
+                    <h2 class="ritual-title">7 Días · 7 Intenciones</h2>
+                    <p class="ritual-desc">
+                        Cada día tiene su propia energía y merece una intención distinta. Elegí la tuya para sahumar y equilibrar tus espacios.
+                    </p>
+                    <div class="ritual-tabs">
+                        <button class="ritual-tab-btn active" onclick="selectIntencion('abundancia', this)">Abundancia</button>
+                        <button class="ritual-tab-btn" onclick="selectIntencion('paz', this)">Paz &amp; Armonía</button>
+                        <button class="ritual-tab-btn" onclick="selectIntencion('meditacion', this)">Meditación</button>
+                        <button class="ritual-tab-btn" onclick="selectIntencion('soltar', this)">Soltar</button>
+                    </div>
+                </div>
+
+                <div class="ritual-quote-box">
+                    <span id="intencionTitle" style="font-family:var(--font-mono); font-size:0.64rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--meraki-aroma);">Momento de Abundancia</span>
+                    <p class="ritual-quote-text" id="intencionPhrase">"Atraigo prosperidad, plenitud y gratitud a cada rincón de mi espacio."</p>
+                    <a id="intencionLink" href="https://wa.me/5493757525802?text=%C2%A1Hola%20MeraKi!%20%E2%9C%A8%20Quiero%20solicitar%20el%20kit%20de%20sahumado%20para%20la%20intenci%C3%B3n%20de%20Abundancia." target="_blank" rel="noopener noreferrer" class="btn-ritual-wpp">Solicitar por WhatsApp ↗</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- FORMULARIO DE CONTACTO EMAIL (ENLAZADO A GOOGLE SHEETS) -->
+        <section class="contact-luxury-section reveal-block" id="contacto">
+            <div class="location-details-stack">
+                <span class="hero-kicker">Atención Personalizada</span>
+                <h2 class="catalog-heading-modern" style="text-transform:none;">Escribinos por Email</h2>
+                <p style="font-size:0.88rem; color:var(--ink-muted); line-height:1.55;">
+                    ¿Consultas por talles especiales, envíos mayoristas o pedidos a medida? Dejanos tu mensaje y te respondemos a la brevedad.
+                </p>
+            </div>
+
+            <form id="contactForm" class="contact-form-grid" onsubmit="submitContactForm(event)">
+                <div class="form-field-group">
+                    <label class="form-label-mono" for="contactName">Tu Nombre</label>
+                    <input type="text" id="contactName" class="form-input-line" placeholder="Ej. Sofía" required>
+                </div>
+                <div class="form-field-group">
+                    <label class="form-label-mono" for="contactEmail">Tu Email o WhatsApp</label>
+                    <input type="text" id="contactEmail" class="form-input-line" placeholder="correo@ejemplo.com" required>
+                </div>
+                <div class="form-field-group full">
+                    <label class="form-label-mono" for="contactSubject">Asunto</label>
+                    <input type="text" id="contactSubject" class="form-input-line" placeholder="Consulta sobre disponibilidad / envíos" required>
+                </div>
+                <div class="form-field-group full">
+                    <label class="form-label-mono" for="contactMessage">Mensaje</label>
+                    <textarea id="contactMessage" rows="2" class="form-input-line" placeholder="Contanos qué pieza estás buscando..." required style="resize:vertical;"></textarea>
+                </div>
+                <div class="form-field-group full" style="margin-top:4px;">
+                    <button type="submit" id="contactSubmitBtn" class="btn-luxury-primary" style="width:100%;">Enviar Consulta</button>
+                </div>
+                <div class="contact-feedback-msg" id="contactFeedback">✓ ¡Mensaje enviado! Te responderemos a la brevedad.</div>
+            </form>
+        </section>
+
+        <!-- SHOWROOM FÍSICO & MAPA -->
+        <section class="boutique-location-section reveal-block" id="ubicacion">
+            <div class="location-details-stack">
+                <span class="hero-kicker" style="color:var(--ink-muted);">Showroom &amp; Boutique · Misiones</span>
+                <h2 class="catalog-heading-modern" style="text-transform:none;">Ushuaia 196 esq. Jangadero</h2>
+                <p style="font-size:0.88rem; color:var(--ink-muted); line-height:1.55;">
+                    Visitanos en <strong>Puerto Iguazú</strong>.<br>
+                    Lunes a Viernes de <strong>9:00 a 12:30</strong> y de <strong>16:30 a 21:00 hs</strong>.
+                </p>
+                <div style="display:flex; gap:18px; margin-top:6px;">
+                    <a href="https://maps.google.com/?q=Ushuaia+196,+Puerto+Iguazu,+Misiones" target="_blank" rel="noopener noreferrer" class="link-luxury-underline">Abrir en Google Maps ↗</a>
+                    <a href="https://www.instagram.com/merakicvm/" target="_blank" rel="noopener noreferrer" class="link-luxury-underline">@merakicvm ↗</a>
                 </div>
             </div>
 
-            <div class="ritual-quote-box">
-                <span id="intencionTitle" style="font-family:var(--font-mono); font-size:0.64rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--meraki-aroma);">Momento de Abundancia</span>
-                <p class="ritual-quote-text" id="intencionPhrase">"Atraigo prosperidad, plenitud y gratitud a cada rincón de mi espacio."</p>
-                <a id="intencionLink" href="https://wa.me/5493757525802?text=%C2%A1Hola%20MeraKi!%20%E2%9C%A8%20Quiero%20solicitar%20el%20kit%20de%20sahumado%20para%20la%20intenci%C3%B3n%20de%20Abundancia." target="_blank" rel="noopener noreferrer" class="btn-ritual-wpp">Solicitar por WhatsApp ↗</a>
+            <div class="location-map-frame">
+                <iframe 
+                    title="Ubicación MeraKi Puerto Iguazú"
+                    src="https://maps.google.com/maps?q=Ushuaia+y+Jangadero,+Puerto+Iguaz%C3%BA,+Misiones,+Argentina&amp;t=&amp;z=16&amp;ie=UTF8&amp;iwloc=&amp;output=embed" 
+                    loading="lazy" 
+                    allowfullscreen>
+                </iframe>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- 6. TIENDA FÍSICA & MAPA -->
-    <section class="boutique-location-section" id="ubicacion">
-        <div class="location-details-stack">
-            <span class="hero-kicker" style="color:var(--ink-muted);">Showroom &amp; Boutique · Misiones</span>
-            <h2 class="catalog-heading-modern" style="text-transform:none;">Ushuaia 196 esq. Jangadero</h2>
-            <p style="font-size:0.88rem; color:var(--ink-muted); line-height:1.55;">
-                Visitanos en <strong>Puerto Iguazú</strong>.<br>
-                Lunes a Viernes de <strong>9:00 a 12:30</strong> y de <strong>16:30 a 21:00 hs</strong>.
-            </p>
-            <p style="font-family:var(--font-mono); font-size:0.68rem; color:var(--meraki-vino); font-weight:700; letter-spacing:0.08em; text-transform:uppercase;">
-                30% OFF + 12 cuotas sin interés · Todos los medios de pago
-            </p>
-            <div style="display:flex; gap:18px; margin-top:6px;">
-                <a href="https://maps.google.com/?q=Ushuaia+196,+Puerto+Iguazu,+Misiones" target="_blank" rel="noopener noreferrer" class="link-luxury-underline">Abrir en Google Maps ↗</a>
-                <a href="https://www.instagram.com/merakicvm/" target="_blank" rel="noopener noreferrer" class="link-luxury-underline">@merakicvm ↗</a>
-            </div>
+    </div>
+
+    <!-- ==========================================================================
+         VISTA 2: PÁGINA DEDICADA DE CATEGORÍA (INDUMENTARIA / DECO / BAZAR / AROMAS)
+         ========================================================================== -->
+    <div id="pageCategoryView" class="view-panel">
+        <div class="category-page-banner">
+            <button class="breadcrumb-back-btn" onclick="navigateToHome(event)">← Volver al Inicio</button>
+            <span class="hero-kicker" id="catPageKicker">COLECCIÓN MERAKI</span>
+            <h1 class="catalog-heading-modern" id="catPageTitle">Indumentaria</h1>
+            <span class="catalog-count-label" id="catPageCounter">Cargando piezas...</span>
         </div>
 
-        <div class="location-map-frame">
-            <iframe 
-                title="Ubicación MeraKi Puerto Iguazú"
-                src="https://maps.google.com/maps?q=Ushuaia+y+Jangadero,+Puerto+Iguaz%C3%BA,+Misiones,+Argentina&amp;t=&amp;z=16&amp;ie=UTF8&amp;iwloc=&amp;output=embed" 
-                loading="lazy" 
-                allowfullscreen>
-            </iframe>
-        </div>
-    </section>
+        <section class="catalog-section" style="border-top: none;">
+            <div class="subcat-pills-row" id="dynamicSubcatRow"></div>
+            <div class="products-runway-grid" id="categoryProductsGrid"></div>
+        </section>
+    </div>
 
-    <!-- 7. FOOTER -->
+    <!-- FOOTER GLOBAL -->
     <footer class="luxury-footer">
         <div class="footer-inner">
             <div class="footer-wordmark">MeraKi</div>
             <div class="footer-links-row">
+                <a href="#inicio" onclick="navigateToHome(event)">Inicio</a>
+                <span>·</span>
                 <a href="https://wa.me/5493757525802" target="_blank" rel="noopener noreferrer">WhatsApp: 3757-525802</a>
                 <span>·</span>
-                <a href="https://www.instagram.com/merakicvm/" target="_blank" rel="noopener noreferrer">Instagram @merakicvm</a>
-                <span>·</span>
-                <a href="#catalogo">Colección</a>
+                <a href="https://www.instagram.com/merakicvm/" target="_blank" rel="noopener noreferrer">@merakicvm</a>
             </div>
             <p class="footer-legal">© 2026 MERAKI INDUMENTARIA DECO &amp; HOME · PUERTO IGUAZÚ, ARGENTINA</p>
         </div>
     </footer>
 
     <!-- ==========================================================================
-         MODALES & DRAWERS
+         MODALES, DRAWERS Y BOTÓN FLOTANTE WHATSAPP
          ========================================================================== -->
     <div class="drawer-backdrop" id="globalBackdrop" onclick="closeAllOverlays()"></div>
 
@@ -1396,7 +1903,7 @@
         <div class="pdp-info-col">
             <div>
                 <span class="product-sub-kicker" id="pdpKicker">INDUMENTARIA</span>
-                <h2 class="catalog-heading-modern" id="pdpTitle" style="font-size:1.55rem; text-transform:none; margin-top:4px;">Pieza MeraKi</h2>
+                <h2 class="catalog-heading-modern" id="pdpTitle" style="font-size:1.5rem; text-transform:none; margin-top:4px;">Pieza MeraKi</h2>
                 <div class="pdp-price-main" id="pdpPriceMain">Consultar</div>
                 <div class="pdp-price-frontier" id="pdpPriceFrontier"></div>
                 <p id="pdpDesc" style="font-size:0.84rem; color:var(--ink-muted); line-height:1.55; margin-top:12px;"></p>
@@ -1418,11 +1925,11 @@
         </div>
     </div>
 
-    <!-- BOLSA DE SELECCIÓN WHATSAPP -->
+    <!-- BOLSA DE SELECCIÓN WHATSAPP (CON BOTÓN ELIMINAR EXPLÍCITO) -->
     <aside class="side-drawer right" id="bagDrawer" aria-label="Bolsa de Selección">
         <div class="drawer-head">
             <span class="drawer-title">Tu Bolsa de Selección</span>
-            <button onclick="closeAllOverlays()" style="font-size:1.1rem;">✕</button>
+            <button onclick="closeAllOverlays()" style="font-size:1.1rem;" aria-label="Cerrar bolsa">✕</button>
         </div>
         <div class="drawer-body" id="bagDrawerBody"></div>
         <div class="drawer-foot" id="bagDrawerFoot"></div>
@@ -1432,15 +1939,20 @@
     <aside class="side-drawer left" id="menuDrawer" aria-label="Menú Principal">
         <div class="drawer-head">
             <span class="drawer-title">MeraKi Menú</span>
-            <button onclick="closeAllOverlays()" style="font-size:1.1rem;">✕</button>
+            <button onclick="closeAllOverlays()" style="font-size:1.1rem;" aria-label="Cerrar menú">✕</button>
         </div>
         <div class="drawer-body" id="mobileMenuBody" style="gap:16px;"></div>
     </aside>
 
-    <div class="toast-bar" id="toastBar">Agregado a tu bolsa</div>
+    <!-- BOTÓN FLOTANTE SUTIL WHATSAPP CONCIERGE -->
+    <a id="floatingConcierge" href="https://wa.me/5493757525802?text=%C2%A1Hola%20MeraKi!%20%E2%9C%A8%20Quisiera%20hacer%20una%20consulta." target="_blank" rel="noopener noreferrer" class="floating-wpp-concierge" aria-label="WhatsApp Asesoría" onclick="playTap()">
+        <span class="floating-wpp-dot"></span>
+        <span class="floating-wpp-label">WhatsApp</span>
+    </a>
 
-    <!-- ==========================================================================
-         MOTOR JAVASCRIPT: AUTO-LECTURA DE GITHUB + GOOGLE SHEETS + MULTI-MONEDA
+    <div class="toast-bar" id="toastBar">Agregado a tu bolsa</div>
+<!-- ==========================================================================
+         MOTOR JAVASCRIPT: MULTIPÁGINA, 6 CURADAS, SHEETS, GITHUB AUTO & ANIMACIONES
          ========================================================================== -->
     <script>
         const CONFIG = {
@@ -1449,10 +1961,13 @@
             GITHUB_REPO: "meraki_web",
             GITHUB_BRANCH: "main",
 
-            // Cuando conectes tu Google Sheet público, pegá acá el link terminado en /gviz/tq?tqx=out:csv
+            // 1. Pegá acá el link CSV de tu Google Sheet cuando lo creemos:
             GOOGLE_SHEETS_CSV_URL: "",
 
-            // Tasas automáticas si solo se carga precio en ARS
+            // 2. Pegá acá la URL de tu Google Apps Script (para el formulario de email y el admin.html):
+            APPS_SCRIPT_URL: "",
+
+            // Cotizaciones automáticas si solo cargás el precio en ARS
             RATES: {
                 ARS_TO_PYG: 6.5,
                 ARS_TO_BRL: 0.005
@@ -1461,14 +1976,18 @@
 
         let PRODUCTS = [];
         let activeCurrency = localStorage.getItem('meraki_currency') || 'ARS';
+        let currentView = 'home'; // 'home' | 'category'
         let activeRubro = 'Todo';
         let activeSubcat = 'Todas';
+        let activeHomeSection = 'home';
         let searchQuery = '';
         let shoppingBag = JSON.parse(localStorage.getItem('meraki_bag') || '[]');
         let currentPdpProduct = null;
         let currentPdpSize = 'A confirmar';
 
-        // Resolver ruta de media tanto en GitHub Pages como si se abre el archivo localmente
+        // ==========================================================================
+        // 1. UTILIDADES DE RUTAS & FORMATO
+        // ==========================================================================
         function resolveAssetUrl(relPath) {
             if (!relPath) return '';
             if (relPath.startsWith('http://') || relPath.startsWith('https://')) return relPath;
@@ -1479,7 +1998,6 @@
             return encoded;
         }
 
-        // Formatear nombre bonito desde nombre de archivo (ej. "chica-1.webp" -> "Look Chica 1")
         function prettifyFilename(filename) {
             const base = filename.replace(/\.[^/.]+$/, "");
             return base
@@ -1489,9 +2007,6 @@
                 .trim();
         }
 
-        // ==========================================================================
-        // 1. MULTI-MONEDA (ARS · PYG · BRL)
-        // ==========================================================================
         function getProductPrice(item, curr = activeCurrency) {
             const ars = Number(item.precioARS) || 0;
             if (ars === 0 && !item.precioPYG && !item.precioBRL) return 0;
@@ -1517,7 +2032,8 @@
             document.querySelectorAll('.curr-btn').forEach(b => {
                 b.classList.toggle('active', b.dataset.curr === curr);
             });
-            renderCatalogGrid();
+            renderHomeCuratedGrid();
+            renderCategoryGrid();
             renderBagDrawer();
             if (currentPdpProduct && document.getElementById('pdpModal').classList.contains('open')) {
                 updatePdpPrices(currentPdpProduct);
@@ -1525,14 +2041,13 @@
         }
 
         // ==========================================================================
-        // 2. AUTO-DISCOVERY DESDE GITHUB (`media/`) & MOTOR GOOGLE SHEETS
+        // 2. AUTO-DISCOVERY DESDE GITHUB + SINCRONIZACIÓN CON GOOGLE SHEETS
         // ==========================================================================
         function mapFolderToCategory(path) {
             const parts = path.split('/');
-            // path ej: media/indumentaria/mujer/foto.webp
             const folder = (parts[1] || '').toLowerCase();
             if (folder === 'indumentaria') {
-                const sub = (parts[2] || 'General').toLowerCase();
+                const sub = (parts[2] || 'Mujer').toLowerCase();
                 return {
                     rubro: 'Indumentaria',
                     subcategoria: sub === 'mujer' ? 'Mujer' : sub === 'hombre' ? 'Hombre' : prettifyFilename(sub),
@@ -1553,8 +2068,8 @@
         }
 
         async function autoLoadFromGitHubRepo() {
-            const cacheKey = 'meraki_gh_tree_v1';
-            const cacheTimeKey = 'meraki_gh_tree_time_v1';
+            const cacheKey = 'meraki_gh_tree_v2';
+            const cacheTimeKey = 'meraki_gh_tree_time_v2';
             const now = Date.now();
             const cachedRaw = localStorage.getItem(cacheKey);
             const cachedTime = Number(localStorage.getItem(cacheTimeKey) || 0);
@@ -1564,8 +2079,7 @@
                     const parsed = JSON.parse(cachedRaw);
                     if (parsed.length > 0) {
                         PRODUCTS = parsed;
-                        buildNavigationAndFilters();
-                        renderCatalogGrid();
+                        afterCatalogLoaded();
                         return;
                     }
                 } catch(e) {}
@@ -1587,7 +2101,6 @@
                     if (node.type !== 'blob' || !node.path.startsWith('media/')) return;
                     const p = node.path;
 
-                    // Detectar video/foto editorial para el Hero
                     if (p.startsWith('media/editorial/')) {
                         if (p.toLowerCase().endsWith('.mp4')) heroVideoFound = resolveAssetUrl(p);
                         else if (imgRegex.test(p)) heroPosterFound = resolveAssetUrl(p);
@@ -1610,7 +2123,8 @@
                         descripcion: meta.desc,
                         imagen: resolveAssetUrl(p),
                         etiqueta: '',
-                        talles: meta.talles
+                        talles: meta.talles,
+                        destacado: false
                     });
                 });
 
@@ -1634,11 +2148,10 @@
                     localStorage.setItem(cacheTimeKey, String(now));
                 }
             } catch (err) {
-                console.warn('No se pudo leer árbol de GitHub en este intento:', err);
+                console.warn('Fallo temporal de red leyendo GitHub:', err);
             }
 
-            buildNavigationAndFilters();
-            renderCatalogGrid();
+            afterCatalogLoaded();
         }
 
         function parseCSV(csvText) {
@@ -1692,6 +2205,7 @@
                     foto: headers.findIndex(h => h.includes('foto') || h.includes('imagen')),
                     tag: headers.findIndex(h => h.includes('etiqueta') || h.includes('tag')),
                     talles: headers.findIndex(h => h.includes('talle')),
+                    destacado: headers.findIndex(h => h.includes('destacado') || h.includes('home') || h.includes('mix')),
                     estado: headers.findIndex(h => h.includes('estado') || h.includes('mostrar'))
                 };
 
@@ -1707,6 +2221,8 @@
 
                     const cleanNum = (val) => Number(String(val || '').replace(/[^0-9]/g, '')) || 0;
                     const rawTalles = idx.talles > -1 && row[idx.talles] ? row[idx.talles].split(/[,/|]/).map(t => t.trim()).filter(Boolean) : ['Único', 'A confirmar'];
+                    const destVal = idx.destacado > -1 ? (row[idx.destacado] || '').toUpperCase() : '';
+                    const isFeatured = ['SI', 'SÍ', 'YES', 'TRUE', '1', 'X'].includes(destVal);
 
                     sheetProducts.push({
                         id: `sh-${r}`,
@@ -1719,14 +2235,14 @@
                         descripcion: (idx.desc > -1 && row[idx.desc]) ? row[idx.desc] : 'Pieza seleccionada de nuestra colección en Puerto Iguazú.',
                         imagen: resolveAssetUrl(foto),
                         etiqueta: idx.tag > -1 ? (row[idx.tag] || '') : '',
-                        talles: rawTalles
+                        talles: rawTalles,
+                        destacado: isFeatured
                     });
                 }
 
                 if (sheetProducts.length > 0) {
                     PRODUCTS = sheetProducts;
-                    buildNavigationAndFilters();
-                    renderCatalogGrid();
+                    afterCatalogLoaded();
                 } else {
                     await autoLoadFromGitHubRepo();
                 }
@@ -1735,42 +2251,243 @@
             }
         }
 
+        function afterCatalogLoaded() {
+            buildTopBarAndUniverses();
+            renderHomeCuratedGrid();
+            handleRouteFromHash();
+        }
+
         // ==========================================================================
-        // 3. CATEGORÍAS SUPERIORES VISIBLES & SUBCATEGORÍAS
+        // 3. ENRUTADOR MULTIPÁGINA (VISTAS SEPARADAS: HOME vs PÁGINAS DE CATEGORÍA)
         // ==========================================================================
-        function buildNavigationAndFilters() {
-            const orderedPriority = ['Todo', 'Indumentaria', 'Deco & Home', 'Bazar', 'Aromas'];
+        function getOrderedRubros() {
+            const orderedPriority = ['Indumentaria', 'Deco & Home', 'Bazar', 'Aromas'];
             const existing = [...new Set(PRODUCTS.map(p => p.rubro).filter(Boolean))];
-            const rubrosDisponibles = ['Todo', ...existing.sort((a, b) => {
+            return existing.sort((a, b) => {
                 const ia = orderedPriority.indexOf(a), ib = orderedPriority.indexOf(b);
                 return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);
-            })];
+            });
+        }
 
-            // Barra de categorías superior siempre visible (Móvil + PC)
+        function buildTopBarAndUniverses() {
+            const rubros = getOrderedRubros();
+
+            // 1. Barra Superior de Páginas y Secciones
             const topBar = document.getElementById('topCategoriesBar');
-            topBar.innerHTML = rubrosDisponibles.map(r => `
-                <button class="top-cat-pill ${activeRubro === r ? 'active' : ''}" onclick="selectRubro('${r}', true)">${r}</button>
-            `).join('') + `<a href="#bienestar" class="top-cat-pill">7 Intenciones</a><a href="#ubicacion" class="top-cat-pill">Showroom</a>`;
+            let html = `<button class="top-cat-pill ${currentView === 'home' && activeHomeSection === 'home' ? 'active' : ''}" data-nav="home" onclick="navigateToHome(event)">Inicio</button>`;
 
-            // Menú lateral móvil
+            rubros.forEach(r => {
+                const isAct = currentView === 'category' && activeRubro === r;
+                html += `<button class="top-cat-pill ${isAct ? 'active' : ''}" data-nav="cat-${r}" onclick="navigateToCategory('${r}')">${r}</button>`;
+            });
+
+            html += `
+                <button class="top-cat-pill ${currentView === 'home' && activeHomeSection === 'bienestar' ? 'active' : ''}" data-nav="bienestar" onclick="scrollToSection(event, 'bienestar')">7 Intenciones</button>
+                <button class="top-cat-pill ${currentView === 'home' && activeHomeSection === 'contacto' ? 'active' : ''}" data-nav="contacto" onclick="scrollToSection(event, 'contacto')">Contacto</button>
+                <button class="top-cat-pill ${currentView === 'home' && activeHomeSection === 'ubicacion' ? 'active' : ''}" data-nav="ubicacion" onclick="scrollToSection(event, 'ubicacion')">Showroom</button>
+            `;
+            topBar.innerHTML = html;
+
+            // 2. Portales de Universos en Home (con colorimetría oficial sutil)
+            const portalsGrid = document.getElementById('universesPortalGrid');
+            const tileClasses = {
+                'Indumentaria': { cls: 'tile-indumentaria', sub: 'Tendencia & Básicas' },
+                'Deco & Home':  { cls: 'tile-deco',         sub: 'Refugio & Diseño' },
+                'Bazar':        { cls: 'tile-bazar',        sub: 'Mesa & Detalles' },
+                'Aromas':       { cls: 'tile-aromas',       sub: 'Textil & Sahumado' }
+            };
+
+            portalsGrid.innerHTML = rubros.map((r, i) => {
+                const count = PRODUCTS.filter(p => p.rubro === r).length;
+                const conf = tileClasses[r] || { cls: 'tile-bazar', sub: 'Colección MeraKi' };
+                return `
+                    <article class="universe-tile ${conf.cls}" onclick="navigateToCategory('${r}')">
+                        <div class="tile-top">
+                            <span>0${i + 1} · ${count} ${count === 1 ? 'pieza' : 'piezas'}</span>
+                            <span>↗</span>
+                        </div>
+                        <div>
+                            <h3 class="tile-name">${r}</h3>
+                            <p class="tile-sub">${conf.sub}</p>
+                        </div>
+                    </article>
+                `;
+            }).join('');
+
+            // 3. Menú Lateral Móvil
             const mobileMenu = document.getElementById('mobileMenuBody');
             mobileMenu.innerHTML = `
-                <span class="product-sub-kicker" style="color:var(--ink-light);">Secciones</span>
-                ${rubrosDisponibles.map(r => `
-                    <button onclick="selectRubro('${r}', true); closeAllOverlays();" style="text-align:left; font-size:1.25rem; font-weight:700; padding:6px 0; border-bottom:1px solid var(--hairline); text-transform:uppercase; letter-spacing:-0.01em;">${r}</button>
+                <span class="product-sub-kicker" style="color:var(--ink-light);">Páginas de Colección</span>
+                <button onclick="navigateToHome(event); closeAllOverlays();" style="text-align:left; font-size:1.15rem; font-weight:700; padding:7px 0; border-bottom:1px solid var(--hairline); text-transform:uppercase;">Inicio</button>
+                ${rubros.map(r => `
+                    <button onclick="navigateToCategory('${r}'); closeAllOverlays();" style="text-align:left; font-size:1.15rem; font-weight:700; padding:7px 0; border-bottom:1px solid var(--hairline); text-transform:uppercase;">${r}</button>
                 `).join('')}
-                <div style="margin-top:16px; display:flex; flex-direction:column; gap:12px;">
-                    <a href="#bienestar" onclick="closeAllOverlays()" style="font-family:var(--font-mono); font-size:0.72rem; text-transform:uppercase; letter-spacing:0.1em;">✨ 7 Días · 7 Intenciones</a>
-                    <a href="#ubicacion" onclick="closeAllOverlays()" style="font-family:var(--font-mono); font-size:0.72rem; text-transform:uppercase; letter-spacing:0.1em;">📍 Ushuaia 196, Puerto Iguazú</a>
+                <div style="margin-top:16px; display:flex; flex-direction:column; gap:14px;">
+                    <button onclick="scrollToSection(event, 'bienestar'); closeAllOverlays();" style="text-align:left; font-family:var(--font-mono); font-size:0.72rem; text-transform:uppercase; letter-spacing:0.1em;">✨ 7 Días · 7 Intenciones</button>
+                    <button onclick="scrollToSection(event, 'contacto'); closeAllOverlays();" style="text-align:left; font-family:var(--font-mono); font-size:0.72rem; text-transform:uppercase; letter-spacing:0.1em;">✉️ Escribinos por Email</button>
+                    <button onclick="scrollToSection(event, 'ubicacion'); closeAllOverlays();" style="text-align:left; font-family:var(--font-mono); font-size:0.72rem; text-transform:uppercase; letter-spacing:0.1em;">📍 Showroom Ushuaia 196</button>
                     <a href="https://wa.me/${CONFIG.WHATSAPP_NUMBER}" target="_blank" rel="noopener noreferrer" class="btn-wpp-solicitar" style="margin-top:8px;">Solicitar por WhatsApp</a>
                 </div>
             `;
-
-            renderSubcategoryPills();
         }
 
-        function renderSubcategoryPills() {
+        function setActiveHeaderTab(navKey) {
+            document.querySelectorAll('#topCategoriesBar .top-cat-pill').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.nav === navKey);
+            });
+        }
+
+        function navigateToHome(e) {
+            if (e) e.preventDefault();
+            playTap();
+            currentView = 'home';
+            activeHomeSection = 'home';
+            searchQuery = '';
+            document.getElementById('catalogSearchInput').value = '';
+            document.getElementById('searchExpandBar').classList.remove('open');
+
+            document.getElementById('pageCategoryView').classList.remove('active');
+            document.getElementById('pageHomeView').classList.add('active');
+
+            if (location.hash !== '#inicio') history.replaceState(null, '', '#inicio');
+            setActiveHeaderTab('home');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            updateFloatingVisibility();
+        }
+
+        function navigateToCategory(rubro) {
+            playTap();
+            currentView = 'category';
+            activeRubro = rubro;
+            activeSubcat = 'Todas';
+
+            document.getElementById('pageHomeView').classList.remove('active');
+            document.getElementById('pageCategoryView').classList.add('active');
+
+            const newHash = `categoria/${encodeURIComponent(rubro)}`;
+            if (location.hash !== `#${newHash}`) location.hash = newHash;
+
+            setActiveHeaderTab(`cat-${rubro}`);
+            renderCategoryPageHeaderAndSubcats();
+            renderCategoryGrid();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            updateFloatingVisibility();
+        }
+
+        function scrollToSection(e, sectionId) {
+            if (e) e.preventDefault();
+            playTap();
+            activeHomeSection = sectionId;
+
+            const performScroll = () => {
+                const target = document.getElementById(sectionId);
+                if (!target) return;
+                const headerEl = document.getElementById('luxuryHeader');
+                const offset = (headerEl ? headerEl.offsetHeight : 100) + 18;
+                const y = target.getBoundingClientRect().top + window.scrollY - offset;
+                window.scrollTo({ top: y, behavior: 'smooth' });
+                setActiveHeaderTab(sectionId);
+            };
+
+            if (currentView !== 'home') {
+                currentView = 'home';
+                document.getElementById('pageCategoryView').classList.remove('active');
+                document.getElementById('pageHomeView').classList.add('active');
+                setTimeout(performScroll, 60);
+            } else {
+                performScroll();
+            }
+            updateFloatingVisibility();
+        }
+
+        function handleRouteFromHash() {
+            const h = decodeURIComponent(location.hash || '');
+            if (h.startsWith('#categoria/')) {
+                const targetRubro = h.replace('#categoria/', '');
+                if (targetRubro === 'Todo' || PRODUCTS.some(p => p.rubro === targetRubro)) {
+                    navigateToCategory(targetRubro);
+                }
+            } else if (['#bienestar', '#contacto', '#ubicacion'].includes(h)) {
+                scrollToSection(null, h.replace('#', ''));
+            }
+        }
+
+        window.addEventListener('hashchange', handleRouteFromHash);
+
+        // ==========================================================================
+        // 4. MIX CURADO DE 6 FOTOS EN HOME + RENDERIZADO DE PÁGINAS DE CATEGORÍA
+        // ==========================================================================
+        function getWeeklyHomeSix() {
+            if (PRODUCTS.length === 0) return [];
+
+            // 1. Prioriza los marcados como Destacado_Home = SI en Google Sheets
+            const flagged = PRODUCTS.filter(p => p.destacado === true);
+            if (flagged.length >= 6) return flagged.slice(0, 6);
+
+            const selected = [...flagged];
+            const usedIds = new Set(selected.map(p => p.id));
+
+            // 2. Completa hasta 6 haciendo un mix equilibrado entre todos los rubros disponibles
+            const rubros = getOrderedRubros();
+            let round = 0;
+            while (selected.length < 6 && round < 20) {
+                let addedInRound = false;
+                for (const r of rubros) {
+                    if (selected.length >= 6) break;
+                    const pool = PRODUCTS.filter(p => p.rubro === r && !usedIds.has(p.id));
+                    if (pool.length > 0) {
+                        selected.push(pool[0]);
+                        usedIds.add(pool[0].id);
+                        addedInRound = true;
+                    }
+                }
+                if (!addedInRound) break;
+                round++;
+            }
+            return selected;
+        }
+
+        function createProductCardHTML(item) {
+            const priceVal = getProductPrice(item);
+            const priceFormatted = formatMoney(priceVal);
+            const subLabel = [item.rubro, item.subcategoria].filter(Boolean).join(' · ');
+
+            return `
+                <article class="product-card-minimal" onclick="openPdpModal('${item.id}')">
+                    <div class="product-image-stage">
+                        ${item.etiqueta ? `<span class="product-tag-minimal">${item.etiqueta}</span>` : ''}
+                        <img src="${item.imagen}" alt="${item.nombre}" loading="lazy" decoding="async">
+                        <button class="product-quick-add" title="Agregar a la Bolsa" onclick="quickAddBag(event, '${item.id}')">+</button>
+                    </div>
+                    <div class="product-meta-block">
+                        <span class="product-sub-kicker">${subLabel}</span>
+                        <h3 class="product-name-clean">${item.nombre}</h3>
+                        <span class="product-price-clean">${priceFormatted}</span>
+                    </div>
+                </article>
+            `;
+        }
+
+        function renderHomeCuratedGrid() {
+            const grid = document.getElementById('homeCuratedGrid');
+            const sub = document.getElementById('homeCuratedSubtitle');
+            const list = getWeeklyHomeSix();
+            sub.innerText = `${list.length} Piezas Curadas · Mix de Temporada (${activeCurrency})`;
+            if (list.length === 0) {
+                grid.innerHTML = `<div class="empty-catalog-state">Cargando selección semanal...</div>`;
+                return;
+            }
+            grid.innerHTML = list.map(createProductCardHTML).join('');
+        }
+
+        function renderCategoryPageHeaderAndSubcats() {
+            const titleEl = document.getElementById('catPageTitle');
+            const kickerEl = document.getElementById('catPageKicker');
             const subRow = document.getElementById('dynamicSubcatRow');
+
+            titleEl.innerText = activeRubro === 'Todo' ? 'Toda la Colección' : activeRubro;
+            kickerEl.innerText = searchQuery ? `Resultados para "${searchQuery}"` : 'Colección MeraKi';
+
             const pool = activeRubro === 'Todo' ? PRODUCTS : PRODUCTS.filter(p => p.rubro === activeRubro);
             const subs = [...new Set(pool.map(p => p.subcategoria).filter(Boolean))];
 
@@ -1787,77 +2504,72 @@
             }
         }
 
-        function selectRubro(rubro, shouldScroll = false) {
-            playTap();
-            activeRubro = rubro;
-            activeSubcat = 'Todas';
-            buildNavigationAndFilters();
-            renderCatalogGrid();
-            if (shouldScroll) {
-                const el = document.getElementById('catalogo');
-                const y = el.getBoundingClientRect().top + window.scrollY - 105;
-                window.scrollTo({ top: y, behavior: 'smooth' });
-            }
-        }
-
         function selectSubcat(sub) {
             playTap();
             activeSubcat = sub;
-            renderSubcategoryPills();
-            renderCatalogGrid();
+            renderCategoryPageHeaderAndSubcats();
+            renderCategoryGrid();
         }
 
-        // ==========================================================================
-        // 4. RENDERIZADOR DE GRILLA DE PRODUCTOS
-        // ==========================================================================
-        function getFilteredProducts() {
-            return PRODUCTS.filter(p => {
+        function renderCategoryGrid() {
+            const grid = document.getElementById('categoryProductsGrid');
+            const counterEl = document.getElementById('catPageCounter');
+
+            const filtered = PRODUCTS.filter(p => {
                 const matchRubro = activeRubro === 'Todo' || p.rubro === activeRubro;
                 const matchSub = activeSubcat === 'Todas' || p.subcategoria === activeSubcat;
                 const q = searchQuery.toLowerCase();
                 const matchSearch = !q || p.nombre.toLowerCase().includes(q) || p.descripcion.toLowerCase().includes(q) || p.rubro.toLowerCase().includes(q) || p.subcategoria.toLowerCase().includes(q);
                 return matchRubro && matchSub && matchSearch;
             });
-        }
 
-        function renderCatalogGrid() {
-            const grid = document.getElementById('productsRunwayGrid');
-            const titleEl = document.getElementById('activeCategoryTitle');
-            const countEl = document.getElementById('catalogCounterLabel');
+            counterEl.innerText = `${filtered.length} ${filtered.length === 1 ? 'pieza disponible' : 'piezas disponibles'} · ${activeCurrency}`;
 
-            const list = getFilteredProducts();
-            titleEl.innerText = activeRubro === 'Todo' ? 'Colección Completa' : activeRubro;
-            countEl.innerText = `${list.length} ${list.length === 1 ? 'pieza' : 'piezas'} · ${activeCurrency}`;
-
-            if (list.length === 0) {
-                grid.innerHTML = `<div class="empty-catalog-state">No hay piezas cargadas en esta selección todavía.</div>`;
+            if (filtered.length === 0) {
+                grid.innerHTML = `<div class="empty-catalog-state">No encontramos piezas con ese filtro. Probá limpiando la búsqueda.</div>`;
                 return;
             }
-
-            grid.innerHTML = list.map(item => {
-                const priceVal = getProductPrice(item);
-                const priceFormatted = formatMoney(priceVal);
-                const subLabel = [item.rubro, item.subcategoria].filter(Boolean).join(' · ');
-
-                return `
-                    <article class="product-card-minimal" onclick="openPdpModal('${item.id}')">
-                        <div class="product-image-stage">
-                            ${item.etiqueta ? `<span class="product-tag-minimal">${item.etiqueta}</span>` : ''}
-                            <img src="${item.imagen}" alt="${item.nombre}" loading="lazy" decoding="async">
-                            <button class="product-quick-add" title="Agregar a la Bolsa" onclick="quickAddBag(event, '${item.id}')">+</button>
-                        </div>
-                        <div class="product-meta-block">
-                            <span class="product-sub-kicker">${subLabel}</span>
-                            <h3 class="product-name-clean">${item.nombre}</h3>
-                            <span class="product-price-clean">${priceFormatted}</span>
-                        </div>
-                    </article>
-                `;
-            }).join('');
+            grid.innerHTML = filtered.map(createProductCardHTML).join('');
         }
 
         // ==========================================================================
-        // 5. QUICK-VIEW MODAL & WHATSAPP
+        // 5. BÚSQUEDA GLOBAL
+        // ==========================================================================
+        function toggleSearchBar() {
+            playTap();
+            const bar = document.getElementById('searchExpandBar');
+            bar.classList.toggle('open');
+            if (bar.classList.contains('open')) document.getElementById('catalogSearchInput').focus();
+        }
+
+        function handleSearch(val) {
+            searchQuery = val.trim();
+            if (searchQuery.length > 0) {
+                if (currentView !== 'category') {
+                    activeRubro = 'Todo';
+                    activeSubcat = 'Todas';
+                    currentView = 'category';
+                    document.getElementById('pageHomeView').classList.remove('active');
+                    document.getElementById('pageCategoryView').classList.add('active');
+                    setActiveHeaderTab('');
+                }
+                renderCategoryPageHeaderAndSubcats();
+                renderCategoryGrid();
+            } else {
+                renderCategoryPageHeaderAndSubcats();
+                renderCategoryGrid();
+            }
+        }
+
+        function clearSearch() {
+            searchQuery = '';
+            document.getElementById('catalogSearchInput').value = '';
+            document.getElementById('searchExpandBar').classList.remove('open');
+            navigateToHome();
+        }
+
+        // ==========================================================================
+        // 6. QUICK-VIEW MODAL & WHATSAPP
         // ==========================================================================
         function openPdpModal(id) {
             playTap();
@@ -1910,7 +2622,7 @@
         }
 
         // ==========================================================================
-        // 6. BOLSA DE SELECCIÓN MULTI-PRENDA -> WHATSAPP
+        // 7. BOLSA DE SELECCIÓN INTUITIVA (CON BOTÓN EXPLÍCITO ELIMINAR)
         // ==========================================================================
         function quickAddBag(e, id) {
             e.stopPropagation();
@@ -1940,8 +2652,26 @@
         function updateBagQty(index, delta) {
             playTap();
             if (!shoppingBag[index]) return;
-            shoppingBag[index].qty += delta;
-            if (shoppingBag[index].qty <= 0) shoppingBag.splice(index, 1);
+            const next = shoppingBag[index].qty + delta;
+            if (next < 1) {
+                removeBagItem(index);
+                return;
+            }
+            shoppingBag[index].qty = next;
+            saveBag();
+            renderBagDrawer();
+        }
+
+        function removeBagItem(index) {
+            playTap();
+            shoppingBag.splice(index, 1);
+            saveBag();
+            renderBagDrawer();
+        }
+
+        function clearEntireBag() {
+            playTap();
+            shoppingBag = [];
             saveBag();
             renderBagDrawer();
         }
@@ -1960,7 +2690,7 @@
 
             if (shoppingBag.length === 0) {
                 body.innerHTML = `<div style="text-align:center; padding:48px 16px; color:var(--ink-muted); font-size:0.86rem;">Tu bolsa está vacía.<br><br>Elegí piezas de la colección para armar tu solicitud por WhatsApp.</div>`;
-                foot.innerHTML = '';
+                foot.innerHTML = `<button class="btn-add-bag-outline" onclick="closeAllOverlays()">Seguir Explorando</button>`;
                 return;
             }
 
@@ -1980,15 +2710,20 @@
                     <div class="bag-item-row">
                         <img src="${item.imagen}" alt="${item.nombre}" class="bag-item-img">
                         <div class="bag-item-info">
-                            <div>
-                                <div style="font-size:0.82rem; font-weight:700; color:var(--ink-black);">${item.nombre}</div>
-                                <div style="font-family:var(--font-mono); font-size:0.64rem; color:var(--ink-muted); text-transform:uppercase; margin-top:2px;">Opción: ${entry.size}</div>
+                            <div class="bag-item-top-row">
+                                <div>
+                                    <div style="font-size:0.82rem; font-weight:700; color:var(--ink-black);">${item.nombre}</div>
+                                    <div style="font-family:var(--font-mono); font-size:0.62rem; color:var(--ink-muted); text-transform:uppercase; margin-top:2px;">Opción: ${entry.size}</div>
+                                </div>
+                                <button class="btn-remove-bag-item" onclick="removeBagItem(${idx})" aria-label="Eliminar producto">
+                                    ✕ Eliminar
+                                </button>
                             </div>
-                            <div style="display:flex; align-items:center; justify-content:space-between; margin-top:8px;">
+                            <div style="display:flex; align-items:center; justify-content:space-between; margin-top:10px;">
                                 <div class="qty-control">
-                                    <button onclick="updateBagQty(${idx}, -1)">−</button>
+                                    <button onclick="updateBagQty(${idx}, -1)" aria-label="Restar uno">−</button>
                                     <span>${entry.qty}</span>
-                                    <button onclick="updateBagQty(${idx}, 1)">+</button>
+                                    <button onclick="updateBagQty(${idx}, 1)" aria-label="Sumar uno">+</button>
                                 </div>
                                 <span style="font-family:var(--font-mono); font-size:0.78rem; font-weight:700;">${unitStr}</span>
                             </div>
@@ -2009,11 +2744,55 @@
                 <a href="https://wa.me/${CONFIG.WHATSAPP_NUMBER}?text=${encodeURIComponent(fullMsg)}" target="_blank" rel="noopener noreferrer" class="btn-wpp-solicitar" onclick="playTap()">
                     Solicitar por WhatsApp (${shoppingBag.reduce((s,b)=>s+b.qty,0)})
                 </a>
+                <button onclick="clearEntireBag()" style="font-family:var(--font-mono); font-size:0.62rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--ink-muted); padding:4px; text-align:center;">Vaciar bolsa</button>
             `;
         }
 
         // ==========================================================================
-        // 7. OVERLAYS, BÚSQUEDA, 7 INTENCIONES Y HORARIO EN VIVO
+        // 8. FORMULARIO DE CONTACTO EMAIL (ENLAZADO A SHEETS + APPS SCRIPT)
+        // ==========================================================================
+        async function submitContactForm(e) {
+            e.preventDefault();
+            playTap();
+
+            const btn = document.getElementById('contactSubmitBtn');
+            const feedback = document.getElementById('contactFeedback');
+            const payload = {
+                action: 'contact',
+                nombre: document.getElementById('contactName').value.trim(),
+                contacto: document.getElementById('contactEmail').value.trim(),
+                asunto: document.getElementById('contactSubject').value.trim(),
+                mensaje: document.getElementById('contactMessage').value.trim(),
+                fecha: new Date().toLocaleString('es-AR')
+            };
+
+            btn.innerText = 'ENVIANDO...';
+            btn.disabled = true;
+
+            try {
+                if (CONFIG.APPS_SCRIPT_URL) {
+                    await fetch(CONFIG.APPS_SCRIPT_URL, {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        headers: { 'Content-Type': 'text/plain' },
+                        body: JSON.stringify(payload)
+                    });
+                }
+                feedback.innerText = '✓ ¡Gracias! Tu consulta fue enviada correctamente.';
+                feedback.classList.add('visible');
+                document.getElementById('contactForm').reset();
+            } catch (err) {
+                feedback.innerText = '✓ Consulta registrada. Si es urgente, escribinos directo por WhatsApp.';
+                feedback.classList.add('visible');
+            } finally {
+                btn.innerText = 'ENVIAR CONSULTA';
+                btn.disabled = false;
+                setTimeout(() => feedback.classList.remove('visible'), 6000);
+            }
+        }
+
+        // ==========================================================================
+        // 9. DRAWERS, 7 INTENCIONES, FLOATING WHATSAPP & ANIMACIONES AWWWWARDS
         // ==========================================================================
         function openBagDrawer() {
             playTap();
@@ -2033,30 +2812,6 @@
             document.getElementById('pdpModal').classList.remove('open');
             document.getElementById('bagDrawer').classList.remove('open');
             document.getElementById('menuDrawer').classList.remove('open');
-        }
-
-        function toggleSearchBar() {
-            playTap();
-            const bar = document.getElementById('searchExpandBar');
-            bar.classList.toggle('open');
-            if (bar.classList.contains('open')) document.getElementById('catalogSearchInput').focus();
-        }
-
-        function handleSearch(val) {
-            searchQuery = val.trim();
-            renderCatalogGrid();
-        }
-
-        function clearSearch() {
-            searchQuery = '';
-            document.getElementById('catalogSearchInput').value = '';
-            document.getElementById('searchExpandBar').classList.remove('open');
-            renderCatalogGrid();
-        }
-
-        function scrollToTop(e) {
-            if (e) e.preventDefault();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         const intencionesData = {
@@ -2110,6 +2865,40 @@
             }
         }
 
+        function updateFloatingVisibility() {
+            const floating = document.getElementById('floatingConcierge');
+            const header = document.getElementById('luxuryHeader');
+            if (header) header.classList.toggle('scrolled', window.scrollY > 20);
+
+            if (!floating) return;
+            if (currentView === 'category') {
+                floating.classList.toggle('is-visible', window.scrollY > 80);
+                return;
+            }
+            const heroWpp = document.getElementById('heroWhatsAppBtn');
+            if (heroWpp) {
+                const rect = heroWpp.getBoundingClientRect();
+                floating.classList.toggle('is-visible', rect.bottom < 0);
+            }
+        }
+
+        function initScrollAnimations() {
+            if (!('IntersectionObserver' in window)) {
+                document.querySelectorAll('.reveal-block').forEach(el => el.classList.add('is-visible'));
+                return;
+            }
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.08 });
+
+            document.querySelectorAll('.reveal-block').forEach(el => observer.observe(el));
+        }
+
         function showToast(msg) {
             const t = document.getElementById('toastBar');
             t.innerText = msg;
@@ -2121,12 +2910,15 @@
             if ('vibrate' in navigator) { try { navigator.vibrate(8); } catch(e) {} }
         }
 
-        // INICIALIZACIÓN
+        window.addEventListener('scroll', updateFloatingVisibility, { passive: true });
+
         window.addEventListener('DOMContentLoaded', () => {
             setCurrency(activeCurrency);
             saveBag();
             updateStoreStatus();
+            initScrollAnimations();
             loadCatalog();
+            updateFloatingVisibility();
         });
     </script>
 </body>
