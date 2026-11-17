@@ -2219,7 +2219,12 @@
                     const foto = idx.foto > -1 ? row[idx.foto] : '';
                     if (!nombre && !foto) continue;
 
-                    const cleanNum = (val) => Number(String(val || '').replace(/[^0-9]/g, '')) || 0;
+                   const cleanNum = (val) => {
+    if (!val) return 0;
+    let s = String(val).trim();
+    s = s.replace(/[.,]\d{2}$/, ''); // Borra los decimales tipo .00 al final
+    return Number(s.replace(/[^0-9]/g, '')) || 0;
+};
                     const rawTalles = idx.talles > -1 && row[idx.talles] ? row[idx.talles].split(/[,/|]/).map(t => t.trim()).filter(Boolean) : ['Único', 'A confirmar'];
                     const destVal = idx.destacado > -1 ? (row[idx.destacado] || '').toUpperCase() : '';
                     const isFeatured = ['SI', 'SÍ', 'YES', 'TRUE', '1', 'X'].includes(destVal);
