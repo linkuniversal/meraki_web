@@ -61,6 +61,7 @@ function setCurrency(curr) {
     renderBagDrawer();
     if (currentPdpProduct && document.getElementById('pdpModal').classList.contains('open')) {
         updatePdpPrices(currentPdpProduct);
+        updatePdpWppLink();
     }
 }
 
@@ -147,7 +148,8 @@ function navigateToHome(e) {
     currentView = 'home';
     activeHomeSection = 'home';
     searchQuery = '';
-    document.getElementById('catalogSearchInput').value = '';
+    const input = document.getElementById('catalogSearchInput');
+    if (input) input.value = '';
     document.getElementById('searchExpandBar').classList.remove('open');
     document.getElementById('pageCategoryView').classList.remove('active');
     document.getElementById('pageHomeView').classList.add('active');
@@ -162,6 +164,11 @@ function navigateToCategory(rubro) {
     currentView = 'category';
     activeRubro = rubro;
     activeSubcat = 'Todas';
+    searchQuery = '';
+    const input = document.getElementById('catalogSearchInput');
+    if (input) input.value = '';
+    document.getElementById('searchExpandBar').classList.remove('open');
+
     document.getElementById('pageHomeView').classList.remove('active');
     document.getElementById('pageCategoryView').classList.add('active');
     const newHash = `categoria/${encodeURIComponent(rubro)}`;
@@ -180,7 +187,7 @@ function scrollToSection(e, sectionId) {
     const perform = () => {
         const target = document.getElementById(sectionId);
         if (!target) return;
-        target.classList.add('is-visible'); // Asegura visibilidad inmediata al anclar
+        target.classList.add('is-visible');
         const headerEl = document.getElementById('luxuryHeader');
         const offset = (headerEl ? headerEl.offsetHeight : 100) + 18;
         window.scrollTo({ top: target.getBoundingClientRect().top + window.scrollY - offset, behavior: 'smooth' });
@@ -237,6 +244,37 @@ function buildSwatchesHTML(colores) {
     `;
 }
 
+function resolveComboDetails(item, comboChoice = 'all') {
+    if (!item.isCombo || !item.subItems || item.subItems.length < 2) {
+        return {
+            displayName: item.nombre,
+            priceARS: item.precioARS || 0,
+            comboKey: 'base'
+        };
+    }
+    if (comboChoice === 'all' || comboChoice === null || comboChoice === undefined) {
+        const total = item.subItems.reduce((acc, sub) => acc + (sub.priceARS || 0), 0);
+        return {
+            displayName: `Look Completo (${item.nombre})`,
+            priceARS: total,
+            comboKey: 'all'
+        };
+    }
+    const idx = Number(comboChoice);
+    if (!Number.isNaN(idx) && item.subItems[idx]) {
+        return {
+            displayName: item.subItems[idx].name,
+            priceARS: item.subItems[idx].priceARS || 0,
+            comboKey: idx
+        };
+    }
+    return {
+        displayName: item.nombre,
+        priceARS: item.precioARS || 0,
+        comboKey: 'all'
+    };
+}
+
 function formatPriceDisplay(item) {
     if (item.isCombo && item.preciosArray && item.preciosArray.length > 1) {
         const p1 = formatMoney(getProductPrice({ precioARS: item.preciosArray[0] }));
@@ -286,7 +324,10 @@ function renderHomeCuratedGrid() {
 
 function renderCategoryPageHeaderAndSubcats() {
     const titleEl = document.getElementById('catPageTitle');
-    titleEl.innerText = activeRubro === 'Todo' ? 'Toda la Colección' : activeRubro;
+    const kickerEl = document.getElementById('catPageKicker');
+    if (titleEl) titleEl.innerText = activeRubro === 'Todo' ? 'Toda la Colección' : activeRubro;
+    if (kickerEl) kickerEl.innerText = searchQuery ? `Resultados para "${searchQuery}"` : 'Colección MeraKi';
+
     const subRow = document.getElementById('dynamicSubcatRow');
     const pool = activeRubro === 'Todo' ? PRODUCTS : PRODUCTS.filter(p => p.rubro === activeRubro);
     const subs = [...new Set(pool.map(p => p.subcategoria).filter(Boolean))];
@@ -297,6 +338,7 @@ function renderCategoryPageHeaderAndSubcats() {
         subRow.classList.add('visible');
     } else {
         subRow.classList.remove('visible');
+        activeSubcat = 'Todas';
     }
 }
 
@@ -314,10 +356,14 @@ function renderCategoryGrid() {
         const matchRubro = activeRubro === 'Todo' || p.rubro === activeRubro;
         const matchSub = activeSubcat === 'Todas' || p.subcategoria === activeSubcat;
         const q = searchQuery.toLowerCase();
-        return matchRubro && matchSub && (!q || p.nombre.toLowerCase().includes(q) || p.descripcion.toLowerCase().includes(q));
+        const matchSearch = !q || p.nombre.toLowerCase().includes(q) || p.descripcion.toLowerCase().includes(q) || p.rubro.toLowerCase().includes(q) || p.subcategoria.toLowerCase().includes(q);
+        return matchRubro && matchSub && matchSearch;
     });
-    counterEl.innerText = `${filtered.length} piezas disponibles · ${activeCurrency}`;
-    if (!filtered.length) { grid.innerHTML = `<div class="empty-catalog-state">No hay resultados.</div>`; return; }
+    counterEl.innerText = `${filtered.length} ${filtered.length === 1 ? 'pieza disponible' : 'piezas disponibles'} · ${activeCurrency}`;
+    if (!filtered.length) {
+        grid.innerHTML = `<div class="empty-catalog-state">No encontramos piezas con ese filtro. Probá limpiando la búsqueda.</div>`;
+        return;
+    }
     grid.innerHTML = filtered.map((p, i) => createProductCardHTML(p, i)).join('');
 }
 
@@ -330,12 +376,21 @@ function toggleSearchBar() {
 
 function handleSearch(val) {
     searchQuery = val.trim();
-    if (searchQuery.length > 0 && currentView !== 'category') {
-        activeRubro = 'Todo'; activeSubcat = 'Todas'; currentView = 'category';
-        document.getElementById('pageHomeView').classList.remove('active');
-        document.getElementById('pageCategoryView').classList.add('active');
+    if (searchQuery.length > 0) {
+        if (currentView !== 'category') {
+            activeRubro = 'Todo';
+            activeSubcat = 'Todas';
+            currentView = 'category';
+            document.getElementById('pageHomeView').classList.remove('active');
+            document.getElementById('pageCategoryView').classList.add('active');
+            setActiveHeaderTab('');
+        }
+        renderCategoryPageHeaderAndSubcats();
+        renderCategoryGrid();
+    } else {
+        renderCategoryPageHeaderAndSubcats();
+        renderCategoryGrid();
     }
-    renderCategoryGrid();
 }
 
 function clearSearch() {
@@ -345,7 +400,9 @@ function clearSearch() {
     navigateToHome();
 }
 
+// ==========================================================================
 // QUICK-VIEW PDP MODAL
+// ==========================================================================
 function openPdpModal(id) {
     playTap();
     const item = PRODUCTS.find(p => p.id === id);
@@ -353,7 +410,7 @@ function openPdpModal(id) {
 
     currentPdpProduct = item;
     currentPdpSize = item.talles[0] || 'A confirmar';
-    currentPdpComboSelection = item.isCombo ? 'all' : null;
+    currentPdpComboSelection = item.isCombo ? 'all' : 'base';
 
     document.getElementById('pdpImg').src = item.imagen;
     document.getElementById('pdpKicker').innerText = [item.rubro, item.subcategoria].filter(Boolean).join(' · ');
@@ -436,14 +493,8 @@ function selectComboPart(choice) {
 }
 
 function updatePdpPrices(item) {
-    let currentPriceARS = item.precioARS;
-    if (item.isCombo && item.subItems.length > 1) {
-        if (currentPdpComboSelection === 'all') {
-            currentPriceARS = item.subItems.reduce((acc, sub) => acc + sub.priceARS, 0);
-        } else if (typeof currentPdpComboSelection === 'number') {
-            currentPriceARS = item.subItems[currentPdpComboSelection].priceARS;
-        }
-    }
+    const details = resolveComboDetails(item, currentPdpComboSelection);
+    const currentPriceARS = details.priceARS;
 
     const mainPrice = formatMoney(getProductPrice({ precioARS: currentPriceARS }, activeCurrency));
     document.getElementById('pdpPriceMain').innerText = currentPriceARS > 0 ? mainPrice : 'Consultar precio';
@@ -471,47 +522,50 @@ function selectSizeChip(btn, sizeVal) {
 function updatePdpWppLink() {
     if (!currentPdpProduct) return;
     const item = currentPdpProduct;
-
-    let targetName = item.nombre;
-    let targetPrice = item.precioARS;
-
-    if (item.isCombo && item.subItems.length > 1) {
-        if (currentPdpComboSelection === 'all') {
-            targetName = `Look Completo (${item.nombre})`;
-            targetPrice = item.subItems.reduce((acc, sub) => acc + sub.priceARS, 0);
-        } else if (typeof currentPdpComboSelection === 'number') {
-            targetName = item.subItems[currentPdpComboSelection].name;
-            targetPrice = item.subItems[currentPdpComboSelection].priceARS;
-        }
-    }
-
-    const priceStr = formatMoney(getProductPrice({ precioARS: targetPrice }));
-    const msg = `¡Hola MeraKi! ✨ Quisiera *Solicitar por WhatsApp*:\n\n• *Prenda:* ${targetName}\n• *Opción/Talle:* ${currentPdpSize}\n• *Valor (${activeCurrency}):* ${priceStr}`;
+    const details = resolveComboDetails(item, currentPdpComboSelection);
+    const priceStr = formatMoney(getProductPrice({ precioARS: details.priceARS }));
+    const msg = `¡Hola MeraKi! ✨ Quisiera *Solicitar por WhatsApp*:\n\n• *Prenda:* ${details.displayName}\n• *Opción/Talle:* ${currentPdpSize}\n• *Valor (${activeCurrency}):* ${priceStr}`;
     document.getElementById('pdpDirectWppBtn').href = `https://wa.me/${CONFIG.WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
 }
 
+// ==========================================================================
+// BOLSA DE SELECCIÓN (CON SOPORTE PARA COMBOS Y BOTÓN ELIMINAR)
+// ==========================================================================
 function quickAddBag(e, id) {
     e.stopPropagation();
     playTap();
     const item = PRODUCTS.find(p => p.id === id);
     if (!item) return;
-    pushToBag(item, item.talles[0] || 'A confirmar');
+    pushToBag(item, item.talles[0] || 'A confirmar', item.isCombo ? 'all' : 'base');
 }
 
 function addCurrentPdpToBag() {
     if (!currentPdpProduct) return;
     playTap();
-    pushToBag(currentPdpProduct, currentPdpSize);
+    pushToBag(currentPdpProduct, currentPdpSize, currentPdpComboSelection);
     closeAllOverlays();
     openBagDrawer();
 }
 
-function pushToBag(item, size) {
-    const existing = shoppingBag.find(b => b.id === item.id && b.size === size);
-    if (existing) existing.qty += 1;
-    else shoppingBag.push({ id: item.id, size, qty: 1 });
+function pushToBag(item, size, comboChoice = 'all') {
+    const details = resolveComboDetails(item, comboChoice);
+    const existing = shoppingBag.find(b =>
+        b.id === item.id &&
+        b.size === size &&
+        (b.comboKey ?? 'all') === details.comboKey
+    );
+    if (existing) {
+        existing.qty += 1;
+    } else {
+        shoppingBag.push({
+            id: item.id,
+            size,
+            comboKey: details.comboKey,
+            qty: 1
+        });
+    }
     saveBag();
-    showToast(`"${item.nombre}" agregado`);
+    showToast(`"${details.displayName}" agregado`);
 }
 
 function updateBagQty(index, delta) {
@@ -549,25 +603,28 @@ function renderBagDrawer() {
     const body = document.getElementById('bagDrawerBody');
     const foot = document.getElementById('bagDrawerFoot');
     if (!shoppingBag.length) {
-        body.innerHTML = `<div style="text-align:center; padding:48px 16px; color:var(--ink-muted);">Tu bolsa está vacía.</div>`;
+        body.innerHTML = `<div style="text-align:center; padding:48px 16px; color:var(--ink-muted);">Tu bolsa está vacía.<br><br>Elegí piezas de la colección para armar tu solicitud por WhatsApp.</div>`;
         foot.innerHTML = `<button class="btn-add-bag-outline" onclick="closeAllOverlays()">Seguir Explorando</button>`;
         return;
     }
-    let total = 0, lines = [];
+    let total = 0, hasConsult = false, lines = [];
     body.innerHTML = shoppingBag.map((entry, idx) => {
         const item = PRODUCTS.find(p => p.id === entry.id);
         if (!item) return '';
-        const p = getProductPrice(item);
-        total += p * entry.qty;
-        const pStr = formatMoney(p);
-        lines.push(`▪ ${entry.qty}x *${item.nombre}* (${entry.size}) — ${pStr}`);
+        const details = resolveComboDetails(item, entry.comboKey ?? 'all');
+        const unitPrice = getProductPrice({ precioARS: details.priceARS });
+        if (unitPrice > 0) total += unitPrice * entry.qty;
+        else hasConsult = true;
+
+        const pStr = formatMoney(unitPrice);
+        lines.push(`▪ ${entry.qty}x *${details.displayName}* (${entry.size}) — ${pStr}`);
         return `
             <div class="bag-item-row">
-                <img src="${item.imagen}" alt="${item.nombre}" class="bag-item-img">
+                <img src="${item.imagen}" alt="${details.displayName}" class="bag-item-img">
                 <div class="bag-item-info">
                     <div class="bag-item-top-row">
                         <div>
-                            <div style="font-size:0.82rem; font-weight:700;">${item.nombre}</div>
+                            <div style="font-size:0.82rem; font-weight:700;">${details.displayName}</div>
                             <div style="font-family:var(--font-mono); font-size:0.62rem; color:var(--ink-muted); text-transform:uppercase; margin-top:2px;">Opción: ${entry.size}</div>
                         </div>
                         <button class="btn-remove-bag-item" onclick="removeBagItem(${idx})">✕ Eliminar</button>
@@ -585,15 +642,16 @@ function renderBagDrawer() {
         `;
     }).join('');
 
-    const totalStr = formatMoney(total);
-    const fullMsg = `¡Hola MeraKi! ✨ Quisiera solicitar esta selección:\n\n${lines.join('\n')}\n\n*Total estimado:* ${totalStr}`;
+    const totalStr = total > 0 ? formatMoney(total) + (hasConsult ? ' + ítems a consultar' : '') : 'A consultar';
+    const fullMsg = `¡Hola MeraKi! ✨ Quisiera *Solicitar por WhatsApp* mi selección de la tienda:\n\n${lines.join('\n')}\n\n*Total estimado (${activeCurrency}):* ${totalStr}\n\nQuedo atenta/o para confirmar talles y medio de pago.`;
     foot.innerHTML = `
-        <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
-            <span>Total (${activeCurrency}):</span>
-            <b>${totalStr}</b>
+        <div style="display:flex; justify-content:space-between; align-items:baseline;">
+            <span style="font-family:var(--font-mono); font-size:0.70rem; text-transform:uppercase; color:var(--ink-muted);">Total Estimado (${activeCurrency})</span>
+            <span style="font-family:var(--font-mono); font-size:1.08rem; font-weight:700;">${totalStr}</span>
         </div>
+        <span style="font-size:0.68rem; color:var(--ink-muted);">30% OFF + 12 cuotas sin interés · Ahora Misiones</span>
         <a href="https://wa.me/${CONFIG.WHATSAPP_NUMBER}?text=${encodeURIComponent(fullMsg)}" target="_blank" rel="noopener noreferrer" class="btn-wpp-solicitar" onclick="playTap()">
-            Solicitar por WhatsApp
+            Solicitar por WhatsApp (${shoppingBag.reduce((s,b)=>s+b.qty,0)})
         </a>
         <button onclick="clearEntireBag()" style="font-family:var(--font-mono); font-size:0.62rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--ink-muted); padding:4px; text-align:center;">Vaciar bolsa</button>
     `;
@@ -631,7 +689,7 @@ function closeOverlayWithoutHistory(modalId) {
 }
 
 // ==========================================================================
-// 7 DÍAS · 7 INTENCIONES (RESTAURADO)
+// 7 DÍAS · 7 INTENCIONES
 // ==========================================================================
 const intencionesData = {
     abundancia: {
@@ -669,7 +727,7 @@ function selectIntencion(key, btn) {
 }
 
 // ==========================================================================
-// FORMULARIO DE CONTACTO EMAIL (RESTAURADO)
+// FORMULARIO DE CONTACTO (APPS SCRIPT + RESPALDO WHATSAPP)
 // ==========================================================================
 async function submitContactForm(e) {
     e.preventDefault();
@@ -697,12 +755,17 @@ async function submitContactForm(e) {
                 headers: { 'Content-Type': 'text/plain' },
                 body: JSON.stringify(payload)
             });
+            feedback.innerText = '✓ ¡Gracias! Tu consulta fue enviada correctamente.';
+        } else {
+            // Si aún no configuraste APPS_SCRIPT_URL, deriva la consulta a WhatsApp para no perderla
+            const wppMsg = `¡Hola MeraKi! ✨ Te escribo desde el formulario de la web:\n\n• *Nombre:* ${payload.nombre}\n• *Contacto:* ${payload.contacto}\n• *Asunto:* ${payload.asunto}\n• *Mensaje:* ${payload.mensaje}`;
+            window.open(`https://wa.me/${CONFIG.WHATSAPP_NUMBER}?text=${encodeURIComponent(wppMsg)}`, '_blank', 'noopener,noreferrer');
+            feedback.innerText = '✓ Redirigiendo tu consulta a WhatsApp...';
         }
-        feedback.innerText = '✓ ¡Gracias! Tu consulta fue enviada correctamente.';
         feedback.classList.add('visible');
         document.getElementById('contactForm').reset();
     } catch (err) {
-        feedback.innerText = '✓ Consulta registrada. Si es urgente, escribinos directo por WhatsApp.';
+        feedback.innerText = '✓ No pudimos enviar por email; escribinos directo por WhatsApp.';
         feedback.classList.add('visible');
     } finally {
         btn.innerText = 'ENVIAR CONSULTA';
@@ -712,7 +775,7 @@ async function submitContactForm(e) {
 }
 
 // ==========================================================================
-// ESTADO SHOWROOM & ANIMACIONES DE SCROLL (RESTAURADO)
+// ESTADO SHOWROOM & ANIMACIONES DE SCROLL
 // ==========================================================================
 function updateStoreStatus() {
     const dot = document.getElementById('statusDot');
