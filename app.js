@@ -108,7 +108,7 @@ function buildTopBarAndUniverses() {
         return `
             <article class="universe-tile ${conf.cls}" onclick="navigateToCategory('${r}')">
                 <div class="tile-top">
-                    <span>0${i + 1} · ${count} piezas</span>
+                    <span>0${i + 1} · ${count} ${count === 1 ? 'pieza' : 'piezas'}</span>
                     <span>↗</span>
                 </div>
                 <div>
@@ -126,6 +126,12 @@ function buildTopBarAndUniverses() {
         ${rubros.map(r => `
             <button onclick="navigateToCategory('${r}'); closeAllOverlays();" style="text-align:left; font-size:1.15rem; font-weight:700; padding:7px 0; border-bottom:1px solid var(--hairline); text-transform:uppercase;">${r}</button>
         `).join('')}
+        <div style="margin-top:16px; display:flex; flex-direction:column; gap:14px;">
+            <button onclick="scrollToSection(event, 'bienestar'); closeAllOverlays();" style="text-align:left; font-family:var(--font-mono); font-size:0.72rem; text-transform:uppercase; letter-spacing:0.1em;">✨ 7 Días · 7 Intenciones</button>
+            <button onclick="scrollToSection(event, 'contacto'); closeAllOverlays();" style="text-align:left; font-family:var(--font-mono); font-size:0.72rem; text-transform:uppercase; letter-spacing:0.1em;">✉️ Escribinos por Email</button>
+            <button onclick="scrollToSection(event, 'ubicacion'); closeAllOverlays();" style="text-align:left; font-family:var(--font-mono); font-size:0.72rem; text-transform:uppercase; letter-spacing:0.1em;">📍 Showroom Ushuaia 196</button>
+            <a href="https://wa.me/${CONFIG.WHATSAPP_NUMBER}" target="_blank" rel="noopener noreferrer" class="btn-wpp-solicitar" style="margin-top:8px;">Solicitar por WhatsApp</a>
+        </div>
     `;
 }
 
@@ -174,6 +180,7 @@ function scrollToSection(e, sectionId) {
     const perform = () => {
         const target = document.getElementById(sectionId);
         if (!target) return;
+        target.classList.add('is-visible'); // Asegura visibilidad inmediata al anclar
         const headerEl = document.getElementById('luxuryHeader');
         const offset = (headerEl ? headerEl.offsetHeight : 100) + 18;
         window.scrollTo({ top: target.getBoundingClientRect().top + window.scrollY - offset, behavior: 'smooth' });
@@ -187,13 +194,18 @@ function scrollToSection(e, sectionId) {
     } else {
         perform();
     }
+    updateFloatingVisibility();
 }
 
 function handleRouteFromHash() {
     const h = decodeURIComponent(location.hash || '');
     if (h.startsWith('#categoria/')) {
         const targetRubro = h.replace('#categoria/', '');
-        if (targetRubro === 'Todo' || PRODUCTS.some(p => p.rubro === targetRubro)) navigateToCategory(targetRubro);
+        if (targetRubro === 'Todo' || PRODUCTS.some(p => p.rubro === targetRubro)) {
+            navigateToCategory(targetRubro);
+        }
+    } else if (['#bienestar', '#contacto', '#ubicacion'].includes(h)) {
+        scrollToSection(null, h.replace('#', ''));
     }
 }
 window.addEventListener('hashchange', handleRouteFromHash);
@@ -435,6 +447,17 @@ function updatePdpPrices(item) {
 
     const mainPrice = formatMoney(getProductPrice({ precioARS: currentPriceARS }, activeCurrency));
     document.getElementById('pdpPriceMain').innerText = currentPriceARS > 0 ? mainPrice : 'Consultar precio';
+
+    const frontierEl = document.getElementById('pdpPriceFrontier');
+    if (frontierEl) {
+        if (currentPriceARS > 0) {
+            const otherCurrencies = ['ARS', 'PYG', 'BRL'].filter(c => c !== activeCurrency);
+            const refs = otherCurrencies.map(c => `${c} ${formatMoney(getProductPrice({ precioARS: currentPriceARS }, c), c)}`).join('  ·  ');
+            frontierEl.innerText = `Referencia aprox: ${refs}`;
+        } else {
+            frontierEl.innerText = 'Consultar disponibilidad y precio directo';
+        }
+    }
 }
 
 function selectSizeChip(btn, sizeVal) {
@@ -540,11 +563,14 @@ function renderBagDrawer() {
         lines.push(`▪ ${entry.qty}x *${item.nombre}* (${entry.size}) — ${pStr}`);
         return `
             <div class="bag-item-row">
-                <img src="${item.imagen}" class="bag-item-img">
+                <img src="${item.imagen}" alt="${item.nombre}" class="bag-item-img">
                 <div class="bag-item-info">
                     <div class="bag-item-top-row">
-                        <div style="font-size:0.82rem; font-weight:700;">${item.nombre}</div>
-                        <button class="btn-remove-bag-item" onclick="removeBagItem(${idx})">✕</button>
+                        <div>
+                            <div style="font-size:0.82rem; font-weight:700;">${item.nombre}</div>
+                            <div style="font-family:var(--font-mono); font-size:0.62rem; color:var(--ink-muted); text-transform:uppercase; margin-top:2px;">Opción: ${entry.size}</div>
+                        </div>
+                        <button class="btn-remove-bag-item" onclick="removeBagItem(${idx})">✕ Eliminar</button>
                     </div>
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px;">
                         <div class="qty-control">
@@ -562,13 +588,14 @@ function renderBagDrawer() {
     const totalStr = formatMoney(total);
     const fullMsg = `¡Hola MeraKi! ✨ Quisiera solicitar esta selección:\n\n${lines.join('\n')}\n\n*Total estimado:* ${totalStr}`;
     foot.innerHTML = `
-        <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
-            <span>Total:</span>
+        <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+            <span>Total (${activeCurrency}):</span>
             <b>${totalStr}</b>
         </div>
-        <a href="https://wa.me/${CONFIG.WHATSAPP_NUMBER}?text=${encodeURIComponent(fullMsg)}" target="_blank" class="btn-wpp-solicitar">
+        <a href="https://wa.me/${CONFIG.WHATSAPP_NUMBER}?text=${encodeURIComponent(fullMsg)}" target="_blank" rel="noopener noreferrer" class="btn-wpp-solicitar" onclick="playTap()">
             Solicitar por WhatsApp
         </a>
+        <button onclick="clearEntireBag()" style="font-family:var(--font-mono); font-size:0.62rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--ink-muted); padding:4px; text-align:center;">Vaciar bolsa</button>
     `;
 }
 
@@ -603,6 +630,125 @@ function closeOverlayWithoutHistory(modalId) {
     document.getElementById('menuDrawer').classList.remove('open');
 }
 
+// ==========================================================================
+// 7 DÍAS · 7 INTENCIONES (RESTAURADO)
+// ==========================================================================
+const intencionesData = {
+    abundancia: {
+        title: "Momento de Abundancia",
+        phrase: '"Atraigo prosperidad, plenitud y gratitud a cada rincón de mi espacio."',
+        link: `https://wa.me/${CONFIG.WHATSAPP_NUMBER}?text=%C2%A1Hola%20MeraKi!%20%E2%9C%A8%20Quiero%20solicitar%20el%20kit%20de%20sahumado%20para%20la%20intenci%C3%B3n%20de%20Abundancia.`
+    },
+    paz: {
+        title: "Momento de Paz & Armonía",
+        phrase: '"Despejo la mente, suelto tensiones y restauro la calma en mi hogar."',
+        link: `https://wa.me/${CONFIG.WHATSAPP_NUMBER}?text=%C2%A1Hola%20MeraKi!%20%E2%9C%A8%20Quiero%20solicitar%20el%20kit%20de%20sahumado%20para%20la%20intenci%C3%B3n%20de%20Paz%20y%20Armon%C3%ADa.`
+    },
+    meditacion: {
+        title: "Momento de Meditación",
+        phrase: '"Conecto con el presente, el silencio y mi centro espiritual."',
+        link: `https://wa.me/${CONFIG.WHATSAPP_NUMBER}?text=%C2%A1Hola%20MeraKi!%20%E2%9C%A8%20Quiero%20solicitar%20el%20kit%20de%20sahumado%20para%20la%20intenci%C3%B3n%20de%20Meditaci%C3%B3n.`
+    },
+    soltar: {
+        title: "Momento de Soltar",
+        phrase: '"Libero cargas pasadas, renuevo el aire y abro paso a lo nuevo."',
+        link: `https://wa.me/${CONFIG.WHATSAPP_NUMBER}?text=%C2%A1Hola%20MeraKi!%20%E2%9C%A8%20Quiero%20solicitar%20el%20kit%20de%20sahumado%20para%20la%20intenci%C3%B3n%20de%20Soltar.`
+    }
+};
+
+function selectIntencion(key, btn) {
+    playTap();
+    document.querySelectorAll('.ritual-tab-btn').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+    const item = intencionesData[key];
+    if (item) {
+        document.getElementById('intencionTitle').innerText = item.title;
+        document.getElementById('intencionPhrase').innerText = item.phrase;
+        document.getElementById('intencionLink').href = item.link;
+    }
+}
+
+// ==========================================================================
+// FORMULARIO DE CONTACTO EMAIL (RESTAURADO)
+// ==========================================================================
+async function submitContactForm(e) {
+    e.preventDefault();
+    playTap();
+
+    const btn = document.getElementById('contactSubmitBtn');
+    const feedback = document.getElementById('contactFeedback');
+    const payload = {
+        action: 'contact',
+        nombre: document.getElementById('contactName').value.trim(),
+        contacto: document.getElementById('contactEmail').value.trim(),
+        asunto: document.getElementById('contactSubject').value.trim(),
+        mensaje: document.getElementById('contactMessage').value.trim(),
+        fecha: new Date().toLocaleString('es-AR')
+    };
+
+    btn.innerText = 'ENVIANDO...';
+    btn.disabled = true;
+
+    try {
+        if (CONFIG.APPS_SCRIPT_URL) {
+            await fetch(CONFIG.APPS_SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'text/plain' },
+                body: JSON.stringify(payload)
+            });
+        }
+        feedback.innerText = '✓ ¡Gracias! Tu consulta fue enviada correctamente.';
+        feedback.classList.add('visible');
+        document.getElementById('contactForm').reset();
+    } catch (err) {
+        feedback.innerText = '✓ Consulta registrada. Si es urgente, escribinos directo por WhatsApp.';
+        feedback.classList.add('visible');
+    } finally {
+        btn.innerText = 'ENVIAR CONSULTA';
+        btn.disabled = false;
+        setTimeout(() => feedback.classList.remove('visible'), 6000);
+    }
+}
+
+// ==========================================================================
+// ESTADO SHOWROOM & ANIMACIONES DE SCROLL (RESTAURADO)
+// ==========================================================================
+function updateStoreStatus() {
+    const dot = document.getElementById('statusDot');
+    const txt = document.getElementById('statusText');
+    if (!dot || !txt) return;
+    const now = new Date();
+    const day = now.getDay();
+    const mins = now.getHours() * 60 + now.getMinutes();
+    const isOpen = (day >= 1 && day <= 5) && ((mins >= 540 && mins <= 750) || (mins >= 990 && mins <= 1260));
+    if (isOpen) {
+        dot.style.background = '#16A34A';
+        txt.innerText = 'Abierto ahora · Ushuaia 196 esq. Jangadero';
+    } else {
+        dot.style.background = '#D97706';
+        txt.innerText = 'Ushuaia 196 · Consultas activas por WhatsApp';
+    }
+}
+
+function initScrollAnimations() {
+    const blocks = document.querySelectorAll('.reveal-block');
+    if (!('IntersectionObserver' in window)) {
+        blocks.forEach(el => el.classList.add('is-visible'));
+        return;
+    }
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('is-visible');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.05 });
+
+    blocks.forEach(el => observer.observe(el));
+}
+
 function showToast(msg) {
     const t = document.getElementById('toastBar');
     t.innerText = msg;
@@ -614,6 +760,8 @@ function playTap() { if ('vibrate' in navigator) try { navigator.vibrate(8); } c
 
 function updateFloatingVisibility() {
     const floating = document.getElementById('floatingConcierge');
+    const header = document.getElementById('luxuryHeader');
+    if (header) header.classList.toggle('scrolled', window.scrollY > 20);
     if (!floating) return;
     floating.classList.toggle('is-visible', window.scrollY > 120);
 }
@@ -622,5 +770,8 @@ window.addEventListener('scroll', updateFloatingVisibility, { passive: true });
 window.addEventListener('DOMContentLoaded', () => {
     setCurrency(activeCurrency);
     saveBag();
+    updateStoreStatus();
+    initScrollAnimations();
     loadCatalog();
+    updateFloatingVisibility();
 });
