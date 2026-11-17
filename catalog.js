@@ -11,7 +11,7 @@ const CONFIG = {
     GOOGLE_SHEETS_CSV_URL: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSCgumzTKh4vjuCvuVdCPvgAyZyg_yYtaatwPvlJGbzpjz96tokUttkgTSE5_oHc0weHP3dEEyDwoj5/pub?gid=0&single=true&output=csv",
     APPS_SCRIPT_URL: "",
 
-    CACHE_KEY: "meraki_sheets_cache_v5",
+    CACHE_KEY: "meraki_sheets_cache_v6",
     CACHE_TTL_MS: 3 * 60 * 1000,
 
     RATES: {
@@ -26,7 +26,7 @@ const COLOR_MAP = {
     "blanco": "#FFFFFF", "off white": "#F8F6F0", "manteca": "#FBF7EE",
     "natural": "#EFECE6", "crudo": "#EDE6D8", "marfil": "#FAF6EB",
     "crema": "#F5ECD7", "hueso": "#F2EDE2", "beige": "#D8C3A5",
-    "arena": "#DCCDB6", "nude": "#E3C5B0", "vison": "#B8A695",
+    "arena": "#DCCDB6", "madera": "#A47551", "nude": "#E3C5B0", "vison": "#B8A695",
     "taupe": "#8C7D70", "camel": "#C19A6B", "tostado": "#A97B50",
     "marron": "#5C3A28", "chocolate": "#3D2418", "negro": "#141414",
     "gris": "#8E9196", "gris claro": "#C9CDD1", "gris melange": "#A5A9AE",
@@ -57,15 +57,20 @@ function parseColors(raw) {
         let hex = t.startsWith('#') ? t.toUpperCase() : COLOR_MAP[normalizeColorKey(t)];
         if (!hex) hex = "#D8D4CE";
         const name = t.charAt(0).toUpperCase() + t.slice(1);
+        const upperHex = hex.toUpperCase();
         if (!seen.has(name.toLowerCase())) {
             seen.add(name.toLowerCase());
-            res.push({ name, hex, light: hex.toUpperCase() === '#FFFFFF' || hex.toUpperCase() === '#F8F6F0' });
+            res.push({
+                name,
+                hex,
+                light: ['#FFFFFF', '#F8F6F0', '#FBF7EE', '#FAF6EB', '#EFECE6'].includes(upperHex)
+            });
         }
     }
     return res;
 }
 
-function parseTalles(raw, rubro = "Indumentaria") {
+function parseTalles(raw) {
     const clean = String(raw || "").trim();
     if (!clean) return { list: ["A confirmar"], label: "A confirmar" };
     const list = clean.split(/[,/|]+/).map(t => t.trim()).filter(Boolean);
@@ -116,8 +121,8 @@ function resolveAssetUrl(relPath) {
 function getProductPrice(item, curr = activeCurrency) {
     const ars = item.precioARS || 0;
     if (curr === 'ARS') return ars;
-    if (curr === 'PYG') return Math.round((ars * CONFIG.RATES.ARS_TO_PYG) / 1000) * 1000;
-    if (curr === 'BRL') return Math.round(ars * CONFIG.RATES.ARS_TO_BRL);
+    if (curr === 'PYG') return (item.precioPYG > 0) ? item.precioPYG : (ars > 0 ? Math.round((ars * CONFIG.RATES.ARS_TO_PYG) / 1000) * 1000 : 0);
+    if (curr === 'BRL') return (item.precioBRL > 0) ? item.precioBRL : (ars > 0 ? Math.round(ars * CONFIG.RATES.ARS_TO_BRL) : 0);
     return ars;
 }
 
@@ -163,6 +168,8 @@ function mapSheetRowsToProducts(rows) {
         sub: headers.findIndex(h => h.includes('sub')),
         nombre: headers.findIndex(h => h.includes('nombre') || h.includes('producto') || h.includes('titulo')),
         ars: headers.findIndex(h => h.includes('ars') || h === 'precio'),
+        pyg: headers.findIndex(h => h.includes('pyg') || h.includes('guarani')),
+        brl: headers.findIndex(h => h.includes('brl') || h.includes('real')),
         desc: headers.findIndex(h => h.includes('desc')),
         foto: headers.findIndex(h => h.includes('foto') || h.includes('imagen')),
         tag: headers.findIndex(h => h.includes('etiqueta') || h.includes('tag')),
@@ -184,18 +191,22 @@ function mapSheetRowsToProducts(rows) {
 
         const { cleanTitle, extractedColors, extractedTalles } = parseTitleAndExtractMeta(rawTitle);
         const prices = idx.ars > -1 ? parsePriceCell(row[idx.ars]) : [0];
+        const pygVal = idx.pyg > -1 ? parsePriceCell(row[idx.pyg])[0] || 0 : 0;
+        const brlVal = idx.brl > -1 ? parsePriceCell(row[idx.brl])[0] || 0 : 0;
         const rubro = (idx.rubro > -1 && row[idx.rubro]) ? row[idx.rubro] : 'Indumentaria';
 
-        let finalTalles = idx.talles > -1 && row[idx.talles] ? parseTalles(row[idx.talles], rubro).list : [];
+        let finalTalles = idx.talles > -1 && row[idx.talles] ? parseTalles(row[idx.talles]).list : [];
         if (extractedTalles.length > 0) finalTalles = [...new Set([...finalTalles, ...extractedTalles])];
         if (finalTalles.length === 0) finalTalles = ["A confirmar"];
 
         let finalColors = idx.colores > -1 && row[idx.colores] ? parseColors(row[idx.colores]) : [];
         if (extractedColors.length > 0) finalColors = [...finalColors, ...extractedColors];
 
-        const isCombo = cleanTitle.includes('/') || prices.length > 1;
+        // Solo activa el selector de prendas por separado si hay 2 precios cargados (ej. "35000 / 56000")
+        const hasTwoPrices = prices.length > 1;
+        const isCombo = hasTwoPrices;
         let subItems = [];
-        if (isCombo) {
+        if (hasTwoPrices) {
             const names = cleanTitle.split('/').map(n => n.trim());
             subItems = names.map((namePart, i) => ({
                 name: namePart,
@@ -205,6 +216,7 @@ function mapSheetRowsToProducts(rows) {
 
         const destVal = idx.destacado > -1 ? (row[idx.destacado] || '').toUpperCase() : '';
         const isFeatured = ['SI', 'SÍ', 'YES', 'TRUE', '1', 'X'].includes(destVal);
+        const sheetTag = idx.tag > -1 ? (row[idx.tag] || '') : '';
 
         list.push({
             id: `sh-${r}`,
@@ -212,12 +224,14 @@ function mapSheetRowsToProducts(rows) {
             subcategoria: (idx.sub > -1 && row[idx.sub]) ? row[idx.sub] : 'Mujer',
             nombre: cleanTitle || 'Pieza Exclusiva MeraKi',
             precioARS: prices[0] || 0,
+            precioPYG: pygVal,
+            precioBRL: brlVal,
             preciosArray: prices,
             isCombo,
             subItems,
             descripcion: (idx.desc > -1 && row[idx.desc]) ? row[idx.desc] : '',
             imagen: resolveAssetUrl(foto),
-            etiqueta: isCombo ? 'LOOK / 2 PIEZAS' : (idx.tag > -1 ? (row[idx.tag] || '') : ''),
+            etiqueta: sheetTag || (hasTwoPrices ? 'LOOK / 2 PIEZAS' : ''),
             talles: finalTalles,
             tallesLabel: finalTalles.join(' · '),
             colores: finalColors,
