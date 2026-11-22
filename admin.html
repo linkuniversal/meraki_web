@@ -104,36 +104,33 @@
         .pill-btn.active { background: var(--ink-black); color: #FFFFFF; border-color: var(--ink-black); }
         .search-box { width: 100%; max-width: 340px; border: 1px solid var(--hairline-strong); background: #FFFFFF; padding: 9px 14px; font-size: 0.86rem; outline: none; }
 
-        /* GRILLA DE TARJETAS */
+        /* GRILLA VISUAL */
         .cards-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
         @media (min-width: 720px) { .cards-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; } }
         @media (min-width: 1080px) { .cards-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px; } }
 
         .prod-card {
             background: #FFFFFF; border: 1px solid var(--hairline); display: flex; flex-direction: column;
-            justify-content: space-between; position: relative;
+            justify-content: space-between; content-visibility: auto; contain-intrinsic-size: 250px 390px;
             transition: transform 0.2s var(--ease), box-shadow 0.2s;
         }
         .prod-card:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(0, 0, 0, 0.06); }
         .prod-card.is-hidden { opacity: 0.55; }
 
         .prod-thumb-wrap { position: relative; width: 100%; aspect-ratio: 3 / 4; background: var(--bg-gallery); overflow: hidden; cursor: pointer; }
-        .prod-thumb-wrap img { width: 100%; height: 100%; object-fit: cover; object-position: center 15%; display: block; }
+        .prod-thumb-wrap img, .prod-thumb-wrap video { width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; }
+        .prod-thumb-wrap img.fit-contain, .prod-thumb-wrap video.fit-contain { object-fit: contain; }
 
         .badge-home { position: absolute; top: 8px; left: 8px; background: var(--meraki-vino); color: #FFFFFF; font-family: var(--font-mono); font-size: 0.54rem; font-weight: 700; padding: 3px 7px; text-transform: uppercase; z-index: 2; }
         .badge-paused { position: absolute; bottom: 8px; left: 8px; background: rgba(0, 0, 0, 0.78); color: #FFFFFF; font-family: var(--font-mono); font-size: 0.54rem; font-weight: 700; padding: 3px 7px; text-transform: uppercase; z-index: 2; }
         .badge-multicount { position: absolute; bottom: 8px; right: 8px; background: rgba(0, 0, 0, 0.74); color: #FFFFFF; font-family: var(--font-mono); font-size: 0.56rem; font-weight: 700; padding: 3px 7px; z-index: 2; }
 
-        /* BOTONES EN ESQUINA SUPERIOR DERECHA: DUPLICAR Y ELIMINAR */
-        .quick-corner-tools {
-            position: absolute; top: 8px; right: 8px; z-index: 4;
-            display: flex; gap: 6px;
-        }
+        /* ACCIONES RÁPIDAS EN ESQUINA SUPERIOR DERECHA */
+        .quick-corner-tools { position: absolute; top: 8px; right: 8px; z-index: 4; display: flex; gap: 6px; }
         .corner-tool-btn {
             width: 30px; height: 30px; border-radius: 50%;
             background: rgba(255, 255, 255, 0.94); color: var(--ink-black);
-            border: 1px solid rgba(0, 0, 0, 0.12);
-            display: flex; align-items: center; justify-content: center;
+            border: 1px solid rgba(0, 0, 0, 0.12); display: flex; align-items: center; justify-content: center;
             font-size: 0.84rem; font-weight: 700; box-shadow: 0 3px 8px rgba(0, 0, 0, 0.14);
             transition: transform 0.15s, background 0.15s, color 0.15s;
         }
@@ -165,13 +162,16 @@
         .modal-body { padding: 20px 22px; display: grid; grid-template-columns: 1fr; gap: 20px; }
         @media (min-width: 680px) { .modal-body { grid-template-columns: 240px 1fr; } }
 
-        /* MULTI-FOTO EN MODAL EDITOR */
         .editor-photo-col { display: flex; flex-direction: column; gap: 10px; }
-        .editor-photo-preview { width: 100%; aspect-ratio: 3 / 4; object-fit: cover; background: var(--bg-gallery); border: 1px solid var(--hairline); }
+        .editor-stage-wrap { width: 100%; aspect-ratio: 3 / 4; background: var(--bg-gallery); border: 1px solid var(--hairline); overflow: hidden; position: relative; }
+        .editor-photo-preview { width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; }
+        .editor-photo-preview.fit-contain { object-fit: contain; }
+
         .multi-thumbs-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
         .m-thumb-box { position: relative; aspect-ratio: 3 / 4; border: 2px solid transparent; overflow: hidden; cursor: pointer; background: var(--bg-gallery); }
         .m-thumb-box.is-cover { border-color: var(--meraki-vino); }
-        .m-thumb-box img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .m-thumb-box img, .m-thumb-box video { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .m-thumb-box img.fit-contain, .m-thumb-box video.fit-contain { object-fit: contain; }
         .m-thumb-del { position: absolute; top: 2px; right: 2px; width: 20px; height: 20px; background: rgba(0,0,0,0.8); color: #FFF; font-size: 0.65rem; display: flex; align-items: center; justify-content: center; }
         .m-thumb-cov { position: absolute; bottom: 0; left: 0; right: 0; background: rgba(96,0,0,0.85); color: #FFF; font-family: var(--font-mono); font-size: 0.50rem; text-align: center; padding: 2px 0; text-transform: uppercase; }
 
@@ -189,17 +189,18 @@
 
         .toggle-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; background: var(--bg-ivory); border: 1px solid var(--hairline); font-size: 0.84rem; font-weight: 600; cursor: pointer; }
 
-        /* ASISTENTE DE AGRUPACIÓN MULTI-FOTOS (2 A 50+ FOTOS) */
-        .group-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; padding: 16px 22px; }
+        /* ASISTENTE VISUAL MULTI-FOTO */
+        .group-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(125px, 1fr)); gap: 10px; padding: 16px 22px; }
         .group-photo-tile {
             position: relative; aspect-ratio: 3 / 4; border: 2px solid var(--hairline); overflow: hidden; cursor: pointer; background: var(--bg-gallery);
             transition: border-color 0.15s, transform 0.15s;
         }
         .group-photo-tile.selected { border-color: var(--meraki-vino); border-width: 3px; transform: scale(0.96); }
-        .group-photo-tile img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .group-photo-tile img, .group-photo-tile video { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .group-photo-tile img.fit-contain, .group-photo-tile video.fit-contain { object-fit: contain; }
         .group-check-badge {
             position: absolute; top: 6px; right: 6px; width: 24px; height: 24px; border-radius: 50%;
-            background: rgba(255,255,255,0.92); border: 1.5px solid var(--ink-black);
+            background: rgba(255,255,255,0.9); border: 1.5px solid var(--ink-black);
             display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.78rem;
         }
         .group-photo-tile.selected .group-check-badge { background: var(--meraki-vino); color: #FFF; border-color: var(--meraki-vino); }
@@ -208,10 +209,10 @@
             font-family: var(--font-mono); font-size: 0.56rem; font-weight: 700; padding: 3px 6px; text-align: center;
         }
 
-        /* DIÁLOGO PRUDENTE DE CONFIRMACIÓN */
+        /* DIÁLOGO PRUDENTE */
         .confirm-panel { background: #FFFFFF; width: min(420px, 100%); padding: 26px 24px; display: flex; flex-direction: column; gap: 14px; text-align: center; box-shadow: 0 24px 60px rgba(0,0,0,0.3); }
 
-        /* TOAST CON BOTÓN DESHACER */
+        /* TOAST CON DESHACER */
         .toast-floating {
             position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(24px);
             background: var(--ink-black); color: #FFFFFF; padding: 12px 18px;
@@ -257,11 +258,11 @@
         </header>
 
         <main class="admin-main">
-            <!-- SUBIDA RÁPIDA (1 O MUCHAS FOTOS) -->
+            <!-- SUBIDA RÁPIDA (FOTOS O VIDEOS) -->
             <div class="quick-drop-banner">
-                <input type="file" id="batchFileInput" accept="image/*" multiple onchange="handleUploadPicker(this.files)">
-                <div style="font-weight:700; font-size:0.96rem;">📸 Tocá acá o arrastrá fotos para subir (1 o varias juntas)</div>
-                <div style="font-size:0.78rem; color:var(--ink-muted); margin-top:4px;">Si subís varias fotos, podés unir fácilmente las que son de la misma prenda (frente, espalda, detalle) y se comprimen sin perder calidad.</div>
+                <input type="file" id="batchFileInput" accept="image/*,video/mp4,video/webm" multiple onchange="handleUploadPicker(this.files)">
+                <div style="font-weight:700; font-size:0.96rem;">📸 Tocá acá o arrastrá fotos / videos MP4 (1 o varios juntos)</div>
+                <div style="font-size:0.78rem; color:var(--ink-muted); margin-top:4px;">Fotos y videos quedan ordenados. Si subís varios ángulos, podés unirlos en una sola prenda con un clic.</div>
             </div>
 
             <!-- BUSCADOR Y FILTROS -->
@@ -286,7 +287,7 @@
         </main>
     </div>
 
-    <!-- MODAL 1: EDITOR DE PRODUCTO (CON MULTI-FOTO) -->
+    <!-- MODAL 1: EDITOR DE PRODUCTO -->
     <div class="modal-bg" id="editModal" onclick="if(event.target===this) attemptCloseEditModal()">
         <div class="modal-panel">
             <div class="modal-head">
@@ -295,20 +296,20 @@
             </div>
 
             <form class="modal-body" onsubmit="saveProductForm(event)">
-                <!-- COLUMNA MULTI-FOTO -->
                 <div class="editor-photo-col">
-                    <img id="edPreviewImg" src="" alt="Vista previa" class="editor-photo-preview">
+                    <div class="editor-stage-wrap" id="edPreviewStage">
+                        <img id="edPreviewImg" src="" alt="Vista previa" class="editor-photo-preview" onload="applySmartFit(this)">
+                    </div>
 
                     <label class="btn-outline" style="position:relative; width:100%; cursor:pointer;">
-                        ➕ Agregar Más Fotos / Ángulos
-                        <input type="file" id="edFileInput" accept="image/*" multiple style="position:absolute; inset:0; opacity:0; cursor:pointer;" onchange="handleAddAnglesToProduct(this)">
+                        ➕ Agregar Más Fotos o Videos
+                        <input type="file" id="edFileInput" accept="image/*,video/mp4,video/webm" multiple style="position:absolute; inset:0; opacity:0; cursor:pointer;" onchange="handleAddAnglesToProduct(this)">
                     </label>
 
                     <div id="edMultiThumbsStrip" class="multi-thumbs-strip"></div>
-                    <span id="edPhotoStatus" style="font-family:var(--font-mono); font-size:0.62rem; color:var(--ink-muted);">Tocá una mini foto para hacerla Portada o borrarla.</span>
+                    <span id="edPhotoStatus" style="font-family:var(--font-mono); font-size:0.62rem; color:var(--ink-muted);">Tocá una miniatura para hacerla Portada o borrarla.</span>
                 </div>
 
-                <!-- COLUMNA DATOS -->
                 <div class="field-col">
                     <div class="field-row-2">
                         <div>
@@ -328,7 +329,7 @@
 
                     <div>
                         <label class="lbl-mono">Nombre (Para 2 prendas usá "/": Blusa / Pantalón)</label>
-                        <input type="text" id="edNombre" class="input-clean" required placeholder="Ej. Vestido Lino Natural" oninput="markDirty()">
+                        <input type="text" id="edNombre" class="input-clean" required placeholder="Ej. Almohadón Crochet / Vestido Lino" oninput="markDirty()">
                     </div>
 
                     <div class="field-row-2">
@@ -390,13 +391,13 @@
         </div>
     </div>
 
-    <!-- MODAL 2: ASISTENTE VISUAL PARA AGRUPAR MÚLTIPLES FOTOS -->
+    <!-- MODAL 2: ASISTENTE AGRUPADOR MULTI-FOTOS -->
     <div class="modal-bg" id="groupModal">
         <div class="modal-panel" style="width:min(880px, 100%);">
             <div class="modal-head">
                 <div>
                     <h2 style="font-size:1rem; font-weight:800; text-transform:uppercase;">Organizá tus fotos antes de subir</h2>
-                    <span id="groupSubtitle" style="font-size:0.78rem; color:var(--ink-muted);">Tocá las fotos que son de la MISMA prenda para unirlas, o publicalas separadas.</span>
+                    <span id="groupSubtitle" style="font-size:0.78rem; color:var(--ink-muted);">Tocá las fotos que son de la MISMA prenda para unirlas, o subilas separadas.</span>
                 </div>
                 <button onclick="cancelGroupWizard()" style="font-size:1.2rem; padding:4px;">✕</button>
             </div>
@@ -418,7 +419,7 @@
         </div>
     </div>
 
-    <!-- MODAL 3: DIÁLOGO PRUDENTE DE CONFIRMACIÓN (ANTI-ACCIDENTES) -->
+    <!-- MODAL 3: DIÁLOGO PRUDENTE DE CONFIRMACIÓN -->
     <div class="modal-bg" id="confirmModal">
         <div class="confirm-panel">
             <div style="font-size:2rem;" id="confIcon">⚠️</div>
@@ -431,7 +432,7 @@
         </div>
     </div>
 
-    <!-- TOAST FLOTANTE + DESHACER -->
+    <!-- TOAST -->
     <div class="toast-floating" id="toastBox">
         <span id="toastText">Cambios realizados</span>
         <button type="button" class="toast-undo-btn" id="toastUndoBtn" style="display:none;" onclick="undoLastAction()">↩ Deshacer</button>
@@ -454,31 +455,33 @@
         let currentFilter = 'ALL';
         let adminRenderLimit = ADMIN_PAGE_SIZE;
 
-        // Caché en memoria para ver al 0 ms las fotos recién subidas
         const localPreviewCache = {};
-
-        // Estado del editor individual
         let editingId = null;
         let editorPhotos = [];
         let editorDirty = false;
         let toastTimer = null;
-
-        // Estado del agrupador multi-foto
         let pendingGroups = [];
+
+        function isVideoPath(p) {
+            return /\.(mp4|webm|mov)$/i.test(String(p || '').split('?')[0]);
+        }
+
+        function applySmartFit(el) {
+            if (!el) return;
+            const w = el.naturalWidth || el.videoWidth || 0;
+            const h = el.naturalHeight || el.videoHeight || 0;
+            if (w > 0 && h > 0 && (w / h) > 0.82) {
+                el.classList.add('fit-contain');
+            } else {
+                el.classList.remove('fit-contain');
+            }
+        }
 
         function imgUrl(rel) {
             if (!rel) return '';
             if (localPreviewCache[rel]) return localPreviewCache[rel];
-            if (rel.startsWith('http') || rel.startsWith('data:')) return rel;
+            if (rel.startsWith('http') || rel.startsWith('data:') || rel.startsWith('blob:')) return rel;
             return GH_RAW_BASE + rel.split('/').map(encodeURIComponent).join('/');
-        }
-
-        function handleThumbError(imgEl, relPath) {
-            if (imgEl.dataset.retried) return;
-            imgEl.dataset.retried = '1';
-            setTimeout(() => {
-                imgEl.src = imgUrl(relPath) + (relPath.startsWith('http') ? '' : '?v=' + Date.now());
-            }, 2200);
         }
 
         function showToast(msg, canUndo = false) {
@@ -496,9 +499,7 @@
             return fetch(url, { ...options, headers, cache: 'no-store' });
         }
 
-        // =========================================================
-        // 1. LOGIN & CARGA INICIAL
-        // =========================================================
+        /* 1. LOGIN & SESIÓN */
         async function attemptLogin(e) {
             e.preventDefault();
             const pass = document.getElementById('adminPassInput').value.trim();
@@ -545,7 +546,7 @@
             }
         }
 
-        async function saveCatalogToD1(toastMsg = '✓ Cambios realizados', allowUndo = false) {
+        async function saveCatalogToD1(toastMsg = '✓ Cambios guardados con éxito', allowUndo = false) {
             const res = await apiCall('/api/catalog', {
                 method: 'POST',
                 body: JSON.stringify({ items: catalogItems })
@@ -566,9 +567,7 @@
             await saveCatalogToD1('↩ Cambio deshecho correctamente', false);
         }
 
-        // =========================================================
-        // 2. RENDER DE GRILLA CON PAGINACIÓN Y ACCESO RÁPIDO
-        // =========================================================
+        /* 2. RENDER DE GRILLA CON ACCIONES RÁPIDAS Y ENCUADRE INTELIGENTE */
         function setFilter(f, btn) {
             currentFilter = f;
             adminRenderLimit = ADMIN_PAGE_SIZE;
@@ -615,35 +614,42 @@
             });
 
             const grid = document.getElementById('cardsGrid');
+            const loadMoreWrap = document.getElementById('adminLoadMoreWrap');
+
             if (!filtered.length) {
                 grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:48px; color:var(--ink-muted);">No hay prendas con este filtro.</div>`;
-                document.getElementById('adminLoadMoreWrap').style.display = 'none';
+                loadMoreWrap.style.display = 'none';
                 return;
             }
 
             const pageItems = filtered.slice(0, adminRenderLimit);
-            document.getElementById('adminLoadMoreWrap').style.display = filtered.length > adminRenderLimit ? 'block' : 'none';
-            if (filtered.length > adminRenderLimit) {
-                document.getElementById('adminLoadMoreBtn').innerText = `Ver más prendas (${pageItems.length} de ${filtered.length})`;
-            }
+            loadMoreWrap.style.display = filtered.length > adminRenderLimit ? 'block' : 'none';
 
             grid.innerHTML = pageItems.map(item => {
                 const photos = getItemPhotosList(item);
-                const coverPhoto = photos[0] || item.foto || '';
+                const cover = photos[0] || '';
                 const colorsArr = String(item.colores || '').split(',').map(s => s.trim()).filter(Boolean);
                 const priceTxt = String(item.precioARS || '').trim() ? `$ ${item.precioARS}` : 'Consultar';
+                const isVid = isVideoPath(cover);
+
+                const mediaMarkup = isVid
+                    ? `<video src="${imgUrl(cover)}" autoplay loop muted playsinline onloadedmetadata="applySmartFit(this)"></video>`
+                    : `<img src="${imgUrl(cover)}" alt="${item.nombre}" loading="lazy" onload="applySmartFit(this)">`;
 
                 return `
                     <article class="prod-card ${item.visible === false ? 'is-hidden' : ''}">
-                        <div class="quick-corner-tools">
-                            <button type="button" class="corner-tool-btn" onclick="quickDuplicateProduct('${item.id}')" title="Duplicar prenda">📄</button>
-                            <button type="button" class="corner-tool-btn del" onclick="askDeleteProduct('${item.id}', false)" title="Eliminar prenda">✕</button>
-                        </div>
                         <div class="prod-thumb-wrap" onclick="openEditModal('${item.id}')">
                             ${item.destacado ? `<span class="badge-home">⭐ Home</span>` : ''}
                             ${item.visible === false ? `<span class="badge-paused">Pausado</span>` : ''}
-                            ${photos.length > 1 ? `<span class="badge-multicount">📸 ${photos.length} fotos</span>` : ''}
-                            <img src="${imgUrl(coverPhoto)}" alt="${item.nombre}" loading="lazy" onerror="handleThumbError(this, '${coverPhoto}')">
+                            ${photos.length > 1 ? `<span class="badge-multicount">${photos.length} fotos</span>` : ''}
+                            ${isVid ? `<span class="badge-multicount" style="left:8px; right:auto; bottom:8px;">🎬 Video</span>` : ''}
+
+                            <div class="quick-corner-tools" onclick="event.stopPropagation()">
+                                <button type="button" class="corner-tool-btn" title="Duplicar producto" onclick="duplicateProduct('${item.id}')">📑</button>
+                                <button type="button" class="corner-tool-btn del" title="Eliminar producto" onclick="askDeleteProduct('${item.id}', false)">✕</button>
+                            </div>
+
+                            ${mediaMarkup}
                         </div>
                         <div class="prod-body" onclick="openEditModal('${item.id}')" style="cursor:pointer;">
                             <span class="prod-kicker">${item.rubro} · ${item.subcategoria}</span>
@@ -675,55 +681,62 @@
             const item = catalogItems.find(i => i.id === id);
             if (!item) return;
             item.visible = item.visible === false;
-            await saveCatalogToD1(item.visible ? '👁️ Visible en la tienda' : 'Producto pausado');
+            await saveCatalogToD1(item.visible ? '👁️ Prenda visible en la tienda' : 'Prenda pausada');
         }
 
-        // =========================================================
-        // 3. DUPLICAR RÁPIDO & ELIMINAR CON CONFIRMACIÓN PRUDENTE
-        // =========================================================
-        async function quickDuplicateProduct(id) {
-            const original = catalogItems.find(i => i.id === id);
-            if (!original) return;
-
+        async function duplicateProduct(id) {
+            const orig = catalogItems.find(i => i.id === id);
+            if (!orig) return;
             undoSnapshot = JSON.stringify(catalogItems);
-            const clone = JSON.parse(JSON.stringify(original));
+
+            const clone = JSON.parse(JSON.stringify(orig));
             clone.id = `mk-${Date.now()}`;
-            clone.nombre = `${clone.nombre} (Copia)`;
+            clone.nombre = `${orig.nombre} (Copia)`;
             clone.destacado = false;
             clone.visible = true;
 
             catalogItems.unshift(clone);
-            await saveCatalogToD1(`✓ Prenda duplicada: "${clone.nombre}"`, true);
+            await saveCatalogToD1(`✓ Duplicado: "${clone.nombre}"`, true);
         }
 
-        function askDeleteProduct(id, fromInsideModal = false) {
-            const target = catalogItems.find(i => i.id === id);
-            if (!target) return;
-
+        function askDeleteProduct(id, fromModal = false) {
+            const item = catalogItems.find(i => i.id === id);
+            if (!item) return;
             openConfirmDialog(
                 '🗑️',
-                '¿Eliminar esta prenda?',
-                `Vas a eliminar "${target.nombre}". Si confirmás, se borrará del catálogo y de la web.`,
+                '¿Eliminar este producto?',
+                `"${item.nombre}" se eliminará del catálogo. Podés recuperarlo inmediatamente con el botón Deshacer.`,
                 'Sí, eliminar',
                 '#B91C1C',
                 async () => {
                     undoSnapshot = JSON.stringify(catalogItems);
                     catalogItems = catalogItems.filter(i => i.id !== id);
-
-                    if (fromInsideModal) {
-                        closeEditModalDirect();
-                    }
-
-                    await saveCatalogToD1(`🗑️ Prenda eliminada: "${target.nombre}"`, true);
+                    if (fromModal) closeEditModal();
+                    await saveCatalogToD1(`🗑️ "${item.nombre}" eliminado`, true);
                 }
             );
         }
 
-        // =========================================================
-        // 4. COMPRESIÓN DE ALTA DEFINICIÓN (LANCZOS + WEBP 86%)
-        // =========================================================
-        function compressImageToWebP(file, maxDim = 1600, quality = 0.86) {
+        /* 3. PROCESADOR INTELIGENTE (FOTO WEBP O VIDEO MP4) */
+        function processMediaFile(file, maxDim = 1200, quality = 0.86) {
             return new Promise((resolve, reject) => {
+                const isVid = file.type.startsWith('video/') || /\.(mp4|webm|mov)$/i.test(file.name);
+                if (isVid) {
+                    const reader = new FileReader();
+                    reader.onerror = reject;
+                    reader.onload = e => {
+                        const dataUrl = e.target.result;
+                        resolve({
+                            isVideo: true,
+                            dataUrl,
+                            base64: dataUrl.split(',')[1],
+                            ext: file.name.split('.').pop().toLowerCase() || 'mp4'
+                        });
+                    };
+                    reader.readAsDataURL(file);
+                    return;
+                }
+
                 const reader = new FileReader();
                 reader.onerror = reject;
                 reader.onload = e => {
@@ -736,14 +749,17 @@
                             else { w = Math.round((w * maxDim) / h); h = maxDim; }
                         }
                         const canvas = document.createElement('canvas');
-                        canvas.width = w;
-                        canvas.height = h;
+                        canvas.width = w; canvas.height = h;
                         const ctx = canvas.getContext('2d');
-                        ctx.imageSmoothingEnabled = true;
-                        ctx.imageSmoothingQuality = 'high';
                         ctx.drawImage(img, 0, 0, w, h);
                         const dataUrl = canvas.toDataURL('image/webp', quality);
-                        resolve({ dataUrl, base64: dataUrl.split(',')[1], w, h });
+                        resolve({
+                            isVideo: false,
+                            dataUrl,
+                            base64: dataUrl.split(',')[1],
+                            ext: 'webp',
+                            ratio: (w / h)
+                        });
                     };
                     img.src = e.target.result;
                 };
@@ -758,95 +774,70 @@
             return String(sub || '').toLowerCase().includes('hombre') ? 'media/indumentaria/hombre' : 'media/indumentaria/mujer';
         }
 
-        // =========================================================
-        // 5. ASISTENTE MULTI-FOTOS: SI SUBE 2 O 39 FOTOS A LA VEZ
-        // =========================================================
+        /* 4. ASISTENTE AGRUPADOR MULTI-FOTO */
         async function handleUploadPicker(fileList) {
             const files = Array.from(fileList || []);
             if (!files.length) return;
-            document.getElementById('batchFileInput').value = '';
+            showToast(`Procesando ${files.length} archivo(s)...`);
 
-            // 1 sola foto -> Se publica directo como prenda nueva
-            if (files.length === 1) {
-                showToast('Comprimiendo foto...');
-                try {
-                    const { dataUrl, base64 } = await compressImageToWebP(files[0]);
-                    const slug = files[0].name.replace(/\.[^/.]+$/, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 26);
-                    const path = `media/indumentaria/mujer/${slug}-${Date.now()}.webp`;
-
-                    localPreviewCache[path] = dataUrl;
-
-                    catalogItems.unshift({
-                        id: `mk-${Date.now()}`,
-                        rubro: 'Indumentaria',
-                        subcategoria: 'Mujer',
-                        nombre: 'Nueva Prenda (Editar)',
-                        precioARS: '',
-                        precioPYG: '',
-                        precioBRL: '',
-                        descripcion: 'Pieza seleccionada de nuestra colección en Puerto Iguazú.',
-                        foto: path,
-                        fotos: [path],
-                        etiqueta: 'NEW',
-                        talles: 'S, M, L',
-                        colores: '',
-                        destacado: false,
-                        visible: true
-                    });
-
-                    await saveCatalogToD1('✓ Prenda nueva agregada al inicio');
-
-                    // Sube a GitHub en segundo plano
-                    apiCall('/api/media', {
-                        method: 'POST',
-                        body: JSON.stringify({ path, base64, message: `Panel: subir ${slug}` })
-                    });
-                } catch (ex) {
-                    alert('No se pudo procesar la foto.');
-                }
-                return;
-            }
-
-            // 2 o más fotos -> Abre el asistente interactivo de agrupación
-            showToast(`Preparando ${files.length} fotos...`);
-            pendingGroups = [];
-
+            const processed = [];
             for (let i = 0; i < files.length; i++) {
                 try {
-                    const { dataUrl, base64 } = await compressImageToWebP(files[i]);
-                    pendingGroups.push({
-                        selected: false,
-                        fotos: [{
-                            previewUrl: dataUrl,
-                            base64,
-                            origName: files[i].name
-                        }]
+                    const res = await processMediaFile(files[i]);
+                    processed.push({
+                        previewUrl: res.dataUrl,
+                        base64: res.base64,
+                        isVideo: res.isVideo,
+                        ext: res.ext,
+                        origName: files[i].name
                     });
                 } catch (_) {}
             }
 
-            if (!pendingGroups.length) return;
+            document.getElementById('batchFileInput').value = '';
+            if (!processed.length) return;
+
+            if (processed.length === 1) {
+                pendingGroups = [{ items: [processed[0]], selected: false }];
+                await publishAllGroupedItems();
+                return;
+            }
+
+            pendingGroups = processed.map(p => ({ items: [p], selected: false }));
+            openGroupWizard();
+        }
+
+        function openGroupWizard() {
             renderGroupWizard();
             document.getElementById('groupModal').classList.add('open');
         }
 
+        function cancelGroupWizard() {
+            pendingGroups = [];
+            document.getElementById('groupModal').classList.remove('open');
+        }
+
         function renderGroupWizard() {
             const grid = document.getElementById('groupGrid');
-            const totalPhotos = pendingGroups.reduce((acc, g) => acc + g.fotos.length, 0);
             const selCount = pendingGroups.filter(g => g.selected).length;
-
-            document.getElementById('groupSummaryLbl').innerText = `${pendingGroups.length} prendas a crear (${totalPhotos} fotos totales)`;
-            document.getElementById('btnMergeSelected').style.display = selCount >= 2 ? 'inline-flex' : 'none';
-            document.getElementById('btnQuickMergeAll').style.display = pendingGroups.length >= 2 ? 'inline-flex' : 'none';
             document.getElementById('selCountSpan').innerText = selCount;
+            document.getElementById('btnMergeSelected').style.display = selCount >= 2 ? 'inline-flex' : 'none';
+            document.getElementById('btnQuickMergeAll').style.display = (pendingGroups.length >= 2 && selCount === 0) ? 'inline-flex' : 'none';
+            document.getElementById('groupSummaryLbl').innerText = `${pendingGroups.length} producto(s) a publicar`;
 
-            grid.innerHTML = pendingGroups.map((g, idx) => {
-                const cover = g.fotos[0].previewUrl;
+            grid.innerHTML = pendingGroups.map((grp, idx) => {
+                const cover = grp.items[0];
+                const isVid = cover.isVideo;
+                const mediaTag = isVid
+                    ? `<video src="${cover.previewUrl}" autoplay loop muted playsinline onloadedmetadata="applySmartFit(this)"></video>`
+                    : `<img src="${cover.previewUrl}" alt="Foto" onload="applySmartFit(this)">`;
+
                 return `
-                    <div class="group-photo-tile ${g.selected ? 'selected' : ''}" onclick="toggleGroupSelect(${idx})">
-                        <div class="group-check-badge">${g.selected ? '✓' : ''}</div>
-                        <img src="${cover}" alt="Foto ${idx + 1}">
-                        ${g.fotos.length > 1 ? `<div class="group-count-pill">📸 ${g.fotos.length} fotos juntas</div>` : ''}
+                    <div class="group-photo-tile ${grp.selected ? 'selected' : ''}" onclick="toggleGroupSelect(${idx})">
+                        <span class="group-check-badge">${grp.selected ? '✓' : ''}</span>
+                        ${mediaTag}
+                        <button type="button" class="group-remove-btn" onclick="event.stopPropagation(); removePendingGroup(${idx})" title="Quitar">✕</button>
+                        ${grp.items.length > 1 ? `<span class="group-count-pill">${grp.items.length} fotos unidas</span>` : (isVid ? `<span class="group-count-pill">Video</span>` : '')}
                     </div>
                 `;
             }).join('');
@@ -860,103 +851,97 @@
 
         function mergeSelectedGroupItems() {
             const selectedIndices = [];
-            pendingGroups.forEach((g, idx) => { if (g.selected) selectedIndices.push(idx); });
+            pendingGroups.forEach((g, i) => { if (g.selected) selectedIndices.push(i); });
             if (selectedIndices.length < 2) return;
 
-            const mergedFotos = [];
+            const mergedItems = [];
             selectedIndices.forEach(i => {
-                mergedFotos.push(...pendingGroups[i].fotos);
+                pendingGroups[i].items.forEach(it => mergedItems.push(it));
             });
 
-            // Reemplaza el primer seleccionado con todas las fotos unidas y quita los demás
-            const keepIndex = selectedIndices[0];
-            pendingGroups[keepIndex] = {
-                selected: false,
-                fotos: mergedFotos
-            };
-
-            for (let i = selectedIndices.length - 1; i >= 1; i--) {
-                pendingGroups.splice(selectedIndices[i], 1);
-            }
-
+            pendingGroups = pendingGroups.filter(g => !g.selected);
+            pendingGroups.unshift({ items: mergedItems, selected: false });
             renderGroupWizard();
-            showToast(`✓ Uniste ${mergedFotos.length} fotos en 1 mismo producto`);
+            showToast('✓ Fotos agrupadas en un solo producto');
         }
 
         function mergeAllIntoOneProduct() {
             if (pendingGroups.length < 2) return;
-            const allFotos = [];
-            pendingGroups.forEach(g => allFotos.push(...g.fotos));
-            pendingGroups = [{ selected: false, fotos: allFotos }];
+            const allItems = [];
+            pendingGroups.forEach(g => g.items.forEach(it => allItems.push(it)));
+            pendingGroups = [{ items: allItems, selected: false }];
             renderGroupWizard();
-            showToast(`✓ Todas las fotos (${allFotos.length}) unidas en 1 solo producto`);
+            showToast('✓ Todas las fotos unidas en un solo producto');
         }
 
-        function cancelGroupWizard() {
-            document.getElementById('groupModal').classList.remove('open');
-            pendingGroups = [];
+        function removePendingGroup(idx) {
+            pendingGroups.splice(idx, 1);
+            if (!pendingGroups.length) cancelGroupWizard();
+            else renderGroupWizard();
         }
 
         async function publishAllGroupedItems() {
             const btn = document.getElementById('btnPublishGroups');
-            btn.innerText = 'Subiendo...';
+            btn.innerText = 'Subiendo a la web...';
             btn.disabled = true;
 
-            const createdCount = pendingGroups.length;
-            const uploadQueue = [];
+            const defaultRubro = ['Indumentaria', 'Deco & Home', 'Bazar', 'Aromas'].includes(currentFilter) ? currentFilter : 'Indumentaria';
+            const folder = folderForRubro(defaultRubro, 'Mujer');
+            let publishedCount = 0;
 
-            pendingGroups.forEach((g, gIdx) => {
-                const productPaths = [];
-                g.fotos.forEach((f, fIdx) => {
-                    const slug = f.origName.replace(/\.[^/.]+$/, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 24);
-                    const path = `media/indumentaria/mujer/${slug}-${Date.now() + gIdx * 10 + fIdx}.webp`;
-                    productPaths.push(path);
-                    localPreviewCache[path] = f.previewUrl;
-                    uploadQueue.push({ path, base64: f.base64, slug });
-                });
+            for (let g = 0; g < pendingGroups.length; g++) {
+                const group = pendingGroups[g];
+                const uploadedPaths = [];
 
-                catalogItems.unshift({
-                    id: `mk-${Date.now()}-${gIdx}`,
-                    rubro: 'Indumentaria',
-                    subcategoria: 'Mujer',
-                    nombre: 'Nueva Prenda (Editar)',
-                    precioARS: '',
-                    precioPYG: '',
-                    precioBRL: '',
-                    descripcion: 'Pieza seleccionada de nuestra colección en Puerto Iguazú.',
-                    foto: productPaths[0],
-                    fotos: productPaths,
-                    etiqueta: 'NEW',
-                    talles: 'S, M, L',
-                    colores: '',
-                    destacado: false,
-                    visible: true
-                });
-            });
+                for (let m = 0; m < group.items.length; m++) {
+                    const item = group.items[m];
+                    const slug = (item.origName || 'prenda').replace(/\.[^/.]+$/, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 24);
+                    const path = `${folder}/${slug}-${Date.now() + g * 10 + m}.${item.ext || 'webp'}`;
 
-            document.getElementById('groupModal').classList.remove('open');
-            pendingGroups = [];
-            btn.innerText = '🚀 Subir y Publicar Todo';
-            btn.disabled = false;
-
-            await saveCatalogToD1(`✓ Se crearon ${createdCount} productos nuevos`);
-
-            // Sube a GitHub en cola en segundo plano sin trabar el panel
-            (async () => {
-                for (const item of uploadQueue) {
                     try {
-                        await apiCall('/api/media', {
+                        const upRes = await apiCall('/api/media', {
                             method: 'POST',
-                            body: JSON.stringify({ path: item.path, base64: item.base64, message: `Upload: ${item.slug}` })
+                            body: JSON.stringify({ path, base64: item.base64, message: `Subida panel: ${slug}` })
                         });
+                        if (upRes.ok) {
+                            localPreviewCache[path] = item.previewUrl;
+                            uploadedPaths.push(path);
+                        }
                     } catch (_) {}
                 }
-            })();
+
+                if (uploadedPaths.length > 0) {
+                    const firstSlugName = (group.items[0].origName || '').replace(/\.[^/.]+$/, '').replace(/[-_]+/g, ' ');
+                    const cleanTitle = firstSlugName ? firstSlugName.replace(/\b\w/g, l => l.toUpperCase()) : 'Nueva Prenda';
+
+                    catalogItems.unshift({
+                        id: `mk-${Date.now()}-${g}`,
+                        rubro: defaultRubro,
+                        subcategoria: defaultRubro === 'Indumentaria' ? 'Mujer' : 'General',
+                        nombre: cleanTitle,
+                        precioARS: '',
+                        precioPYG: '',
+                        precioBRL: '',
+                        descripcion: 'Pieza seleccionada de nuestra colección en Puerto Iguazú.',
+                        foto: uploadedPaths[0],
+                        fotos: uploadedPaths,
+                        etiqueta: 'NEW',
+                        talles: defaultRubro === 'Indumentaria' ? 'S, M, L' : 'Único',
+                        colores: '',
+                        destacado: false,
+                        visible: true
+                    });
+                    publishedCount++;
+                }
+            }
+
+            cancelGroupWizard();
+            btn.innerText = '🚀 Subir y Publicar Todo';
+            btn.disabled = false;
+            await saveCatalogToD1(`✓ ${publishedCount} producto(s) publicados con éxito`);
         }
 
-        // =========================================================
-        // 6. MODAL EDITOR INDIVIDUAL CON MULTI-FOTO
-        // =========================================================
+        /* 5. MODAL DE EDICIÓN VISUAL */
         function markDirty() { editorDirty = true; }
 
         function buildVisualPickers() {
@@ -1008,99 +993,27 @@
             buildVisualPickers();
         }
 
-        function renderEditorMultiThumbs() {
-            const strip = document.getElementById('edMultiThumbsStrip');
-            const previewImg = document.getElementById('edPreviewImg');
-
-            if (!editorPhotos.length) {
-                previewImg.src = '';
-                strip.innerHTML = '';
-                document.getElementById('edPhotoStatus').innerText = 'Agregá al menos una foto.';
-                return;
-            }
-
-            previewImg.src = editorPhotos[0].previewUrl || imgUrl(editorPhotos[0].path);
-
-            strip.innerHTML = editorPhotos.map((p, idx) => {
-                const src = p.previewUrl || imgUrl(p.path);
-                return `
-                    <div class="m-thumb-box ${idx === 0 ? 'is-cover' : ''}" onclick="makeCoverPhoto(${idx})" title="Tocar para hacer portada">
-                        <img src="${src}" alt="Foto ${idx + 1}">
-                        ${idx === 0 ? `<span class="m-thumb-cov">Portada</span>` : ''}
-                        <button type="button" class="m-thumb-del" onclick="event.stopPropagation(); removePhotoFromEditor(${idx});" title="Borrar este ángulo">✕</button>
-                    </div>
-                `;
-            }).join('');
-
-            document.getElementById('edPhotoStatus').innerText = `${editorPhotos.length} foto(s) asignadas. La primera es la portada principal.`;
-        }
-
-        function makeCoverPhoto(idx) {
-            if (idx === 0 || !editorPhotos[idx]) return;
-            markDirty();
-            const moved = editorPhotos.splice(idx, 1)[0];
-            editorPhotos.unshift(moved);
-            renderEditorMultiThumbs();
-            showToast('✓ Foto asignada como portada');
-        }
-
-        function removePhotoFromEditor(idx) {
-            if (!editorPhotos[idx]) return;
-            markDirty();
-            editorPhotos.splice(idx, 1);
-            renderEditorMultiThumbs();
-        }
-
-        async function handleAddAnglesToProduct(input) {
-            const files = Array.from(input.files || []);
-            if (!files.length) return;
-            input.value = '';
-            markDirty();
-            showToast(`Optimizando ${files.length} foto(s)...`);
-
-            const rubro = document.getElementById('edRubro').value;
-            const sub = document.getElementById('edSub').value;
-            const folder = folderForRubro(rubro, sub);
-
-            for (let i = 0; i < files.length; i++) {
-                try {
-                    const { dataUrl, base64 } = await compressImageToWebP(files[i]);
-                    const slug = files[i].name.replace(/\.[^/.]+$/, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 24);
-                    const path = `${folder}/${slug}-${Date.now() + i}.webp`;
-                    localPreviewCache[path] = dataUrl;
-
-                    editorPhotos.push({
-                        path,
-                        previewUrl: dataUrl,
-                        isNew: true,
-                        base64
-                    });
-                } catch (_) {}
-            }
-            renderEditorMultiThumbs();
-        }
-
         function openNewProductModal() {
             editingId = null;
             editorPhotos = [];
             editorDirty = false;
 
-            document.getElementById('modalTitle').innerText = '+ Nueva Prenda / Producto';
+            document.getElementById('modalTitle').innerText = '+ Nueva Prenda';
             document.getElementById('edRubro').value = 'Indumentaria';
             document.getElementById('edSub').value = 'Mujer';
             document.getElementById('edNombre').value = '';
             document.getElementById('edArs').value = '';
             document.getElementById('edPyg').value = '';
             document.getElementById('edBrl').value = '';
-            document.getElementById('edTag').value = '';
+            document.getElementById('edTag').value = 'NEW';
             document.getElementById('edColores').value = '';
             document.getElementById('edTalles').value = 'S, M, L';
-            document.getElementById('edDesc').value = 'Prenda seleccionada de nuestra colección en Puerto Iguazú.';
+            document.getElementById('edDesc').value = 'Pieza seleccionada de nuestra colección en Puerto Iguazú.';
             document.getElementById('edHome').checked = false;
             document.getElementById('edVisible').checked = true;
             document.getElementById('edDeleteBtn').style.display = 'none';
 
-            renderEditorMultiThumbs();
+            renderEditorMediaStrip();
             buildVisualPickers();
             document.getElementById('editModal').classList.add('open');
         }
@@ -1108,15 +1021,15 @@
         function openEditModal(id) {
             const item = catalogItems.find(i => i.id === id);
             if (!item) return;
-
             editingId = id;
             editorDirty = false;
-            const photos = getItemPhotosList(item);
-            editorPhotos = photos.map(p => ({
+
+            const existingList = getItemPhotosList(item);
+            editorPhotos = existingList.map(p => ({
                 path: p,
-                previewUrl: localPreviewCache[p] || null,
-                isNew: false,
-                base64: null
+                previewUrl: imgUrl(p),
+                isVideo: isVideoPath(p),
+                isNew: false
             }));
 
             document.getElementById('modalTitle').innerText = 'Editar Producto';
@@ -1134,66 +1047,144 @@
             document.getElementById('edVisible').checked = item.visible !== false;
             document.getElementById('edDeleteBtn').style.display = 'inline-flex';
 
-            renderEditorMultiThumbs();
+            renderEditorMediaStrip();
             buildVisualPickers();
             document.getElementById('editModal').classList.add('open');
+        }
+
+        function renderEditorMediaStrip() {
+            const stage = document.getElementById('edPreviewStage');
+            const strip = document.getElementById('edMultiThumbsStrip');
+            const status = document.getElementById('edPhotoStatus');
+
+            if (!editorPhotos.length) {
+                stage.innerHTML = `<div style="display:flex; align-items:center; justify-content:center; height:100%; color:var(--ink-muted); font-size:0.80rem;">Sin fotos asignadas</div>`;
+                strip.innerHTML = '';
+                status.innerText = 'Elegí 1 o más fotos con el botón de abajo.';
+                return;
+            }
+
+            const cover = editorPhotos[0];
+            const isVid = cover.isVideo;
+            stage.innerHTML = isVid
+                ? `<video src="${cover.previewUrl}" class="editor-photo-preview" autoplay loop muted playsinline onloadedmetadata="applySmartFit(this)"></video>`
+                : `<img src="${cover.previewUrl}" class="editor-photo-preview" alt="Portada" onload="applySmartFit(this)">`;
+
+            strip.innerHTML = editorPhotos.map((m, idx) => `
+                <div class="m-thumb-box ${idx === 0 ? 'is-cover' : ''}" onclick="setCoverPhotoIndex(${idx})">
+                    ${m.isVideo
+                        ? `<video src="${m.previewUrl}" muted onloadedmetadata="applySmartFit(this)"></video>`
+                        : `<img src="${m.previewUrl}" alt="Mini" onload="applySmartFit(this)">`}
+                    <button type="button" class="m-thumb-del" onclick="event.stopPropagation(); removeEditorPhoto(${idx})">✕</button>
+                    ${idx === 0 ? `<span class="m-thumb-cov">Portada</span>` : ''}
+                </div>
+            `).join('');
+
+            status.innerText = `${editorPhotos.length} foto(s)/video(s). La primera es la portada principal.`;
+        }
+
+        function setCoverPhotoIndex(idx) {
+            if (idx === 0 || !editorPhotos[idx]) return;
+            markDirty();
+            const chosen = editorPhotos.splice(idx, 1)[0];
+            editorPhotos.unshift(chosen);
+            renderEditorMediaStrip();
+        }
+
+        function removeEditorPhoto(idx) {
+            markDirty();
+            editorPhotos.splice(idx, 1);
+            renderEditorMediaStrip();
+        }
+
+        async function handleAddAnglesToProduct(input) {
+            const files = Array.from(input.files || []);
+            if (!files.length) return;
+            markDirty();
+            showToast(`Optimizando ${files.length} archivo(s)...`);
+
+            for (let f of files) {
+                try {
+                    const res = await processMediaFile(f);
+                    editorPhotos.push({
+                        path: null,
+                        previewUrl: res.dataUrl,
+                        base64: res.base64,
+                        isVideo: res.isVideo,
+                        ext: res.ext,
+                        origName: f.name,
+                        isNew: true
+                    });
+                } catch (_) {}
+            }
+            input.value = '';
+            renderEditorMediaStrip();
         }
 
         function attemptCloseEditModal() {
             if (editorDirty) {
                 openConfirmDialog(
                     '⚠️',
-                    '¿Salir sin guardar?',
-                    'Hiciste modificaciones que no fueron guardadas todavía.',
+                    '¿Cerrar sin guardar?',
+                    'Tenés cambios sin publicar en este producto. Si salís ahora se descartarán.',
                     'Sí, salir',
                     '#0D0D0D',
-                    () => closeEditModalDirect()
+                    () => closeEditModal()
                 );
             } else {
-                closeEditModalDirect();
+                closeEditModal();
             }
         }
 
-        function closeEditModalDirect() {
+        function closeEditModal() {
             document.getElementById('editModal').classList.remove('open');
             document.getElementById('edFileInput').value = '';
-            editingId = null;
-            editorPhotos = [];
             editorDirty = false;
         }
 
         async function saveProductForm(e) {
             e.preventDefault();
             if (!editorPhotos.length) {
-                alert('Por favor agregá al menos una foto para la prenda.');
+                alert('Por favor agregá al menos 1 foto o video a este producto.');
                 return;
             }
 
             const btn = document.getElementById('edSaveBtn');
-            btn.innerText = 'GUARDANDO...';
+            btn.innerText = 'GUARDANDO Y PUBLICANDO...';
             btn.disabled = true;
 
             try {
-                // Sube las fotos nuevas a GitHub en segundo plano
-                const newUploads = editorPhotos.filter(p => p.isNew && p.base64);
-                (async () => {
-                    for (const up of newUploads) {
-                        try {
-                            await apiCall('/api/media', {
-                                method: 'POST',
-                                body: JSON.stringify({ path: up.path, base64: up.base64, message: `Upload photo: ${up.path}` })
-                            });
-                        } catch (_) {}
-                    }
-                })();
-
-                const finalPaths = editorPhotos.map(p => p.path);
                 const existing = editingId ? catalogItems.find(i => i.id === editingId) : null;
+                const defaultRubro = document.getElementById('edRubro').value;
+                const sub = document.getElementById('edSub').value.trim() || 'Mujer';
+                const folder = folderForRubro(defaultRubro, sub);
+                const finalMediaPaths = [];
+
+                for (let i = 0; i < editorPhotos.length; i++) {
+                    const ph = editorPhotos[i];
+                    if (ph.isNew && ph.base64) {
+                        const slug = (ph.origName || 'angulo').replace(/\.[^/.]+$/, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 24);
+                        const path = `${folder}/${slug}-${Date.now() + i}.${ph.ext || 'webp'}`;
+
+                        const upRes = await apiCall('/api/media', {
+                            method: 'POST',
+                            body: JSON.stringify({ path, base64: ph.base64, message: `Subida ángulo: ${slug}` })
+                        });
+                        if (upRes.ok) {
+                            localPreviewCache[path] = ph.previewUrl;
+                            finalMediaPaths.push(path);
+                        }
+                    } else if (ph.path) {
+                        finalMediaPaths.push(ph.path);
+                    }
+                }
+
+                if (!finalMediaPaths.length) throw new Error('No se pudo subir ningún archivo multimedia.');
 
                 const payload = {
                     id: existing ? existing.id : `mk-${Date.now()}`,
-                    rubro: document.getElementById('edRubro').value,
-                    subcategoria: document.getElementById('edSub').value.trim() || 'Mujer',
+                    rubro: defaultRubro,
+                    subcategoria: sub,
                     nombre: document.getElementById('edNombre').value.trim(),
                     precioARS: document.getElementById('edArs').value.trim(),
                     precioPYG: document.getElementById('edPyg').value.trim(),
@@ -1202,13 +1193,12 @@
                     colores: document.getElementById('edColores').value.trim(),
                     talles: document.getElementById('edTalles').value.trim(),
                     descripcion: document.getElementById('edDesc').value.trim(),
-                    foto: finalPaths[0],
-                    fotos: finalPaths,
+                    foto: finalMediaPaths[0],
+                    fotos: finalMediaPaths,
                     destacado: document.getElementById('edHome').checked,
                     visible: document.getElementById('edVisible').checked
                 };
 
-                undoSnapshot = JSON.stringify(catalogItems);
                 if (existing) {
                     const idx = catalogItems.findIndex(i => i.id === existing.id);
                     catalogItems[idx] = payload;
@@ -1216,8 +1206,8 @@
                     catalogItems.unshift(payload);
                 }
 
-                closeEditModalDirect();
-                await saveCatalogToD1('✓ Prenda guardada y publicada al instante', true);
+                closeEditModal();
+                await saveCatalogToD1('✓ Cambios guardados con éxito');
             } catch (ex) {
                 alert(ex.message || 'Error al guardar');
             } finally {
@@ -1226,34 +1216,31 @@
             }
         }
 
-        // =========================================================
-        // 7. DIÁLOGO DE CONFIRMACIÓN PRUDENTE
-        // =========================================================
+        /* 6. DIÁLOGOS DE CONFIRMACIÓN PRUDENTES */
         let confirmActionFn = null;
-        function openConfirmDialog(icon, title, msg, acceptText, acceptBg, onAccept) {
+        function openConfirmDialog(icon, title, msg, btnText, btnColor, onConfirm) {
             document.getElementById('confIcon').innerText = icon;
             document.getElementById('confTitle').innerText = title;
             document.getElementById('confMsg').innerText = msg;
-            const btn = document.getElementById('confAcceptBtn');
-            btn.innerText = acceptText;
-            btn.style.background = acceptBg;
-            confirmActionFn = onAccept;
+            const acceptBtn = document.getElementById('confAcceptBtn');
+            acceptBtn.innerText = btnText;
+            acceptBtn.style.background = btnColor;
+            confirmActionFn = onConfirm;
             document.getElementById('confirmModal').classList.add('open');
         }
 
         function closeConfirmModal() {
-            document.getElementById('confirmModal').classList.remove('open');
             confirmActionFn = null;
+            document.getElementById('confirmModal').classList.remove('open');
         }
 
         document.getElementById('confAcceptBtn').addEventListener('click', () => {
-            if (typeof confirmActionFn === 'function') confirmActionFn();
+            const fn = confirmActionFn;
             closeConfirmModal();
+            if (typeof fn === 'function') fn();
         });
 
-        // =========================================================
-        // 8. DETECTAR FOTOS DE GITHUB SIN BORRAR NADA DEL PANEL
-        // =========================================================
+        /* 7. DETECTOR DE FOTOS SUBIDAS DIRECTO A GITHUB (NO BORRA NADA) */
         async function syncGithubPhotos() {
             const btn = document.getElementById('syncBtn');
             btn.innerText = 'Escaneando...';
@@ -1264,18 +1251,17 @@
                 const data = await res.json();
                 if (!data.ok) throw new Error();
 
-                const existingPaths = new Set();
-                catalogItems.forEach(it => {
-                    getItemPhotosList(it).forEach(p => existingPaths.add(p));
+                const assigned = new Set();
+                catalogItems.forEach(item => {
+                    getItemPhotosList(item).forEach(p => assigned.add(p));
                 });
 
-                const newFiles = (data.files || []).filter(p => !existingPaths.has(p));
-                if (newFiles.length === 0) {
-                    showToast('✓ Todo al día: no hay fotos nuevas sin registrar');
+                const newFiles = (data.files || []).filter(p => !assigned.has(p));
+                if (!newFiles.length) {
+                    showToast('✓ Todo está sincronizado (no hay fotos nuevas en GitHub)');
                     return;
                 }
 
-                undoSnapshot = JSON.stringify(catalogItems);
                 newFiles.forEach((p, idx) => {
                     const parts = p.split('/');
                     const folder = (parts[1] || '').toLowerCase();
@@ -1299,16 +1285,15 @@
                     });
                 });
 
-                await saveCatalogToD1(`✓ Se agregaron ${newFiles.length} foto(s) nuevas de GitHub`, true);
+                await saveCatalogToD1(`✓ ${newFiles.length} foto(s) nuevas añadidas desde GitHub`);
             } catch (_) {
-                alert('No se pudo escanear GitHub.');
+                alert('No se pudo conectar con GitHub.');
             } finally {
                 btn.innerText = '🔄 Detectar Fotos GitHub';
                 btn.disabled = false;
             }
         }
 
-        // Auto-ingreso si ya inició sesión previamente
         if (adminPass) {
             fetch('/api/catalog?check=1', { headers: { 'x-admin-pass': adminPass } })
                 .then(r => { if (r.ok) enterDashboard(); });
