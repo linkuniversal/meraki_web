@@ -25,6 +25,36 @@ function applySmartFit(el) {
     if (el) el.classList.add('fit-contain');
 }
 
+function fallbackToGithubRaw(el) {
+    if (!el || el.dataset.fbDone) return;
+    el.dataset.fbDone = '1';
+    try {
+        const u = new URL(el.src, location.origin);
+        if (u.origin === location.origin && u.pathname.startsWith('/media/')) {
+            el.src = `https://raw.githubusercontent.com/${CONFIG.GITHUB_OWNER}/${CONFIG.GITHUB_REPO}/${CONFIG.GITHUB_BRANCH}${u.pathname}`;
+        }
+    } catch (_) {}
+}
+
+function loadHoverMedia(cardEl) {
+    const el = cardEl && cardEl.querySelector('.product-img-hover[data-hover-src]');
+    if (!el) return;
+    el.src = el.dataset.hoverSrc;
+    el.removeAttribute('data-hover-src');
+}
+
+function initHeroVideo() {
+    const vid = document.getElementById('heroVideoPlayer');
+    if (!vid || vid.dataset.loaded === '1') return;
+    const src = vid.getAttribute('data-src');
+    const fb = vid.getAttribute('data-fallback');
+    if (!src) return;
+    vid.dataset.loaded = '1';
+    vid.innerHTML = `<source src="${src}" type="video/mp4">` + (fb ? `<source src="${fb}" type="video/mp4">` : '');
+    vid.load();
+    vid.play().catch(() => {});
+}
+
 function pushHistoryState(modalId) {
     modalStateStack.push(modalId);
     history.pushState({ modalOpen: true, modalId }, '');
@@ -64,7 +94,7 @@ function setCurrency(curr) {
         b.classList.toggle('active', b.dataset.curr === curr);
     });
     if (PRODUCTS.length > 0) {
-        renderHomeCuratedGrid();
+        if (currentView === 'home') renderHomeCuratedGrid();
         if (currentView === 'category') renderCategoryGrid();
     }
     renderBagDrawer();
@@ -85,8 +115,10 @@ function getOrderedRubros() {
 
 function afterCatalogLoaded() {
     buildTopBarAndUniverses();
-    renderHomeCuratedGrid();
     handleRouteFromHash();
+    if (currentView === 'home') {
+        renderHomeCuratedGrid();
+    }
 }
 
 function buildTopBarAndUniverses() {
@@ -188,6 +220,10 @@ function navigateToHome(e) {
     document.getElementById('searchExpandBar').classList.remove('open');
     document.getElementById('pageCategoryView').classList.remove('active');
     document.getElementById('pageHomeView').classList.add('active');
+    if (PRODUCTS.length > 0 && !document.querySelector('#homeCuratedGrid .product-card-minimal')) {
+        renderHomeCuratedGrid();
+    }
+    initHeroVideo();
     // URL limpia sin redundancias (#inicio)
     if (location.hash) history.replaceState(null, '', window.location.pathname);
     setActiveHeaderTab('home');
@@ -233,6 +269,10 @@ function scrollToSection(e, sectionId) {
         currentView = 'home';
         document.getElementById('pageCategoryView').classList.remove('active');
         document.getElementById('pageHomeView').classList.add('active');
+        if (PRODUCTS.length > 0 && !document.querySelector('#homeCuratedGrid .product-card-minimal')) {
+            renderHomeCuratedGrid();
+        }
+        initHeroVideo();
         setTimeout(perform, 60);
     } else {
         perform();
@@ -330,7 +370,7 @@ function getMediaList(item) {
 function createProductCardHTML(item, idx = 99) {
     const priceStr = formatPriceDisplay(item);
     const subLabel = [item.rubro, item.subcategoria].filter(Boolean).join(' · ');
-    const fetchAttr = idx < 4 ? 'fetchpriority="high"' : '';
+    const fetchAttr = idx < 8 ? 'fetchpriority="high"' : 'loading="lazy"';
     const mediaList = getMediaList(item);
     const coverMedia = mediaList[0] || item.imagen || '';
     const hoverMedia = mediaList.length > 1 ? mediaList[1] : '';
@@ -338,19 +378,19 @@ function createProductCardHTML(item, idx = 99) {
 
     const isCoverVid = isVideoPath(coverMedia);
     const coverMarkup = isCoverVid
-        ? `<video src="${coverMedia}" autoplay loop muted playsinline onloadedmetadata="applySmartFit(this)"></video>`
-        : `<img src="${coverMedia}" alt="${item.nombre}" ${fetchAttr} decoding="async" onload="applySmartFit(this)">`;
+        ? `<video src="${coverMedia}" autoplay loop muted playsinline preload="metadata" onloadedmetadata="applySmartFit(this)"></video>`
+        : `<img src="${coverMedia}" alt="${item.nombre}" ${fetchAttr} decoding="async" onload="applySmartFit(this)" onerror="fallbackToGithubRaw(this)">`;
 
     let hoverMarkup = '';
     if (hasMulti) {
         const isHoverVid = isVideoPath(hoverMedia);
         hoverMarkup = isHoverVid
-            ? `<video src="${hoverMedia}" class="product-img-hover" autoplay loop muted playsinline onloadedmetadata="applySmartFit(this)"></video>`
-            : `<img src="${hoverMedia}" alt="${item.nombre}" class="product-img-hover" decoding="async" onload="applySmartFit(this)">`;
+            ? `<video data-hover-src="${hoverMedia}" class="product-img-hover" autoplay loop muted playsinline preload="none" onloadedmetadata="applySmartFit(this)"></video>`
+            : `<img data-hover-src="${hoverMedia}" alt="${item.nombre}" class="product-img-hover" decoding="async" onload="applySmartFit(this)" onerror="fallbackToGithubRaw(this)">`;
     }
 
     return `
-        <article class="product-card-minimal" onclick="openPdpModal('${item.id}')">
+        <article class="product-card-minimal" onmouseenter="loadHoverMedia(this)" onclick="openPdpModal('${item.id}')">
             <div class="product-image-stage ${hasMulti ? 'has-multi-photo' : ''}">
                 ${item.etiqueta ? `<span class="product-tag-minimal">${item.etiqueta}</span>` : ''}
                 ${hasMulti ? `<span class="product-multi-badge">1/${mediaList.length}</span>` : ''}
@@ -521,7 +561,7 @@ function renderPdpMediaView() {
 
     let innerContent = isVid
         ? `<video src="${currentMedia}" style="width:100%; height:100%; max-height:540px; display:block;" autoplay loop muted playsinline controls onloadedmetadata="applySmartFit(this)"></video>`
-        : `<img id="pdpImg" src="${currentMedia}" alt="${item.nombre}" style="width:100%; height:100%; max-height:540px; display:block;" onload="applySmartFit(this)">`;
+        : `<img id="pdpImg" src="${currentMedia}" alt="${item.nombre}" style="width:100%; height:100%; max-height:540px; display:block;" onload="applySmartFit(this)" onerror="fallbackToGithubRaw(this)">`;
 
     if (mediaList.length > 1) {
         innerContent += `
@@ -532,7 +572,7 @@ function renderPdpMediaView() {
                 <div class="pdp-gal-thumbs">
                     ${mediaList.map((m, idx) => `
                         <div class="pdp-gal-thumb ${idx === currentPdpGalleryIndex ? 'active' : ''}" onclick="setSlideIndex(${idx})">
-                            ${isVideoPath(m) ? `<span style="font-size:0.5rem; display:flex; align-items:center; justify-content:center; height:100%; background:#000; color:#FFF;">▶</span>` : `<img src="${m}" alt="Mini" onload="applySmartFit(this)">`}
+                            ${isVideoPath(m) ? `<span style="font-size:0.5rem; display:flex; align-items:center; justify-content:center; height:100%; background:#000; color:#FFF;">▶</span>` : `<img src="${m}" alt="Mini" onload="applySmartFit(this)" onerror="fallbackToGithubRaw(this)">`}
                         </div>
                     `).join('')}
                 </div>
@@ -731,7 +771,7 @@ function renderBagDrawer() {
 
         const mediaThumb = isVideoPath(coverMedia)
             ? `<video src="${coverMedia}" class="bag-item-img" muted playsinline></video>`
-            : `<img src="${coverMedia}" alt="${details.displayName}" class="bag-item-img" onload="applySmartFit(this)">`;
+            : `<img src="${coverMedia}" alt="${details.displayName}" class="bag-item-img" onload="applySmartFit(this)" onerror="fallbackToGithubRaw(this)">`;
 
         return `
             <div class="bag-item-row">
@@ -945,4 +985,7 @@ window.addEventListener('DOMContentLoaded', () => {
     initScrollAnimations();
     loadCatalog();
     updateFloatingVisibility();
+    if (!location.hash.startsWith('#categoria/')) {
+        setTimeout(initHeroVideo, 120);
+    }
 });
