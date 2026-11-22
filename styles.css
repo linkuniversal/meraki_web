@@ -1266,3 +1266,107 @@ button { font-family: inherit; background: none; border: none; cursor: pointer; 
     transition: all 0.25s var(--ease-luxury);
 }
 .toast-bar.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+/* ==========================================================================
+   10. MULTI-FOTO EN GRILLA, GALERÍA EN MODAL & RENDIMIENTO 1.000+ PRENDAS
+   ========================================================================== */
+.product-card-minimal {
+    content-visibility: auto;
+    contain-intrinsic-size: 260px 410px;
+}
+
+.product-img-hover {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 15%;
+    opacity: 0;
+    transition: opacity 0.35s ease, transform 0.65s var(--ease-luxury);
+    z-index: 1;
+}
+
+@media (hover: hover) {
+    .product-card-minimal:hover .has-multi-photo .product-img-hover {
+        opacity: 1;
+        transform: scale(1.04);
+    }
+}
+
+.product-multi-badge {
+    position: absolute;
+    bottom: 10px;
+    left: 8px;
+    background: rgba(0, 0, 0, 0.72);
+    color: #FFFFFF;
+    font-family: var(--font-mono);
+    font-size: 0.56rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    padding: 3px 7px;
+    z-index: 2;
+}
+
+.pdp-gallery-nav {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+.pdp-gal-arrow {
+    pointer-events: auto;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.92);
+    color: var(--ink-black);
+    font-size: 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.14);
+    transition: transform 0.18s ease, background 0.2s;
+}
+.pdp-gal-arrow:hover { background: var(--ink-black); color: #FFFFFF; }
+.pdp-gal-prev { left: 10px; }
+.pdp-gal-next { right: 10px; }
+
+.pdp-gal-counter {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: rgba(0, 0, 0, 0.75);
+    color: #FFFFFF;
+    font-family: var(--font-mono);
+    font-size: 0.60rem;
+    font-weight: 700;
+    padding: 3px 8px;
+}
+
+.pdp-gal-thumbs {
+    pointer-events: auto;
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 6px;
+    background: rgba(255, 255, 255, 0.88);
+    padding: 4px;
+    max-width: 90%;
+    overflow-x: auto;
+}
+
+.pdp-gal-thumb {
+    width: 36px;
+    height: 44px;
+    opacity: 0.55;
+    border: 1.5px solid transparent;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+.pdp-gal-thumb.active { opacity: 1; border-color: var(--ink-black); }
+.pdp-gal-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
