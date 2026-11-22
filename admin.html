@@ -35,371 +35,197 @@
             color: var(--ink-black);
             min-height: 100vh;
             line-height: 1.45;
-            padding-bottom: 64px;
+            padding-bottom: 72px;
         }
 
         button { font-family: inherit; border: none; background: none; cursor: pointer; color: inherit; }
         input, select, textarea { font-family: inherit; }
 
-        /* =========================================================
-           LOGIN BOUTIQUE (PANTALLA DE ACCESO SIMPLE PARA EL CLIENTE)
-           ========================================================= */
-        .login-screen {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            background: #FFFFFF;
-        }
-
+        /* LOGIN */
+        .login-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; background: #FFFFFF; }
         .login-card {
-            width: min(400px, 100%);
-            border: 1px solid var(--hairline-strong);
-            background: var(--bg-ivory);
-            padding: 36px 28px;
-            display: flex;
-            flex-direction: column;
-            gap: 18px;
-            text-align: center;
+            width: min(400px, 100%); border: 1px solid var(--hairline-strong); background: var(--bg-ivory);
+            padding: 36px 28px; display: flex; flex-direction: column; gap: 18px; text-align: center;
             box-shadow: 0 24px 60px rgba(0, 0, 0, 0.06);
         }
-
-        .login-kicker {
-            font-family: var(--font-mono);
-            font-size: 0.62rem;
-            font-weight: 700;
-            letter-spacing: 0.16em;
-            text-transform: uppercase;
-            color: var(--meraki-vino);
-        }
-
+        .login-kicker { font-family: var(--font-mono); font-size: 0.62rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--meraki-vino); }
         .login-title { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.02em; }
 
         .input-clean {
-            width: 100%;
-            border: 1px solid var(--hairline-strong);
-            background: #FFFFFF;
-            padding: 12px 14px;
-            font-size: 0.92rem;
-            color: var(--ink-black);
-            outline: none;
-            transition: border-color 0.2s;
+            width: 100%; border: 1px solid var(--hairline-strong); background: #FFFFFF;
+            padding: 12px 14px; font-size: 0.92rem; color: var(--ink-black); outline: none; transition: border-color 0.2s;
         }
         .input-clean:focus { border-color: var(--meraki-vino); }
 
         .btn-black {
-            background: var(--ink-black);
-            color: #FFFFFF;
-            font-family: var(--font-mono);
-            font-size: 0.72rem;
-            font-weight: 700;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            padding: 14px 20px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
+            background: var(--ink-black); color: #FFFFFF;
+            font-family: var(--font-mono); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.10em; text-transform: uppercase;
+            padding: 13px 18px; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
             transition: background 0.2s, transform 0.15s;
         }
         .btn-black:hover { background: var(--meraki-vino); }
         .btn-black:active { transform: scale(0.98); }
+        .btn-black:disabled { opacity: 0.55; cursor: wait; }
 
         .btn-outline {
-            border: 1px solid var(--hairline-strong);
-            background: #FFFFFF;
-            color: var(--ink-black);
-            font-family: var(--font-mono);
-            font-size: 0.68rem;
-            font-weight: 700;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            padding: 10px 14px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
+            border: 1px solid var(--hairline-strong); background: #FFFFFF; color: var(--ink-black);
+            font-family: var(--font-mono); font-size: 0.68rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+            padding: 10px 14px; display: inline-flex; align-items: center; justify-content: center; gap: 6px;
         }
         .btn-outline:hover { border-color: var(--ink-black); background: var(--bg-gallery); }
 
-        /* =========================================================
-           BARRA SUPERIOR DEL PANEL
-           ========================================================= */
+        /* TOPBAR */
         .admin-topbar {
-            position: sticky;
-            top: 0;
-            z-index: 40;
-            background: rgba(255, 255, 255, 0.96);
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid var(--hairline);
-            padding: 12px clamp(14px, 3vw, 32px);
+            position: sticky; top: 0; z-index: 40; background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(12px); border-bottom: 1px solid var(--hairline); padding: 12px clamp(14px, 3vw, 32px);
         }
-
-        .topbar-inner {
-            max-width: 1320px;
-            margin: 0 auto;
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-        }
-
-        .brand-row { display: flex; align-items: center; gap: 12px; }
-        .brand-badge {
-            background: var(--meraki-vino);
-            color: #FFFFFF;
-            font-family: var(--font-mono);
-            font-size: 0.62rem;
-            font-weight: 700;
-            letter-spacing: 0.12em;
-            padding: 4px 10px;
-            text-transform: uppercase;
-        }
-
-        .live-pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            font-family: var(--font-mono);
-            font-size: 0.64rem;
-            font-weight: 700;
-            color: #15803D;
-            background: #DCFCE7;
-            padding: 4px 10px;
-            text-transform: uppercase;
-        }
-
+        .topbar-inner { max-width: 1320px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
+        .brand-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+        .brand-badge { background: var(--meraki-vino); color: #FFFFFF; font-family: var(--font-mono); font-size: 0.62rem; font-weight: 700; letter-spacing: 0.12em; padding: 4px 10px; text-transform: uppercase; }
+        .live-pill { display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-mono); font-size: 0.64rem; font-weight: 700; color: #15803D; background: #DCFCE7; padding: 4px 10px; text-transform: uppercase; }
         .topbar-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
 
-        /* =========================================================
-           ÁREA PRINCIPAL & CONTROLES
-           ========================================================= */
-        .admin-main {
-            max-width: 1320px;
-            margin: 0 auto;
-            padding: 20px clamp(14px, 3vw, 32px);
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
+        /* PRINCIPAL */
+        .admin-main { max-width: 1320px; margin: 0 auto; padding: 20px clamp(14px, 3vw, 32px); display: flex; flex-direction: column; gap: 20px; }
 
         .quick-drop-banner {
-            background: #FFFFFF;
-            border: 2px dashed var(--hairline-strong);
-            padding: 22px;
-            text-align: center;
-            position: relative;
-            cursor: pointer;
-            transition: border-color 0.2s, background 0.2s;
+            background: #FFFFFF; border: 2px dashed var(--hairline-strong); padding: 22px; text-align: center;
+            position: relative; cursor: pointer; transition: border-color 0.2s, background 0.2s;
         }
         .quick-drop-banner:hover { border-color: var(--meraki-vino); background: #FFFDFB; }
-        .quick-drop-banner input[type="file"] {
-            position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
-        }
+        .quick-drop-banner input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
 
-        .toolbar-row {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-        @media (min-width: 820px) {
-            .toolbar-row { flex-direction: row; align-items: center; justify-content: space-between; }
-        }
+        .toolbar-row { display: flex; flex-direction: column; gap: 12px; }
+        @media (min-width: 820px) { .toolbar-row { flex-direction: row; align-items: center; justify-content: space-between; } }
 
-        .filter-pills {
-            display: flex;
-            gap: 8px;
-            overflow-x: auto;
-            padding-bottom: 4px;
-            scrollbar-width: none;
-        }
+        .filter-pills { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
         .filter-pills::-webkit-scrollbar { display: none; }
-
-        .pill-btn {
-            font-family: var(--font-mono);
-            font-size: 0.64rem;
-            font-weight: 700;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            padding: 8px 14px;
-            background: #FFFFFF;
-            border: 1px solid var(--hairline-strong);
-            white-space: nowrap;
-        }
+        .pill-btn { font-family: var(--font-mono); font-size: 0.64rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 8px 14px; background: #FFFFFF; border: 1px solid var(--hairline-strong); white-space: nowrap; }
         .pill-btn.active { background: var(--ink-black); color: #FFFFFF; border-color: var(--ink-black); }
+        .search-box { width: 100%; max-width: 340px; border: 1px solid var(--hairline-strong); background: #FFFFFF; padding: 9px 14px; font-size: 0.86rem; outline: none; }
 
-        .search-box {
-            width: 100%;
-            max-width: 340px;
-            border: 1px solid var(--hairline-strong);
-            background: #FFFFFF;
-            padding: 9px 14px;
-            font-size: 0.86rem;
-            outline: none;
-        }
-
-        /* =========================================================
-           GRILLA VISUAL DE TARJETAS CON MINIATURAS GRANDES
-           ========================================================= */
-        .cards-grid {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 14px;
-        }
+        /* GRILLA DE TARJETAS */
+        .cards-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
         @media (min-width: 720px) { .cards-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; } }
         @media (min-width: 1080px) { .cards-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px; } }
 
         .prod-card {
-            background: #FFFFFF;
-            border: 1px solid var(--hairline);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
+            background: #FFFFFF; border: 1px solid var(--hairline); display: flex; flex-direction: column;
+            justify-content: space-between; position: relative;
             transition: transform 0.2s var(--ease), box-shadow 0.2s;
         }
         .prod-card:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(0, 0, 0, 0.06); }
         .prod-card.is-hidden { opacity: 0.55; }
 
-        .prod-thumb-wrap {
-            position: relative;
-            width: 100%;
-            aspect-ratio: 3 / 4;
-            background: var(--bg-gallery);
-            overflow: hidden;
-            cursor: pointer;
-        }
+        .prod-thumb-wrap { position: relative; width: 100%; aspect-ratio: 3 / 4; background: var(--bg-gallery); overflow: hidden; cursor: pointer; }
         .prod-thumb-wrap img { width: 100%; height: 100%; object-fit: cover; object-position: center 15%; display: block; }
 
-        .badge-home {
-            position: absolute; top: 8px; left: 8px;
-            background: var(--meraki-vino); color: #FFFFFF;
-            font-family: var(--font-mono); font-size: 0.54rem; font-weight: 700;
-            padding: 3px 7px; letter-spacing: 0.08em; text-transform: uppercase;
+        .badge-home { position: absolute; top: 8px; left: 8px; background: var(--meraki-vino); color: #FFFFFF; font-family: var(--font-mono); font-size: 0.54rem; font-weight: 700; padding: 3px 7px; text-transform: uppercase; z-index: 2; }
+        .badge-paused { position: absolute; bottom: 8px; left: 8px; background: rgba(0, 0, 0, 0.78); color: #FFFFFF; font-family: var(--font-mono); font-size: 0.54rem; font-weight: 700; padding: 3px 7px; text-transform: uppercase; z-index: 2; }
+        .badge-multicount { position: absolute; bottom: 8px; right: 8px; background: rgba(0, 0, 0, 0.74); color: #FFFFFF; font-family: var(--font-mono); font-size: 0.56rem; font-weight: 700; padding: 3px 7px; z-index: 2; }
+
+        /* BOTONES EN ESQUINA SUPERIOR DERECHA: DUPLICAR Y ELIMINAR */
+        .quick-corner-tools {
+            position: absolute; top: 8px; right: 8px; z-index: 4;
+            display: flex; gap: 6px;
         }
-        .badge-paused {
-            position: absolute; top: 8px; right: 8px;
-            background: rgba(0, 0, 0, 0.78); color: #FFFFFF;
-            font-family: var(--font-mono); font-size: 0.54rem; font-weight: 700;
-            padding: 3px 7px; text-transform: uppercase;
+        .corner-tool-btn {
+            width: 30px; height: 30px; border-radius: 50%;
+            background: rgba(255, 255, 255, 0.94); color: var(--ink-black);
+            border: 1px solid rgba(0, 0, 0, 0.12);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.84rem; font-weight: 700; box-shadow: 0 3px 8px rgba(0, 0, 0, 0.14);
+            transition: transform 0.15s, background 0.15s, color 0.15s;
         }
+        .corner-tool-btn:hover { background: var(--ink-black); color: #FFFFFF; transform: scale(1.08); }
+        .corner-tool-btn.del:hover { background: #B91C1C; color: #FFFFFF; border-color: #B91C1C; }
 
         .prod-body { padding: 12px; display: flex; flex-direction: column; gap: 5px; flex: 1; }
         .prod-kicker { font-family: var(--font-mono); font-size: 0.56rem; color: var(--ink-muted); text-transform: uppercase; letter-spacing: 0.08em; }
         .prod-name { font-size: 0.88rem; font-weight: 700; line-height: 1.25; }
         .prod-price { font-family: var(--font-mono); font-size: 0.84rem; font-weight: 700; color: var(--meraki-vino); margin-top: 2px; }
-
         .swatch-mini-row { display: flex; align-items: center; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
         .swatch-dot { width: 11px; height: 11px; border-radius: 50%; border: 1px solid rgba(0, 0, 0, 0.22); }
 
-        .prod-actions {
-            display: grid;
-            grid-template-columns: 1fr auto auto;
-            border-top: 1px solid var(--hairline);
-        }
-        .act-btn {
-            padding: 9px 10px;
-            font-family: var(--font-mono);
-            font-size: 0.60rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            border-right: 1px solid var(--hairline);
-            transition: background 0.15s;
-        }
+        .prod-actions { display: grid; grid-template-columns: 1fr auto auto; border-top: 1px solid var(--hairline); }
+        .act-btn { padding: 9px 10px; font-family: var(--font-mono); font-size: 0.60rem; font-weight: 700; text-transform: uppercase; border-right: 1px solid var(--hairline); }
         .act-btn:last-child { border-right: none; }
         .act-btn:hover { background: var(--bg-gallery); }
         .act-btn.home-on { background: #FEF2F2; color: var(--meraki-vino); }
 
-        /* =========================================================
-           MODAL EDITOR VISUAL (TÁCTIL, CERO CÓDIGO)
-           ========================================================= */
+        /* MODALES */
         .modal-bg {
-            position: fixed; inset: 0; z-index: 1000;
-            background: rgba(0, 0, 0, 0.58);
-            backdrop-filter: blur(4px);
-            display: none; align-items: center; justify-content: center; padding: 14px;
+            position: fixed; inset: 0; z-index: 1000; background: rgba(0, 0, 0, 0.60);
+            backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; padding: 14px;
         }
         .modal-bg.open { display: flex; }
 
-        .modal-panel {
-            background: #FFFFFF;
-            width: min(760px, 100%);
-            max-height: 92dvh;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.28);
-        }
+        .modal-panel { background: #FFFFFF; width: min(820px, 100%); max-height: 92dvh; overflow-y: auto; display: flex; flex-direction: column; box-shadow: 0 25px 70px rgba(0, 0, 0, 0.28); }
+        .modal-head { padding: 16px 22px; border-bottom: 1px solid var(--hairline); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; background: #FFFFFF; z-index: 10; }
+        .modal-body { padding: 20px 22px; display: grid; grid-template-columns: 1fr; gap: 20px; }
+        @media (min-width: 680px) { .modal-body { grid-template-columns: 240px 1fr; } }
 
-        .modal-head {
-            padding: 16px 22px;
-            border-bottom: 1px solid var(--hairline);
-            display: flex; align-items: center; justify-content: space-between;
-            position: sticky; top: 0; background: #FFFFFF; z-index: 10;
-        }
-
-        .modal-body {
-            padding: 20px 22px;
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 20px;
-        }
-        @media (min-width: 680px) { .modal-body { grid-template-columns: 220px 1fr; } }
-
+        /* MULTI-FOTO EN MODAL EDITOR */
         .editor-photo-col { display: flex; flex-direction: column; gap: 10px; }
         .editor-photo-preview { width: 100%; aspect-ratio: 3 / 4; object-fit: cover; background: var(--bg-gallery); border: 1px solid var(--hairline); }
+        .multi-thumbs-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+        .m-thumb-box { position: relative; aspect-ratio: 3 / 4; border: 2px solid transparent; overflow: hidden; cursor: pointer; background: var(--bg-gallery); }
+        .m-thumb-box.is-cover { border-color: var(--meraki-vino); }
+        .m-thumb-box img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .m-thumb-del { position: absolute; top: 2px; right: 2px; width: 20px; height: 20px; background: rgba(0,0,0,0.8); color: #FFF; font-size: 0.65rem; display: flex; align-items: center; justify-content: center; }
+        .m-thumb-cov { position: absolute; bottom: 0; left: 0; right: 0; background: rgba(96,0,0,0.85); color: #FFF; font-family: var(--font-mono); font-size: 0.50rem; text-align: center; padding: 2px 0; text-transform: uppercase; }
 
         .field-col { display: flex; flex-direction: column; gap: 12px; }
         .field-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .lbl-mono { font-family: var(--font-mono); font-size: 0.60rem; font-weight: 700; letter-spacing: 0.10em; text-transform: uppercase; color: var(--ink-muted); margin-bottom: 4px; display: block; }
 
-        .lbl-mono {
-            font-family: var(--font-mono);
-            font-size: 0.60rem;
-            font-weight: 700;
-            letter-spacing: 0.10em;
-            text-transform: uppercase;
-            color: var(--ink-muted);
-            margin-bottom: 4px;
-            display: block;
-        }
-
-        /* Selector visual de colores */
         .color-picker-grid { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 6px; }
-        .color-chip-pick {
-            display: inline-flex; align-items: center; gap: 5px;
-            padding: 4px 8px; border: 1px solid var(--hairline-strong);
-            font-family: var(--font-mono); font-size: 0.60rem; background: #FFFFFF;
-        }
+        .color-chip-pick { display: inline-flex; align-items: center; gap: 5px; padding: 4px 8px; border: 1px solid var(--hairline-strong); font-family: var(--font-mono); font-size: 0.60rem; background: #FFFFFF; }
         .color-chip-pick.active { border-color: var(--ink-black); background: var(--ink-black); color: #FFFFFF; }
 
-        /* Selector visual de talles */
         .size-picker-grid { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 6px; }
-        .size-chip-pick {
-            padding: 5px 10px; border: 1px solid var(--hairline-strong);
-            font-family: var(--font-mono); font-size: 0.64rem; font-weight: 700; background: #FFFFFF;
-        }
+        .size-chip-pick { padding: 5px 10px; border: 1px solid var(--hairline-strong); font-family: var(--font-mono); font-size: 0.64rem; font-weight: 700; background: #FFFFFF; }
         .size-chip-pick.active { background: var(--ink-black); color: #FFFFFF; border-color: var(--ink-black); }
 
-        .toggle-row {
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 10px 12px; background: var(--bg-ivory); border: 1px solid var(--hairline);
-            font-size: 0.84rem; font-weight: 600; cursor: pointer;
+        .toggle-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; background: var(--bg-ivory); border: 1px solid var(--hairline); font-size: 0.84rem; font-weight: 600; cursor: pointer; }
+
+        /* ASISTENTE DE AGRUPACIÓN MULTI-FOTOS (2 A 50+ FOTOS) */
+        .group-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; padding: 16px 22px; }
+        .group-photo-tile {
+            position: relative; aspect-ratio: 3 / 4; border: 2px solid var(--hairline); overflow: hidden; cursor: pointer; background: var(--bg-gallery);
+            transition: border-color 0.15s, transform 0.15s;
+        }
+        .group-photo-tile.selected { border-color: var(--meraki-vino); border-width: 3px; transform: scale(0.96); }
+        .group-photo-tile img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .group-check-badge {
+            position: absolute; top: 6px; right: 6px; width: 24px; height: 24px; border-radius: 50%;
+            background: rgba(255,255,255,0.92); border: 1.5px solid var(--ink-black);
+            display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.78rem;
+        }
+        .group-photo-tile.selected .group-check-badge { background: var(--meraki-vino); color: #FFF; border-color: var(--meraki-vino); }
+        .group-count-pill {
+            position: absolute; bottom: 6px; left: 6px; right: 6px; background: rgba(0,0,0,0.8); color: #FFF;
+            font-family: var(--font-mono); font-size: 0.56rem; font-weight: 700; padding: 3px 6px; text-align: center;
         }
 
+        /* DIÁLOGO PRUDENTE DE CONFIRMACIÓN */
+        .confirm-panel { background: #FFFFFF; width: min(420px, 100%); padding: 26px 24px; display: flex; flex-direction: column; gap: 14px; text-align: center; box-shadow: 0 24px 60px rgba(0,0,0,0.3); }
+
+        /* TOAST CON BOTÓN DESHACER */
         .toast-floating {
-            position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px);
-            background: var(--ink-black); color: #FFFFFF;
-            padding: 12px 22px; font-family: var(--font-mono); font-size: 0.70rem; font-weight: 700;
-            letter-spacing: 0.08em; text-transform: uppercase; z-index: 9999;
-            opacity: 0; pointer-events: none; transition: all 0.25s var(--ease);
+            position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(24px);
+            background: var(--ink-black); color: #FFFFFF; padding: 12px 18px;
+            font-family: var(--font-mono); font-size: 0.70rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;
+            z-index: 9999; opacity: 0; pointer-events: none; transition: all 0.25s var(--ease);
+            display: flex; align-items: center; gap: 12px; box-shadow: 0 12px 30px rgba(0,0,0,0.28);
         }
-        .toast-floating.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+        .toast-floating.show { opacity: 1; pointer-events: auto; transform: translateX(-50%) translateY(0); }
+        .toast-undo-btn { background: var(--meraki-sky); color: #000; padding: 4px 9px; font-weight: 800; cursor: pointer; }
     </style>
 </head>
 <body>
 
-    <!-- PANTALLA 1: LOGIN SIMPLE -->
+    <!-- LOGIN -->
     <section id="loginScreen" class="login-screen">
         <form class="login-card" onsubmit="attemptLogin(event)">
             <span class="login-kicker">MeraKi · Puerto Iguazú</span>
@@ -411,7 +237,7 @@
         </form>
     </section>
 
-    <!-- PANTALLA 2: PANEL VISUAL -->
+    <!-- DASHBOARD -->
     <div id="dashboardApp" style="display:none;">
         <header class="admin-topbar">
             <div class="topbar-inner">
@@ -425,17 +251,17 @@
                     <button class="btn-outline" onclick="syncGithubPhotos()" id="syncBtn">🔄 Detectar Fotos GitHub</button>
                     <a href="index.html" target="_blank" class="btn-outline">Ver Tienda ↗</a>
                     <button class="btn-black" onclick="openNewProductModal()">+ Nueva Prenda</button>
-                    <button class="btn-outline" onclick="logoutAdmin()" title="Cerrar sesión">Salir</button>
+                    <button class="btn-outline" onclick="logoutAdmin()">Salir</button>
                 </div>
             </div>
         </header>
 
         <main class="admin-main">
-            <!-- SUBIDA RÁPIDA MÚLTIPLE -->
-            <div class="quick-drop-banner" id="batchDropBanner">
-                <input type="file" id="batchFileInput" accept="image/*" multiple onchange="handleBatchUpload(this.files)">
-                <div style="font-weight:700; font-size:0.95rem;">📸 Arrastrá 1 o varias fotos juntas aquí para subirlas</div>
-                <div style="font-size:0.78rem; color:var(--ink-muted); margin-top:4px;">Se comprimen automáticamente a formato WebP ultra rápido y aparecen abajo listas para ponerles precio.</div>
+            <!-- SUBIDA RÁPIDA (1 O MUCHAS FOTOS) -->
+            <div class="quick-drop-banner">
+                <input type="file" id="batchFileInput" accept="image/*" multiple onchange="handleUploadPicker(this.files)">
+                <div style="font-weight:700; font-size:0.96rem;">📸 Tocá acá o arrastrá fotos para subir (1 o varias juntas)</div>
+                <div style="font-size:0.78rem; color:var(--ink-muted); margin-top:4px;">Si subís varias fotos, podés unir fácilmente las que son de la misma prenda (frente, espalda, detalle) y se comprimen sin perder calidad.</div>
             </div>
 
             <!-- BUSCADOR Y FILTROS -->
@@ -450,31 +276,36 @@
                     <button class="pill-btn" data-filter="NOPRICE" onclick="setFilter('NOPRICE', this)">Sin Precio</button>
                     <button class="pill-btn" data-filter="PAUSED" onclick="setFilter('PAUSED', this)">Pausados</button>
                 </div>
-                <input type="search" id="adminSearchInput" class="search-box" placeholder="Buscar por nombre, color, talle..." oninput="renderCards()">
+                <input type="search" id="adminSearchInput" class="search-box" placeholder="Buscar por nombre, color, talle..." oninput="resetAdminPageAndRender()">
             </div>
 
-            <!-- GRILLA DE TARJETAS -->
             <div class="cards-grid" id="cardsGrid"></div>
+            <div id="adminLoadMoreWrap" style="text-align:center; display:none; padding-top:10px;">
+                <button class="btn-outline" onclick="loadMoreAdminCards()" id="adminLoadMoreBtn">Ver más productos</button>
+            </div>
         </main>
     </div>
 
-    <!-- MODAL EDITOR DE PRODUCTO -->
-    <div class="modal-bg" id="editModal" onclick="if(event.target===this) closeEditModal()">
+    <!-- MODAL 1: EDITOR DE PRODUCTO (CON MULTI-FOTO) -->
+    <div class="modal-bg" id="editModal" onclick="if(event.target===this) attemptCloseEditModal()">
         <div class="modal-panel">
             <div class="modal-head">
                 <h2 id="modalTitle" style="font-size:1rem; font-weight:800; text-transform:uppercase;">Editar Producto</h2>
-                <button onclick="closeEditModal()" style="font-size:1.2rem; padding:4px;">✕</button>
+                <button onclick="attemptCloseEditModal()" style="font-size:1.25rem; padding:4px;" aria-label="Cerrar">✕</button>
             </div>
 
             <form class="modal-body" onsubmit="saveProductForm(event)">
-                <!-- COLUMNA FOTO -->
+                <!-- COLUMNA MULTI-FOTO -->
                 <div class="editor-photo-col">
                     <img id="edPreviewImg" src="" alt="Vista previa" class="editor-photo-preview">
+
                     <label class="btn-outline" style="position:relative; width:100%; cursor:pointer;">
-                        📷 Cambiar Foto
-                        <input type="file" id="edFileInput" accept="image/*" style="position:absolute; inset:0; opacity:0; cursor:pointer;" onchange="handleSinglePhotoChange(this)">
+                        ➕ Agregar Más Fotos / Ángulos
+                        <input type="file" id="edFileInput" accept="image/*" multiple style="position:absolute; inset:0; opacity:0; cursor:pointer;" onchange="handleAddAnglesToProduct(this)">
                     </label>
-                    <span id="edPhotoStatus" style="font-family:var(--font-mono); font-size:0.62rem; color:var(--ink-muted); word-break:break-all;"></span>
+
+                    <div id="edMultiThumbsStrip" class="multi-thumbs-strip"></div>
+                    <span id="edPhotoStatus" style="font-family:var(--font-mono); font-size:0.62rem; color:var(--ink-muted);">Tocá una mini foto para hacerla Portada o borrarla.</span>
                 </div>
 
                 <!-- COLUMNA DATOS -->
@@ -482,7 +313,7 @@
                     <div class="field-row-2">
                         <div>
                             <label class="lbl-mono">Rubro</label>
-                            <select id="edRubro" class="input-clean">
+                            <select id="edRubro" class="input-clean" onchange="markDirty()">
                                 <option value="Indumentaria">Indumentaria</option>
                                 <option value="Deco & Home">Deco &amp; Home</option>
                                 <option value="Bazar">Bazar</option>
@@ -491,75 +322,120 @@
                         </div>
                         <div>
                             <label class="lbl-mono">Subcategoría</label>
-                            <input type="text" id="edSub" class="input-clean" placeholder="Mujer / Hogar / Mesa">
+                            <input type="text" id="edSub" class="input-clean" placeholder="Mujer / Hogar / Mesa" oninput="markDirty()">
                         </div>
                     </div>
 
                     <div>
                         <label class="lbl-mono">Nombre (Para 2 prendas usá "/": Blusa / Pantalón)</label>
-                        <input type="text" id="edNombre" class="input-clean" required placeholder="Ej. Vestido Lino Natural">
+                        <input type="text" id="edNombre" class="input-clean" required placeholder="Ej. Vestido Lino Natural" oninput="markDirty()">
                     </div>
 
                     <div class="field-row-2">
                         <div>
                             <label class="lbl-mono">Precio ARS ($ — o 35000 / 56000)</label>
-                            <input type="text" id="edArs" class="input-clean" placeholder="Ej. 38000">
+                            <input type="text" id="edArs" class="input-clean" placeholder="Ej. 38000" oninput="markDirty()">
                         </div>
                         <div>
                             <label class="lbl-mono">Etiqueta (Opcional)</label>
-                            <input type="text" id="edTag" class="input-clean" placeholder="NEW / SALE / LOOK / 2 PIEZAS">
+                            <input type="text" id="edTag" class="input-clean" placeholder="NEW / SALE / LOOK / 2 PIEZAS" oninput="markDirty()">
                         </div>
                     </div>
 
                     <div class="field-row-2">
                         <div>
                             <label class="lbl-mono">Precio PYG ₲ (Opcional)</label>
-                            <input type="text" id="edPyg" class="input-clean" placeholder="Automático si queda vacío">
+                            <input type="text" id="edPyg" class="input-clean" placeholder="Automático si queda vacío" oninput="markDirty()">
                         </div>
                         <div>
                             <label class="lbl-mono">Precio BRL R$ (Opcional)</label>
-                            <input type="text" id="edBrl" class="input-clean" placeholder="Automático si queda vacío">
+                            <input type="text" id="edBrl" class="input-clean" placeholder="Automático si queda vacío" oninput="markDirty()">
                         </div>
                     </div>
 
                     <div>
                         <label class="lbl-mono">Colores Disponibles (Tocá para agregar/quitar)</label>
                         <div class="color-picker-grid" id="colorPickerGrid"></div>
-                        <input type="text" id="edColores" class="input-clean" placeholder="Blanco, Negro, Beige...">
+                        <input type="text" id="edColores" class="input-clean" placeholder="Blanco, Negro, Beige..." oninput="markDirty()">
                     </div>
 
                     <div>
                         <label class="lbl-mono">Talles Disponibles (Tocá o escribí)</label>
                         <div class="size-picker-grid" id="sizePickerGrid"></div>
-                        <input type="text" id="edTalles" class="input-clean" placeholder="S, M, L, XL">
+                        <input type="text" id="edTalles" class="input-clean" placeholder="S, M, L, XL" oninput="markDirty()">
                     </div>
 
                     <div>
                         <label class="lbl-mono">Descripción</label>
-                        <textarea id="edDesc" rows="2" class="input-clean" placeholder="Detalles de la tela o el producto..."></textarea>
+                        <textarea id="edDesc" rows="2" class="input-clean" placeholder="Detalles de la tela o el producto..." oninput="markDirty()"></textarea>
                     </div>
 
                     <div class="field-row-2">
                         <label class="toggle-row">
                             <span>⭐ Destacar en Home</span>
-                            <input type="checkbox" id="edHome" style="width:18px; height:18px; accent-color:var(--meraki-vino);">
+                            <input type="checkbox" id="edHome" onchange="markDirty()" style="width:18px; height:18px; accent-color:var(--meraki-vino);">
                         </label>
                         <label class="toggle-row">
                             <span>👁️ Visible en Tienda</span>
-                            <input type="checkbox" id="edVisible" checked style="width:18px; height:18px; accent-color:var(--ink-black);">
+                            <input type="checkbox" id="edVisible" checked onchange="markDirty()" style="width:18px; height:18px; accent-color:var(--ink-black);">
                         </label>
                     </div>
 
                     <div style="display:flex; gap:10px; margin-top:6px;">
                         <button type="submit" id="edSaveBtn" class="btn-black" style="flex:1;">Guardar y Publicar</button>
-                        <button type="button" id="edDeleteBtn" class="btn-outline" style="color:#B91C1C; border-color:#FCA5A5;" onclick="deleteCurrentItem()">🗑️ Eliminar</button>
+                        <button type="button" id="edDeleteBtn" class="btn-outline" style="color:#B91C1C; border-color:#FCA5A5;" onclick="askDeleteProduct(editingId, true)">🗑️ Eliminar</button>
                     </div>
                 </div>
             </form>
         </div>
     </div>
 
-    <div class="toast-floating" id="toastBox">Guardado al instante</div>
+    <!-- MODAL 2: ASISTENTE VISUAL PARA AGRUPAR MÚLTIPLES FOTOS -->
+    <div class="modal-bg" id="groupModal">
+        <div class="modal-panel" style="width:min(880px, 100%);">
+            <div class="modal-head">
+                <div>
+                    <h2 style="font-size:1rem; font-weight:800; text-transform:uppercase;">Organizá tus fotos antes de subir</h2>
+                    <span id="groupSubtitle" style="font-size:0.78rem; color:var(--ink-muted);">Tocá las fotos que son de la MISMA prenda para unirlas, o publicalas separadas.</span>
+                </div>
+                <button onclick="cancelGroupWizard()" style="font-size:1.2rem; padding:4px;">✕</button>
+            </div>
+
+            <div style="padding:12px 22px; background:var(--bg-ivory); border-bottom:1px solid var(--hairline); display:flex; flex-wrap:wrap; gap:8px; align-items:center; justify-content:space-between;">
+                <div style="display:flex; flex-wrap:wrap; gap:8px;">
+                    <button type="button" class="btn-black" id="btnMergeSelected" onclick="mergeSelectedGroupItems()" style="display:none; background:var(--meraki-vino);">🔗 Unir elegidas en 1 mismo producto (<span id="selCountSpan">0</span>)</button>
+                    <button type="button" class="btn-outline" id="btnQuickMergeAll" onclick="mergeAllIntoOneProduct()" style="display:none;">🔗 Todas son del MISMO producto (Unir todas)</button>
+                </div>
+                <span id="groupSummaryLbl" style="font-family:var(--font-mono); font-size:0.68rem; font-weight:700;"></span>
+            </div>
+
+            <div class="group-grid" id="groupGrid"></div>
+
+            <div style="padding:16px 22px; border-top:1px solid var(--hairline); display:flex; flex-wrap:wrap; gap:10px; justify-content:flex-end; align-items:center; position:sticky; bottom:0; background:#FFF;">
+                <button type="button" class="btn-outline" onclick="cancelGroupWizard()">Cancelar</button>
+                <button type="button" class="btn-black" id="btnPublishGroups" onclick="publishAllGroupedItems()">🚀 Subir y Publicar Todo</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 3: DIÁLOGO PRUDENTE DE CONFIRMACIÓN (ANTI-ACCIDENTES) -->
+    <div class="modal-bg" id="confirmModal">
+        <div class="confirm-panel">
+            <div style="font-size:2rem;" id="confIcon">⚠️</div>
+            <h3 id="confTitle" style="font-size:1.15rem; font-weight:800;">¿Confirmar acción?</h3>
+            <p id="confMsg" style="font-size:0.86rem; color:var(--ink-muted);"></p>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:6px;">
+                <button type="button" class="btn-outline" onclick="closeConfirmModal()">No, cancelar</button>
+                <button type="button" class="btn-black" id="confAcceptBtn" style="background:#B91C1C;">Sí, confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST FLOTANTE + DESHACER -->
+    <div class="toast-floating" id="toastBox">
+        <span id="toastText">Cambios realizados</span>
+        <button type="button" class="toast-undo-btn" id="toastUndoBtn" style="display:none;" onclick="undoLastAction()">↩ Deshacer</button>
+    </div>
 
     <script>
         const GH_RAW_BASE = "https://raw.githubusercontent.com/linkuniversal/meraki_web/main/";
@@ -570,25 +446,48 @@
             ["Celeste", "#9EC4E8"], ["Verde", "#2E6B47"], ["Borravino", "#600000"], ["Amarillo", "#EBC23F"], ["Rosa", "#EBA4B5"]
         ];
         const SIZE_PRESETS = ["XS", "S", "M", "L", "XL", "XXL", "Único", "36", "38", "40", "42", "44", "46", "A confirmar"];
+        const ADMIN_PAGE_SIZE = 40;
 
         let adminPass = sessionStorage.getItem('meraki_admin_pass') || '';
         let catalogItems = [];
+        let undoSnapshot = null;
         let currentFilter = 'ALL';
+        let adminRenderLimit = ADMIN_PAGE_SIZE;
+
+        // Caché en memoria para ver al 0 ms las fotos recién subidas
+        const localPreviewCache = {};
+
+        // Estado del editor individual
         let editingId = null;
-        let pendingNewBase64 = null;
-        let pendingNewExtPath = null;
+        let editorPhotos = [];
+        let editorDirty = false;
+        let toastTimer = null;
+
+        // Estado del agrupador multi-foto
+        let pendingGroups = [];
 
         function imgUrl(rel) {
             if (!rel) return '';
+            if (localPreviewCache[rel]) return localPreviewCache[rel];
             if (rel.startsWith('http') || rel.startsWith('data:')) return rel;
             return GH_RAW_BASE + rel.split('/').map(encodeURIComponent).join('/');
         }
 
-        function showToast(msg) {
-            const t = document.getElementById('toastBox');
-            t.innerText = msg;
-            t.classList.add('show');
-            setTimeout(() => t.classList.remove('show'), 2400);
+        function handleThumbError(imgEl, relPath) {
+            if (imgEl.dataset.retried) return;
+            imgEl.dataset.retried = '1';
+            setTimeout(() => {
+                imgEl.src = imgUrl(relPath) + (relPath.startsWith('http') ? '' : '?v=' + Date.now());
+            }, 2200);
+        }
+
+        function showToast(msg, canUndo = false) {
+            const box = document.getElementById('toastBox');
+            document.getElementById('toastText').innerText = msg;
+            document.getElementById('toastUndoBtn').style.display = canUndo && undoSnapshot ? 'inline-block' : 'none';
+            box.classList.add('show');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => box.classList.remove('show'), canUndo ? 6000 : 2800);
         }
 
         async function apiCall(url, options = {}) {
@@ -598,7 +497,7 @@
         }
 
         // =========================================================
-        // 1. LOGIN & ARRANQUE
+        // 1. LOGIN & CARGA INICIAL
         // =========================================================
         async function attemptLogin(e) {
             e.preventDefault();
@@ -625,8 +524,10 @@
         }
 
         function logoutAdmin() {
-            sessionStorage.removeItem('meraki_admin_pass');
-            location.reload();
+            openConfirmDialog('👋', '¿Cerrar sesión?', 'Vas a salir del panel de administración.', 'Sí, salir', '#0D0D0D', () => {
+                sessionStorage.removeItem('meraki_admin_pass');
+                location.reload();
+            });
         }
 
         async function enterDashboard() {
@@ -644,27 +545,45 @@
             }
         }
 
-        async function saveCatalogToD1(toastMsg = '✓ Publicado al instante en la web') {
+        async function saveCatalogToD1(toastMsg = '✓ Cambios realizados', allowUndo = false) {
             const res = await apiCall('/api/catalog', {
                 method: 'POST',
                 body: JSON.stringify({ items: catalogItems })
             });
             if (!res.ok) {
-                alert('Error al guardar cambios en la base de datos.');
+                alert('Hubo un problema al guardar en Cloudflare D1.');
                 return false;
             }
             renderCards();
-            showToast(toastMsg);
+            showToast(toastMsg, allowUndo);
             return true;
         }
 
+        async function undoLastAction() {
+            if (!undoSnapshot) return;
+            catalogItems = JSON.parse(undoSnapshot);
+            undoSnapshot = null;
+            await saveCatalogToD1('↩ Cambio deshecho correctamente', false);
+        }
+
         // =========================================================
-        // 2. RENDER DE GRILLA VISUAL
+        // 2. RENDER DE GRILLA CON PAGINACIÓN Y ACCESO RÁPIDO
         // =========================================================
         function setFilter(f, btn) {
             currentFilter = f;
+            adminRenderLimit = ADMIN_PAGE_SIZE;
             document.querySelectorAll('#filterPills .pill-btn').forEach(b => b.classList.remove('active'));
             if (btn) btn.classList.add('active');
+            renderCards();
+        }
+
+        function resetAdminPageAndRender() {
+            adminRenderLimit = ADMIN_PAGE_SIZE;
+            renderCards();
+        }
+
+        function loadMoreAdminCards() {
+            adminRenderLimit += ADMIN_PAGE_SIZE;
             renderCards();
         }
 
@@ -672,6 +591,11 @@
             const low = name.trim().toLowerCase();
             const found = PALETTE_PRESETS.find(p => p[0].toLowerCase() === low);
             return found ? found[1] : '#D8D4CE';
+        }
+
+        function getItemPhotosList(item) {
+            if (Array.isArray(item.fotos) && item.fotos.length > 0) return item.fotos.filter(Boolean);
+            return item.foto ? [item.foto] : [];
         }
 
         function renderCards() {
@@ -693,19 +617,33 @@
             const grid = document.getElementById('cardsGrid');
             if (!filtered.length) {
                 grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:48px; color:var(--ink-muted);">No hay prendas con este filtro.</div>`;
+                document.getElementById('adminLoadMoreWrap').style.display = 'none';
                 return;
             }
 
-            grid.innerHTML = filtered.map(item => {
+            const pageItems = filtered.slice(0, adminRenderLimit);
+            document.getElementById('adminLoadMoreWrap').style.display = filtered.length > adminRenderLimit ? 'block' : 'none';
+            if (filtered.length > adminRenderLimit) {
+                document.getElementById('adminLoadMoreBtn').innerText = `Ver más prendas (${pageItems.length} de ${filtered.length})`;
+            }
+
+            grid.innerHTML = pageItems.map(item => {
+                const photos = getItemPhotosList(item);
+                const coverPhoto = photos[0] || item.foto || '';
                 const colorsArr = String(item.colores || '').split(',').map(s => s.trim()).filter(Boolean);
                 const priceTxt = String(item.precioARS || '').trim() ? `$ ${item.precioARS}` : 'Consultar';
 
                 return `
                     <article class="prod-card ${item.visible === false ? 'is-hidden' : ''}">
+                        <div class="quick-corner-tools">
+                            <button type="button" class="corner-tool-btn" onclick="quickDuplicateProduct('${item.id}')" title="Duplicar prenda">📄</button>
+                            <button type="button" class="corner-tool-btn del" onclick="askDeleteProduct('${item.id}', false)" title="Eliminar prenda">✕</button>
+                        </div>
                         <div class="prod-thumb-wrap" onclick="openEditModal('${item.id}')">
                             ${item.destacado ? `<span class="badge-home">⭐ Home</span>` : ''}
                             ${item.visible === false ? `<span class="badge-paused">Pausado</span>` : ''}
-                            <img src="${imgUrl(item.foto)}" alt="${item.nombre}" loading="lazy">
+                            ${photos.length > 1 ? `<span class="badge-multicount">📸 ${photos.length} fotos</span>` : ''}
+                            <img src="${imgUrl(coverPhoto)}" alt="${item.nombre}" loading="lazy" onerror="handleThumbError(this, '${coverPhoto}')">
                         </div>
                         <div class="prod-body" onclick="openEditModal('${item.id}')" style="cursor:pointer;">
                             <span class="prod-kicker">${item.rubro} · ${item.subcategoria}</span>
@@ -741,9 +679,50 @@
         }
 
         // =========================================================
-        // 3. COMPRESIÓN WEBP EN NAVEGADOR + SUBIDA / BORRADO EN GITHUB
+        // 3. DUPLICAR RÁPIDO & ELIMINAR CON CONFIRMACIÓN PRUDENTE
         // =========================================================
-        function compressImageToWebP(file, maxDim = 1200, quality = 0.84) {
+        async function quickDuplicateProduct(id) {
+            const original = catalogItems.find(i => i.id === id);
+            if (!original) return;
+
+            undoSnapshot = JSON.stringify(catalogItems);
+            const clone = JSON.parse(JSON.stringify(original));
+            clone.id = `mk-${Date.now()}`;
+            clone.nombre = `${clone.nombre} (Copia)`;
+            clone.destacado = false;
+            clone.visible = true;
+
+            catalogItems.unshift(clone);
+            await saveCatalogToD1(`✓ Prenda duplicada: "${clone.nombre}"`, true);
+        }
+
+        function askDeleteProduct(id, fromInsideModal = false) {
+            const target = catalogItems.find(i => i.id === id);
+            if (!target) return;
+
+            openConfirmDialog(
+                '🗑️',
+                '¿Eliminar esta prenda?',
+                `Vas a eliminar "${target.nombre}". Si confirmás, se borrará del catálogo y de la web.`,
+                'Sí, eliminar',
+                '#B91C1C',
+                async () => {
+                    undoSnapshot = JSON.stringify(catalogItems);
+                    catalogItems = catalogItems.filter(i => i.id !== id);
+
+                    if (fromInsideModal) {
+                        closeEditModalDirect();
+                    }
+
+                    await saveCatalogToD1(`🗑️ Prenda eliminada: "${target.nombre}"`, true);
+                }
+            );
+        }
+
+        // =========================================================
+        // 4. COMPRESIÓN DE ALTA DEFINICIÓN (LANCZOS + WEBP 86%)
+        // =========================================================
+        function compressImageToWebP(file, maxDim = 1600, quality = 0.86) {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
                 reader.onerror = reject;
@@ -757,10 +736,14 @@
                             else { w = Math.round((w * maxDim) / h); h = maxDim; }
                         }
                         const canvas = document.createElement('canvas');
-                        canvas.width = w; canvas.height = h;
-                        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+                        canvas.width = w;
+                        canvas.height = h;
+                        const ctx = canvas.getContext('2d');
+                        ctx.imageSmoothingEnabled = true;
+                        ctx.imageSmoothingQuality = 'high';
+                        ctx.drawImage(img, 0, 0, w, h);
                         const dataUrl = canvas.toDataURL('image/webp', quality);
-                        resolve({ dataUrl, base64: dataUrl.split(',')[1] });
+                        resolve({ dataUrl, base64: dataUrl.split(',')[1], w, h });
                     };
                     img.src = e.target.result;
                 };
@@ -775,52 +758,207 @@
             return String(sub || '').toLowerCase().includes('hombre') ? 'media/indumentaria/hombre' : 'media/indumentaria/mujer';
         }
 
-        async function handleBatchUpload(fileList) {
+        // =========================================================
+        // 5. ASISTENTE MULTI-FOTOS: SI SUBE 2 O 39 FOTOS A LA VEZ
+        // =========================================================
+        async function handleUploadPicker(fileList) {
             const files = Array.from(fileList || []);
             if (!files.length) return;
-            showToast(`Comprimiendo y subiendo ${files.length} foto(s)...`);
+            document.getElementById('batchFileInput').value = '';
 
-            const defaultRubro = ['Indumentaria', 'Deco & Home', 'Bazar', 'Aromas'].includes(currentFilter) ? currentFilter : 'Indumentaria';
-            const folder = folderForRubro(defaultRubro, 'Mujer');
-
-            for (let i = 0; i < files.length; i++) {
+            // 1 sola foto -> Se publica directo como prenda nueva
+            if (files.length === 1) {
+                showToast('Comprimiendo foto...');
                 try {
-                    const { base64 } = await compressImageToWebP(files[i]);
-                    const slug = files[i].name.replace(/\.[^/.]+$/, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 28);
-                    const path = `${folder}/${slug}-${Date.now() + i}.webp`;
+                    const { dataUrl, base64 } = await compressImageToWebP(files[0]);
+                    const slug = files[0].name.replace(/\.[^/.]+$/, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 26);
+                    const path = `media/indumentaria/mujer/${slug}-${Date.now()}.webp`;
 
-                    const upRes = await apiCall('/api/media', {
-                        method: 'POST',
-                        body: JSON.stringify({ path, base64, message: `Subida múltiple: ${slug}` })
-                    });
-                    if (!upRes.ok) continue;
+                    localPreviewCache[path] = dataUrl;
 
                     catalogItems.unshift({
-                        id: `mk-${Date.now()}-${i}`,
-                        rubro: defaultRubro,
-                        subcategoria: defaultRubro === 'Indumentaria' ? 'Mujer' : 'General',
-                        nombre: 'Nueva Prenda (Editar nombre)',
+                        id: `mk-${Date.now()}`,
+                        rubro: 'Indumentaria',
+                        subcategoria: 'Mujer',
+                        nombre: 'Nueva Prenda (Editar)',
                         precioARS: '',
                         precioPYG: '',
                         precioBRL: '',
                         descripcion: 'Pieza seleccionada de nuestra colección en Puerto Iguazú.',
                         foto: path,
+                        fotos: [path],
                         etiqueta: 'NEW',
-                        talles: defaultRubro === 'Indumentaria' ? 'S, M, L' : 'Único',
+                        talles: 'S, M, L',
                         colores: '',
                         destacado: false,
                         visible: true
                     });
+
+                    await saveCatalogToD1('✓ Prenda nueva agregada al inicio');
+
+                    // Sube a GitHub en segundo plano
+                    apiCall('/api/media', {
+                        method: 'POST',
+                        body: JSON.stringify({ path, base64, message: `Panel: subir ${slug}` })
+                    });
+                } catch (ex) {
+                    alert('No se pudo procesar la foto.');
+                }
+                return;
+            }
+
+            // 2 o más fotos -> Abre el asistente interactivo de agrupación
+            showToast(`Preparando ${files.length} fotos...`);
+            pendingGroups = [];
+
+            for (let i = 0; i < files.length; i++) {
+                try {
+                    const { dataUrl, base64 } = await compressImageToWebP(files[i]);
+                    pendingGroups.push({
+                        selected: false,
+                        fotos: [{
+                            previewUrl: dataUrl,
+                            base64,
+                            origName: files[i].name
+                        }]
+                    });
                 } catch (_) {}
             }
 
-            document.getElementById('batchFileInput').value = '';
-            await saveCatalogToD1(`✓ ${files.length} foto(s) subidas y listas`);
+            if (!pendingGroups.length) return;
+            renderGroupWizard();
+            document.getElementById('groupModal').classList.add('open');
+        }
+
+        function renderGroupWizard() {
+            const grid = document.getElementById('groupGrid');
+            const totalPhotos = pendingGroups.reduce((acc, g) => acc + g.fotos.length, 0);
+            const selCount = pendingGroups.filter(g => g.selected).length;
+
+            document.getElementById('groupSummaryLbl').innerText = `${pendingGroups.length} prendas a crear (${totalPhotos} fotos totales)`;
+            document.getElementById('btnMergeSelected').style.display = selCount >= 2 ? 'inline-flex' : 'none';
+            document.getElementById('btnQuickMergeAll').style.display = pendingGroups.length >= 2 ? 'inline-flex' : 'none';
+            document.getElementById('selCountSpan').innerText = selCount;
+
+            grid.innerHTML = pendingGroups.map((g, idx) => {
+                const cover = g.fotos[0].previewUrl;
+                return `
+                    <div class="group-photo-tile ${g.selected ? 'selected' : ''}" onclick="toggleGroupSelect(${idx})">
+                        <div class="group-check-badge">${g.selected ? '✓' : ''}</div>
+                        <img src="${cover}" alt="Foto ${idx + 1}">
+                        ${g.fotos.length > 1 ? `<div class="group-count-pill">📸 ${g.fotos.length} fotos juntas</div>` : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function toggleGroupSelect(idx) {
+            if (!pendingGroups[idx]) return;
+            pendingGroups[idx].selected = !pendingGroups[idx].selected;
+            renderGroupWizard();
+        }
+
+        function mergeSelectedGroupItems() {
+            const selectedIndices = [];
+            pendingGroups.forEach((g, idx) => { if (g.selected) selectedIndices.push(idx); });
+            if (selectedIndices.length < 2) return;
+
+            const mergedFotos = [];
+            selectedIndices.forEach(i => {
+                mergedFotos.push(...pendingGroups[i].fotos);
+            });
+
+            // Reemplaza el primer seleccionado con todas las fotos unidas y quita los demás
+            const keepIndex = selectedIndices[0];
+            pendingGroups[keepIndex] = {
+                selected: false,
+                fotos: mergedFotos
+            };
+
+            for (let i = selectedIndices.length - 1; i >= 1; i--) {
+                pendingGroups.splice(selectedIndices[i], 1);
+            }
+
+            renderGroupWizard();
+            showToast(`✓ Uniste ${mergedFotos.length} fotos en 1 mismo producto`);
+        }
+
+        function mergeAllIntoOneProduct() {
+            if (pendingGroups.length < 2) return;
+            const allFotos = [];
+            pendingGroups.forEach(g => allFotos.push(...g.fotos));
+            pendingGroups = [{ selected: false, fotos: allFotos }];
+            renderGroupWizard();
+            showToast(`✓ Todas las fotos (${allFotos.length}) unidas en 1 solo producto`);
+        }
+
+        function cancelGroupWizard() {
+            document.getElementById('groupModal').classList.remove('open');
+            pendingGroups = [];
+        }
+
+        async function publishAllGroupedItems() {
+            const btn = document.getElementById('btnPublishGroups');
+            btn.innerText = 'Subiendo...';
+            btn.disabled = true;
+
+            const createdCount = pendingGroups.length;
+            const uploadQueue = [];
+
+            pendingGroups.forEach((g, gIdx) => {
+                const productPaths = [];
+                g.fotos.forEach((f, fIdx) => {
+                    const slug = f.origName.replace(/\.[^/.]+$/, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 24);
+                    const path = `media/indumentaria/mujer/${slug}-${Date.now() + gIdx * 10 + fIdx}.webp`;
+                    productPaths.push(path);
+                    localPreviewCache[path] = f.previewUrl;
+                    uploadQueue.push({ path, base64: f.base64, slug });
+                });
+
+                catalogItems.unshift({
+                    id: `mk-${Date.now()}-${gIdx}`,
+                    rubro: 'Indumentaria',
+                    subcategoria: 'Mujer',
+                    nombre: 'Nueva Prenda (Editar)',
+                    precioARS: '',
+                    precioPYG: '',
+                    precioBRL: '',
+                    descripcion: 'Pieza seleccionada de nuestra colección en Puerto Iguazú.',
+                    foto: productPaths[0],
+                    fotos: productPaths,
+                    etiqueta: 'NEW',
+                    talles: 'S, M, L',
+                    colores: '',
+                    destacado: false,
+                    visible: true
+                });
+            });
+
+            document.getElementById('groupModal').classList.remove('open');
+            pendingGroups = [];
+            btn.innerText = '🚀 Subir y Publicar Todo';
+            btn.disabled = false;
+
+            await saveCatalogToD1(`✓ Se crearon ${createdCount} productos nuevos`);
+
+            // Sube a GitHub en cola en segundo plano sin trabar el panel
+            (async () => {
+                for (const item of uploadQueue) {
+                    try {
+                        await apiCall('/api/media', {
+                            method: 'POST',
+                            body: JSON.stringify({ path: item.path, base64: item.base64, message: `Upload: ${item.slug}` })
+                        });
+                    } catch (_) {}
+                }
+            })();
         }
 
         // =========================================================
-        // 4. MODAL DE EDICIÓN VISUAL (COLORES, TALLES Y REEMPLAZO DE FOTO)
+        // 6. MODAL EDITOR INDIVIDUAL CON MULTI-FOTO
         // =========================================================
+        function markDirty() { editorDirty = true; }
+
         function buildVisualPickers() {
             const cGrid = document.getElementById('colorPickerGrid');
             const currentColors = String(document.getElementById('edColores').value || '')
@@ -849,6 +987,7 @@
         }
 
         function toggleColorPreset(name) {
+            markDirty();
             const input = document.getElementById('edColores');
             const list = input.value.split(',').map(s => s.trim()).filter(Boolean);
             const idx = list.findIndex(c => c.toLowerCase() === name.toLowerCase());
@@ -859,6 +998,7 @@
         }
 
         function toggleSizePreset(sz) {
+            markDirty();
             const input = document.getElementById('edTalles');
             const list = input.value.split(',').map(s => s.trim()).filter(Boolean);
             const idx = list.findIndex(s => s.toLowerCase() === sz.toLowerCase());
@@ -868,13 +1008,84 @@
             buildVisualPickers();
         }
 
+        function renderEditorMultiThumbs() {
+            const strip = document.getElementById('edMultiThumbsStrip');
+            const previewImg = document.getElementById('edPreviewImg');
+
+            if (!editorPhotos.length) {
+                previewImg.src = '';
+                strip.innerHTML = '';
+                document.getElementById('edPhotoStatus').innerText = 'Agregá al menos una foto.';
+                return;
+            }
+
+            previewImg.src = editorPhotos[0].previewUrl || imgUrl(editorPhotos[0].path);
+
+            strip.innerHTML = editorPhotos.map((p, idx) => {
+                const src = p.previewUrl || imgUrl(p.path);
+                return `
+                    <div class="m-thumb-box ${idx === 0 ? 'is-cover' : ''}" onclick="makeCoverPhoto(${idx})" title="Tocar para hacer portada">
+                        <img src="${src}" alt="Foto ${idx + 1}">
+                        ${idx === 0 ? `<span class="m-thumb-cov">Portada</span>` : ''}
+                        <button type="button" class="m-thumb-del" onclick="event.stopPropagation(); removePhotoFromEditor(${idx});" title="Borrar este ángulo">✕</button>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('edPhotoStatus').innerText = `${editorPhotos.length} foto(s) asignadas. La primera es la portada principal.`;
+        }
+
+        function makeCoverPhoto(idx) {
+            if (idx === 0 || !editorPhotos[idx]) return;
+            markDirty();
+            const moved = editorPhotos.splice(idx, 1)[0];
+            editorPhotos.unshift(moved);
+            renderEditorMultiThumbs();
+            showToast('✓ Foto asignada como portada');
+        }
+
+        function removePhotoFromEditor(idx) {
+            if (!editorPhotos[idx]) return;
+            markDirty();
+            editorPhotos.splice(idx, 1);
+            renderEditorMultiThumbs();
+        }
+
+        async function handleAddAnglesToProduct(input) {
+            const files = Array.from(input.files || []);
+            if (!files.length) return;
+            input.value = '';
+            markDirty();
+            showToast(`Optimizando ${files.length} foto(s)...`);
+
+            const rubro = document.getElementById('edRubro').value;
+            const sub = document.getElementById('edSub').value;
+            const folder = folderForRubro(rubro, sub);
+
+            for (let i = 0; i < files.length; i++) {
+                try {
+                    const { dataUrl, base64 } = await compressImageToWebP(files[i]);
+                    const slug = files[i].name.replace(/\.[^/.]+$/, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 24);
+                    const path = `${folder}/${slug}-${Date.now() + i}.webp`;
+                    localPreviewCache[path] = dataUrl;
+
+                    editorPhotos.push({
+                        path,
+                        previewUrl: dataUrl,
+                        isNew: true,
+                        base64
+                    });
+                } catch (_) {}
+            }
+            renderEditorMultiThumbs();
+        }
+
         function openNewProductModal() {
             editingId = null;
-            pendingNewBase64 = null;
-            pendingNewExtPath = null;
+            editorPhotos = [];
+            editorDirty = false;
+
             document.getElementById('modalTitle').innerText = '+ Nueva Prenda / Producto';
-            document.getElementById('edPreviewImg').src = '';
-            document.getElementById('edPhotoStatus').innerText = 'Seleccioná una foto arriba';
             document.getElementById('edRubro').value = 'Indumentaria';
             document.getElementById('edSub').value = 'Mujer';
             document.getElementById('edNombre').value = '';
@@ -888,6 +1099,8 @@
             document.getElementById('edHome').checked = false;
             document.getElementById('edVisible').checked = true;
             document.getElementById('edDeleteBtn').style.display = 'none';
+
+            renderEditorMultiThumbs();
             buildVisualPickers();
             document.getElementById('editModal').classList.add('open');
         }
@@ -895,13 +1108,18 @@
         function openEditModal(id) {
             const item = catalogItems.find(i => i.id === id);
             if (!item) return;
+
             editingId = id;
-            pendingNewBase64 = null;
-            pendingNewExtPath = null;
+            editorDirty = false;
+            const photos = getItemPhotosList(item);
+            editorPhotos = photos.map(p => ({
+                path: p,
+                previewUrl: localPreviewCache[p] || null,
+                isNew: false,
+                base64: null
+            }));
 
             document.getElementById('modalTitle').innerText = 'Editar Producto';
-            document.getElementById('edPreviewImg').src = imgUrl(item.foto);
-            document.getElementById('edPhotoStatus').innerText = item.foto || '';
             document.getElementById('edRubro').value = item.rubro || 'Indumentaria';
             document.getElementById('edSub').value = item.subcategoria || 'Mujer';
             document.getElementById('edNombre').value = item.nombre || '';
@@ -916,59 +1134,61 @@
             document.getElementById('edVisible').checked = item.visible !== false;
             document.getElementById('edDeleteBtn').style.display = 'inline-flex';
 
+            renderEditorMultiThumbs();
             buildVisualPickers();
             document.getElementById('editModal').classList.add('open');
         }
 
-        function closeEditModal() {
-            document.getElementById('editModal').classList.remove('open');
-            document.getElementById('edFileInput').value = '';
+        function attemptCloseEditModal() {
+            if (editorDirty) {
+                openConfirmDialog(
+                    '⚠️',
+                    '¿Salir sin guardar?',
+                    'Hiciste modificaciones que no fueron guardadas todavía.',
+                    'Sí, salir',
+                    '#0D0D0D',
+                    () => closeEditModalDirect()
+                );
+            } else {
+                closeEditModalDirect();
+            }
         }
 
-        async function handleSinglePhotoChange(input) {
-            const file = input.files[0];
-            if (!file) return;
-            document.getElementById('edPhotoStatus').innerText = 'Optimizando a WebP...';
-            const { dataUrl, base64 } = await compressImageToWebP(file);
-            document.getElementById('edPreviewImg').src = dataUrl;
-            pendingNewBase64 = base64;
-            const slug = file.name.replace(/\.[^/.]+$/, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 28);
-            const folder = folderForRubro(document.getElementById('edRubro').value, document.getElementById('edSub').value);
-            pendingNewExtPath = `${folder}/${slug}-${Date.now()}.webp`;
-            document.getElementById('edPhotoStatus').innerText = `✓ Lista: ${pendingNewExtPath}`;
+        function closeEditModalDirect() {
+            document.getElementById('editModal').classList.remove('open');
+            document.getElementById('edFileInput').value = '';
+            editingId = null;
+            editorPhotos = [];
+            editorDirty = false;
         }
 
         async function saveProductForm(e) {
             e.preventDefault();
+            if (!editorPhotos.length) {
+                alert('Por favor agregá al menos una foto para la prenda.');
+                return;
+            }
+
             const btn = document.getElementById('edSaveBtn');
             btn.innerText = 'GUARDANDO...';
             btn.disabled = true;
 
             try {
-                const existing = editingId ? catalogItems.find(i => i.id === editingId) : null;
-                let finalFoto = existing ? existing.foto : '';
-
-                if (pendingNewBase64 && pendingNewExtPath) {
-                    const upRes = await apiCall('/api/media', {
-                        method: 'POST',
-                        body: JSON.stringify({ path: pendingNewExtPath, base64: pendingNewBase64 })
-                    });
-                    if (!upRes.ok) throw new Error('No se pudo subir la nueva foto a GitHub');
-
-                    // Borra la foto anterior de GitHub si no la comparte otro producto
-                    if (existing && existing.foto && existing.foto.startsWith('media/')) {
-                        const shared = catalogItems.filter(p => p.foto === existing.foto).length;
-                        if (shared <= 1) {
-                            await apiCall('/api/media', { method: 'DELETE', body: JSON.stringify({ path: existing.foto }) });
-                        }
+                // Sube las fotos nuevas a GitHub en segundo plano
+                const newUploads = editorPhotos.filter(p => p.isNew && p.base64);
+                (async () => {
+                    for (const up of newUploads) {
+                        try {
+                            await apiCall('/api/media', {
+                                method: 'POST',
+                                body: JSON.stringify({ path: up.path, base64: up.base64, message: `Upload photo: ${up.path}` })
+                            });
+                        } catch (_) {}
                     }
-                    finalFoto = pendingNewExtPath;
-                }
+                })();
 
-                if (!finalFoto) {
-                    alert('Elegí una foto para el producto.');
-                    return;
-                }
+                const finalPaths = editorPhotos.map(p => p.path);
+                const existing = editingId ? catalogItems.find(i => i.id === editingId) : null;
 
                 const payload = {
                     id: existing ? existing.id : `mk-${Date.now()}`,
@@ -982,11 +1202,13 @@
                     colores: document.getElementById('edColores').value.trim(),
                     talles: document.getElementById('edTalles').value.trim(),
                     descripcion: document.getElementById('edDesc').value.trim(),
-                    foto: finalFoto,
+                    foto: finalPaths[0],
+                    fotos: finalPaths,
                     destacado: document.getElementById('edHome').checked,
                     visible: document.getElementById('edVisible').checked
                 };
 
+                undoSnapshot = JSON.stringify(catalogItems);
                 if (existing) {
                     const idx = catalogItems.findIndex(i => i.id === existing.id);
                     catalogItems[idx] = payload;
@@ -994,8 +1216,8 @@
                     catalogItems.unshift(payload);
                 }
 
-                await saveCatalogToD1('✓ Cambios publicados al instante');
-                closeEditModal();
+                closeEditModalDirect();
+                await saveCatalogToD1('✓ Prenda guardada y publicada al instante', true);
             } catch (ex) {
                 alert(ex.message || 'Error al guardar');
             } finally {
@@ -1004,34 +1226,33 @@
             }
         }
 
-        async function deleteCurrentItem() {
-            if (!editingId) return;
-            const target = catalogItems.find(i => i.id === editingId);
-            if (!target) return;
-            if (!confirm(`¿Eliminar "${target.nombre}" y borrar su foto de GitHub?`)) return;
-
-            const btn = document.getElementById('edDeleteBtn');
-            btn.innerText = 'BORRANDO...';
-            btn.disabled = true;
-
-            try {
-                if (target.foto && target.foto.startsWith('media/')) {
-                    const shared = catalogItems.filter(p => p.foto === target.foto).length;
-                    if (shared <= 1) {
-                        await apiCall('/api/media', { method: 'DELETE', body: JSON.stringify({ path: target.foto }) });
-                    }
-                }
-                catalogItems = catalogItems.filter(i => i.id !== editingId);
-                await saveCatalogToD1('🗑️ Producto y foto eliminados');
-                closeEditModal();
-            } finally {
-                btn.innerText = '🗑️ Eliminar';
-                btn.disabled = false;
-            }
+        // =========================================================
+        // 7. DIÁLOGO DE CONFIRMACIÓN PRUDENTE
+        // =========================================================
+        let confirmActionFn = null;
+        function openConfirmDialog(icon, title, msg, acceptText, acceptBg, onAccept) {
+            document.getElementById('confIcon').innerText = icon;
+            document.getElementById('confTitle').innerText = title;
+            document.getElementById('confMsg').innerText = msg;
+            const btn = document.getElementById('confAcceptBtn');
+            btn.innerText = acceptText;
+            btn.style.background = acceptBg;
+            confirmActionFn = onAccept;
+            document.getElementById('confirmModal').classList.add('open');
         }
 
+        function closeConfirmModal() {
+            document.getElementById('confirmModal').classList.remove('open');
+            confirmActionFn = null;
+        }
+
+        document.getElementById('confAcceptBtn').addEventListener('click', () => {
+            if (typeof confirmActionFn === 'function') confirmActionFn();
+            closeConfirmModal();
+        });
+
         // =========================================================
-        // 5. DETECTOR AUTOMÁTICO DE FOTOS SUBIDAS DIRECTO A GITHUB
+        // 8. DETECTAR FOTOS DE GITHUB SIN BORRAR NADA DEL PANEL
         // =========================================================
         async function syncGithubPhotos() {
             const btn = document.getElementById('syncBtn');
@@ -1043,14 +1264,18 @@
                 const data = await res.json();
                 if (!data.ok) throw new Error();
 
-                const existingPaths = new Set(catalogItems.map(i => i.foto));
-                const newFiles = (data.files || []).filter(p => !existingPaths.has(p));
+                const existingPaths = new Set();
+                catalogItems.forEach(it => {
+                    getItemPhotosList(it).forEach(p => existingPaths.add(p));
+                });
 
+                const newFiles = (data.files || []).filter(p => !existingPaths.has(p));
                 if (newFiles.length === 0) {
-                    showToast('✓ Todo está sincronizado (no hay fotos nuevas)');
+                    showToast('✓ Todo al día: no hay fotos nuevas sin registrar');
                     return;
                 }
 
+                undoSnapshot = JSON.stringify(catalogItems);
                 newFiles.forEach((p, idx) => {
                     const parts = p.split('/');
                     const folder = (parts[1] || '').toLowerCase();
@@ -1068,13 +1293,13 @@
                         rubro, subcategoria: sub, nombre: cleanName,
                         precioARS: '', precioPYG: '', precioBRL: '',
                         descripcion: 'Pieza seleccionada de nuestra colección en Puerto Iguazú.',
-                        foto: p, etiqueta: 'NEW',
+                        foto: p, fotos: [p], etiqueta: 'NEW',
                         talles: rubro === 'Indumentaria' ? 'S, M, L' : 'Único',
                         colores: '', destacado: false, visible: true
                     });
                 });
 
-                await saveCatalogToD1(`✓ ${newFiles.length} foto(s) nuevas importadas de GitHub`);
+                await saveCatalogToD1(`✓ Se agregaron ${newFiles.length} foto(s) nuevas de GitHub`, true);
             } catch (_) {
                 alert('No se pudo escanear GitHub.');
             } finally {
@@ -1083,7 +1308,7 @@
             }
         }
 
-        // Auto-ingreso si ya inició sesión en esta pestaña
+        // Auto-ingreso si ya inició sesión previamente
         if (adminPass) {
             fetch('/api/catalog?check=1', { headers: { 'x-admin-pass': adminPass } })
                 .then(r => { if (r.ok) enterDashboard(); });
