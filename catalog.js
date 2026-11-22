@@ -1,5 +1,5 @@
 /* ==========================================================================
-   MERAKI · MOTOR DE CATÁLOGO INSTANTÁNEO (CLOUDFLARE D1 + CACHÉ SWR)
+   MERAKI · MOTOR DE CATÁLOGO INSTANTÁNEO (MULTI-FOTO + CLOUDFLARE D1)
    ========================================================================== */
 
 const CONFIG = {
@@ -11,7 +11,7 @@ const CONFIG = {
     API_CATALOG_URL: "/api/catalog",
     APPS_SCRIPT_URL: "",
 
-    CACHE_KEY: "meraki_d1_cache_v1",
+    CACHE_KEY: "meraki_d1_cache_v2",
 
     RATES: {
         ARS_TO_PYG: 6.5,
@@ -107,7 +107,7 @@ function parsePriceCell(val) {
 
 function resolveAssetUrl(relPath) {
     if (!relPath) return '';
-    if (relPath.startsWith('http://') || relPath.startsWith('https://')) return relPath;
+    if (relPath.startsWith('http://') || relPath.startsWith('https://') || relPath.startsWith('data:')) return relPath;
     const encoded = relPath.split('/').map(seg => encodeURIComponent(seg)).join('/');
     return `https://raw.githubusercontent.com/${CONFIG.GITHUB_OWNER}/${CONFIG.GITHUB_REPO}/${CONFIG.GITHUB_BRANCH}/${encoded}`;
 }
@@ -154,6 +154,12 @@ function mapApiItemsToProducts(rawItems) {
                 }));
             }
 
+            // Soporte multi-foto retrocompatible con productos de 1 foto
+            const rawFotos = (Array.isArray(it.fotos) && it.fotos.length > 0)
+                ? it.fotos.filter(Boolean)
+                : (it.foto ? [it.foto] : []);
+            const resolvedFotos = rawFotos.map(resolveAssetUrl);
+
             return {
                 id: it.id || `mk-${idx}`,
                 rubro: it.rubro || 'Indumentaria',
@@ -166,7 +172,8 @@ function mapApiItemsToProducts(rawItems) {
                 isCombo: hasTwoPrices,
                 subItems,
                 descripcion: it.descripcion || '',
-                imagen: resolveAssetUrl(it.foto),
+                imagen: resolvedFotos[0] || '',
+                imagenes: resolvedFotos,
                 etiqueta: it.etiqueta || (hasTwoPrices ? 'LOOK / 2 PIEZAS' : ''),
                 talles: finalTalles,
                 tallesLabel: finalTalles.join(' · '),
