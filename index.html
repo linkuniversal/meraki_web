@@ -17,7 +17,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;1,500;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 
     <!-- HOJA DE ESTILOS MODULAR -->
-    <link rel="stylesheet" href="styles.css?v=20261117">
+    <link rel="stylesheet" href="styles.css?v=20261122">
 </head>
 <body>
 
@@ -87,6 +87,9 @@
                 <button class="top-cat-pill" data-nav="cat-Deco &amp; Home" onclick="navigateToCategory('Deco & Home')">Deco &amp; Home</button>
                 <button class="top-cat-pill" data-nav="cat-Bazar" onclick="navigateToCategory('Bazar')">Bazar</button>
                 <button class="top-cat-pill" data-nav="cat-Aromas" onclick="navigateToCategory('Aromas')">Aromas</button>
+                <button class="top-cat-pill" data-nav="bienestar" onclick="scrollToSection(event, 'bienestar')">7 Intenciones</button>
+                <button class="top-cat-pill" data-nav="contacto" onclick="scrollToSection(event, 'contacto')">Contacto</button>
+                <button class="top-cat-pill" data-nav="ubicacion" onclick="scrollToSection(event, 'ubicacion')">Showroom</button>
             </div>
         </nav>
 
@@ -124,6 +127,10 @@
                 <div class="hero-cta-row">
                     <a href="#catalogo" class="btn-luxury-primary" onclick="scrollToSection(event, 'catalogo')">Ver Selección</a>
                     <a id="heroWhatsAppBtn" href="https://wa.me/5493757525802?text=%C2%A1Hola%20MeraKi!%20%E2%9C%A8%20Quisiera%20solicitar%20asesoramiento%20sobre%20las%20novedades." target="_blank" rel="noopener noreferrer" class="btn-luxury-outline" onclick="playTap()">Solicitar por WhatsApp</a>
+                    <a href="https://www.instagram.com/merakicvm/" target="_blank" rel="noopener noreferrer" class="btn-ig-outline" aria-label="Instagram MeraKi" onclick="playTap()">
+                        <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+                        <span>Instagram</span>
+                    </a>
                 </div>
 
                 <div class="hero-store-meta">
@@ -281,7 +288,7 @@
     </footer>
 
     <!-- ==========================================================================
-         MODALES, DRAWERS Y BOTÓN FLOTANTE WHATSAPP
+         MODALES, DRAWERS Y DOCK FLOTANTE INSTAGRAM + WHATSAPP
          ========================================================================== -->
     <div class="drawer-backdrop" id="globalBackdrop" onclick="closeAllOverlays()"></div>
 
@@ -343,16 +350,20 @@
         <div class="drawer-body" id="mobileMenuBody" style="gap:16px;"></div>
     </aside>
 
-    <!-- BOTÓN FLOTANTE SUTIL WHATSAPP CONCIERGE -->
-    <a id="floatingConcierge" href="https://wa.me/5493757525802?text=%C2%A1Hola%20MeraKi!%20%E2%9C%A8%20Quisiera%20hacer%20una%20consulta." target="_blank" rel="noopener noreferrer" class="floating-wpp-concierge" aria-label="WhatsApp Asesoría" onclick="playTap()">
-        <span class="floating-wpp-dot"></span>
-        <span class="floating-wpp-label">WhatsApp</span>
-    </a>
+    <!-- DOCK FLOTANTE INSTAGRAM + WHATSAPP -->
+    <div id="floatingConcierge" class="floating-social-dock">
+        <a href="https://www.instagram.com/merakicvm/" target="_blank" rel="noopener noreferrer" class="floating-social-btn floating-ig-btn" aria-label="Instagram MeraKi" onclick="playTap()">
+            <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        </a>
+        <a href="https://wa.me/5493757525802?text=%C2%A1Hola%20MeraKi!%20%E2%9C%A8%20Quisiera%20hacer%20una%20consulta." target="_blank" rel="noopener noreferrer" class="floating-social-btn floating-wpp-btn" aria-label="WhatsApp Asesoría" onclick="playTap()">
+            <svg viewBox="0 0 24 24"><path d="M12.03 2c-5.52 0-10 4.48-10 10 0 1.77.46 3.45 1.28 4.92L2 22l5.25-1.38c1.41.77 3.03 1.2 4.78 1.2 5.52 0 10-4.48 10-10s-4.48-9.82-10-9.82zm5.81 14.1c-.24.69-1.41 1.32-1.95 1.4-.52.08-1.18.14-1.9-.09-.44-.14-1.01-.33-1.74-.64-3.05-1.32-5.04-4.4-5.19-4.6-.15-.21-1.24-1.65-1.24-3.15s.78-2.23 1.06-2.54c.28-.3.61-.38.81-.38.2 0 .41.01.58.02.19.01.44-.07.69.53.25.6.86 2.1.94 2.25.08.15.13.33.03.53-.1.2-.15.33-.3.5-.15.18-.32.4-.45.54-.15.15-.31.32-.13.62.18.3.8 1.32 1.71 2.14 1.18 1.05 2.17 1.38 2.47 1.53.3.15.48.13.66-.08.18-.2.76-.88.96-1.18.2-.3.4-.25.68-.15.28.1 1.77.83 2.07.99.3.15.51.23.58.36.08.12.08.73-.17 1.42z"/></svg>
+        </a>
+    </div>
 
     <div class="toast-bar" id="toastBar">Agregado a tu bolsa</div>
 
     <!-- MOTORES JAVASCRIPT MODULARES -->
-    <script src="catalog.js?v=20261118" defer></script>
-    <script src="app.js?v=20261118" defer></script>
+    <script src="catalog.js?v=20261122" defer></script>
+    <script src="app.js?v=20261122" defer></script>
 </body>
 </html>
