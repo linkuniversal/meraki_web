@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>MeraKi Admin | Panel de Control &amp; Subidor de Fotos</title>
+    <title>MeraKi Atelier | Panel de Productos</title>
     <meta name="robots" content="noindex, nofollow">
+    <meta name="theme-color" content="#FFFFFF">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,510 +14,1079 @@
     <style>
         :root {
             --bg-canvas: #FFFFFF;
-            --bg-gallery: #F4F4F3;
             --bg-ivory: #FAF9F7;
-            --ink-black: #000000;
-            --ink-primary: #141414;
+            --bg-gallery: #F3F2F0;
+            --ink-black: #0D0D0D;
             --ink-muted: #666666;
-            --ink-light: #949494;
             --meraki-vino: #600000;
+            --meraki-sky: #C3D6FF;
             --hairline: rgba(0, 0, 0, 0.09);
             --hairline-strong: rgba(0, 0, 0, 0.22);
             --font-sans: 'Plus Jakarta Sans', -apple-system, sans-serif;
             --font-mono: 'Space Grotesk', monospace;
-            --ease-luxury: cubic-bezier(0.16, 1, 0.3, 1);
+            --ease: cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
         body {
             font-family: var(--font-sans);
-            background-color: var(--bg-canvas);
-            color: var(--ink-primary);
+            background: var(--bg-ivory);
+            color: var(--ink-black);
             min-height: 100vh;
-            padding: 20px 14px 60px;
+            line-height: 1.45;
+            padding-bottom: 64px;
         }
 
-        .admin-shell {
-            max-width: 900px;
-            margin: 0 auto;
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
-        }
+        button { font-family: inherit; border: none; background: none; cursor: pointer; color: inherit; }
+        input, select, textarea { font-family: inherit; }
 
-        .admin-header {
+        /* =========================================================
+           LOGIN BOUTIQUE (PANTALLA DE ACCESO SIMPLE PARA EL CLIENTE)
+           ========================================================= */
+        .login-screen {
+            min-height: 100vh;
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            border-bottom: 1px solid var(--hairline);
-            padding-bottom: 16px;
+            justify-content: center;
+            padding: 20px;
+            background: #FFFFFF;
         }
 
-        .admin-title {
+        .login-card {
+            width: min(400px, 100%);
+            border: 1px solid var(--hairline-strong);
+            background: var(--bg-ivory);
+            padding: 36px 28px;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            text-align: center;
+            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.06);
+        }
+
+        .login-kicker {
             font-family: var(--font-mono);
-            font-size: 0.95rem;
+            font-size: 0.62rem;
+            font-weight: 700;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: var(--meraki-vino);
+        }
+
+        .login-title { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.02em; }
+
+        .input-clean {
+            width: 100%;
+            border: 1px solid var(--hairline-strong);
+            background: #FFFFFF;
+            padding: 12px 14px;
+            font-size: 0.92rem;
+            color: var(--ink-black);
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .input-clean:focus { border-color: var(--meraki-vino); }
+
+        .btn-black {
+            background: var(--ink-black);
+            color: #FFFFFF;
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
             font-weight: 700;
             letter-spacing: 0.12em;
             text-transform: uppercase;
+            padding: 14px 20px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: background 0.2s, transform 0.15s;
         }
+        .btn-black:hover { background: var(--meraki-vino); }
+        .btn-black:active { transform: scale(0.98); }
 
-        .admin-actions-top { display: flex; gap: 10px; }
-
-        .btn-admin-action {
+        .btn-outline {
+            border: 1px solid var(--hairline-strong);
+            background: #FFFFFF;
+            color: var(--ink-black);
             font-family: var(--font-mono);
             font-size: 0.68rem;
             font-weight: 700;
-            letter-spacing: 0.1em;
+            letter-spacing: 0.08em;
             text-transform: uppercase;
-            padding: 10px 16px;
-            background: var(--ink-black);
-            color: #FFFFFF;
-            cursor: pointer;
-            transition: background 0.2s;
+            padding: 10px 14px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
         }
-        .btn-admin-action:hover { background: var(--meraki-vino); }
-        .btn-admin-outline {
-            background: transparent;
-            color: var(--ink-black);
-            border: 1px solid var(--ink-black);
-        }
-        .btn-admin-outline:hover { background: var(--bg-gallery); }
+        .btn-outline:hover { border-color: var(--ink-black); background: var(--bg-gallery); }
 
-        .admin-card {
-            background: var(--bg-ivory);
-            border: 1px solid var(--hairline);
-            padding: 24px;
+        /* =========================================================
+           BARRA SUPERIOR DEL PANEL
+           ========================================================= */
+        .admin-topbar {
+            position: sticky;
+            top: 0;
+            z-index: 40;
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--hairline);
+            padding: 12px clamp(14px, 3vw, 32px);
+        }
+
+        .topbar-inner {
+            max-width: 1320px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .brand-row { display: flex; align-items: center; gap: 12px; }
+        .brand-badge {
+            background: var(--meraki-vino);
+            color: #FFFFFF;
+            font-family: var(--font-mono);
+            font-size: 0.62rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            padding: 4px 10px;
+            text-transform: uppercase;
+        }
+
+        .live-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-family: var(--font-mono);
+            font-size: 0.64rem;
+            font-weight: 700;
+            color: #15803D;
+            background: #DCFCE7;
+            padding: 4px 10px;
+            text-transform: uppercase;
+        }
+
+        .topbar-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+
+        /* =========================================================
+           ÁREA PRINCIPAL & CONTROLES
+           ========================================================= */
+        .admin-main {
+            max-width: 1320px;
+            margin: 0 auto;
+            padding: 20px clamp(14px, 3vw, 32px);
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            gap: 20px;
         }
 
-        .form-grid-admin {
+        .quick-drop-banner {
+            background: #FFFFFF;
+            border: 2px dashed var(--hairline-strong);
+            padding: 22px;
+            text-align: center;
+            position: relative;
+            cursor: pointer;
+            transition: border-color 0.2s, background 0.2s;
+        }
+        .quick-drop-banner:hover { border-color: var(--meraki-vino); background: #FFFDFB; }
+        .quick-drop-banner input[type="file"] {
+            position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+        }
+
+        .toolbar-row {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        @media (min-width: 820px) {
+            .toolbar-row { flex-direction: row; align-items: center; justify-content: space-between; }
+        }
+
+        .filter-pills {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+            scrollbar-width: none;
+        }
+        .filter-pills::-webkit-scrollbar { display: none; }
+
+        .pill-btn {
+            font-family: var(--font-mono);
+            font-size: 0.64rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            padding: 8px 14px;
+            background: #FFFFFF;
+            border: 1px solid var(--hairline-strong);
+            white-space: nowrap;
+        }
+        .pill-btn.active { background: var(--ink-black); color: #FFFFFF; border-color: var(--ink-black); }
+
+        .search-box {
+            width: 100%;
+            max-width: 340px;
+            border: 1px solid var(--hairline-strong);
+            background: #FFFFFF;
+            padding: 9px 14px;
+            font-size: 0.86rem;
+            outline: none;
+        }
+
+        /* =========================================================
+           GRILLA VISUAL DE TARJETAS CON MINIATURAS GRANDES
+           ========================================================= */
+        .cards-grid {
             display: grid;
-            grid-template-columns: 1fr;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
             gap: 14px;
         }
-        @media (min-width: 640px) {
-            .form-grid-admin { grid-template-columns: 1fr 1fr; }
-        }
-        .form-group-full { grid-column: 1 / -1; }
+        @media (min-width: 720px) { .cards-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; } }
+        @media (min-width: 1080px) { .cards-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px; } }
 
-        .admin-label {
+        .prod-card {
+            background: #FFFFFF;
+            border: 1px solid var(--hairline);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.2s var(--ease), box-shadow 0.2s;
+        }
+        .prod-card:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(0, 0, 0, 0.06); }
+        .prod-card.is-hidden { opacity: 0.55; }
+
+        .prod-thumb-wrap {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 3 / 4;
+            background: var(--bg-gallery);
+            overflow: hidden;
+            cursor: pointer;
+        }
+        .prod-thumb-wrap img { width: 100%; height: 100%; object-fit: cover; object-position: center 15%; display: block; }
+
+        .badge-home {
+            position: absolute; top: 8px; left: 8px;
+            background: var(--meraki-vino); color: #FFFFFF;
+            font-family: var(--font-mono); font-size: 0.54rem; font-weight: 700;
+            padding: 3px 7px; letter-spacing: 0.08em; text-transform: uppercase;
+        }
+        .badge-paused {
+            position: absolute; top: 8px; right: 8px;
+            background: rgba(0, 0, 0, 0.78); color: #FFFFFF;
+            font-family: var(--font-mono); font-size: 0.54rem; font-weight: 700;
+            padding: 3px 7px; text-transform: uppercase;
+        }
+
+        .prod-body { padding: 12px; display: flex; flex-direction: column; gap: 5px; flex: 1; }
+        .prod-kicker { font-family: var(--font-mono); font-size: 0.56rem; color: var(--ink-muted); text-transform: uppercase; letter-spacing: 0.08em; }
+        .prod-name { font-size: 0.88rem; font-weight: 700; line-height: 1.25; }
+        .prod-price { font-family: var(--font-mono); font-size: 0.84rem; font-weight: 700; color: var(--meraki-vino); margin-top: 2px; }
+
+        .swatch-mini-row { display: flex; align-items: center; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+        .swatch-dot { width: 11px; height: 11px; border-radius: 50%; border: 1px solid rgba(0, 0, 0, 0.22); }
+
+        .prod-actions {
+            display: grid;
+            grid-template-columns: 1fr auto auto;
+            border-top: 1px solid var(--hairline);
+        }
+        .act-btn {
+            padding: 9px 10px;
             font-family: var(--font-mono);
             font-size: 0.60rem;
             font-weight: 700;
-            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            border-right: 1px solid var(--hairline);
+            transition: background 0.15s;
+        }
+        .act-btn:last-child { border-right: none; }
+        .act-btn:hover { background: var(--bg-gallery); }
+        .act-btn.home-on { background: #FEF2F2; color: var(--meraki-vino); }
+
+        /* =========================================================
+           MODAL EDITOR VISUAL (TÁCTIL, CERO CÓDIGO)
+           ========================================================= */
+        .modal-bg {
+            position: fixed; inset: 0; z-index: 1000;
+            background: rgba(0, 0, 0, 0.58);
+            backdrop-filter: blur(4px);
+            display: none; align-items: center; justify-content: center; padding: 14px;
+        }
+        .modal-bg.open { display: flex; }
+
+        .modal-panel {
+            background: #FFFFFF;
+            width: min(760px, 100%);
+            max-height: 92dvh;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.28);
+        }
+
+        .modal-head {
+            padding: 16px 22px;
+            border-bottom: 1px solid var(--hairline);
+            display: flex; align-items: center; justify-content: space-between;
+            position: sticky; top: 0; background: #FFFFFF; z-index: 10;
+        }
+
+        .modal-body {
+            padding: 20px 22px;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+        @media (min-width: 680px) { .modal-body { grid-template-columns: 220px 1fr; } }
+
+        .editor-photo-col { display: flex; flex-direction: column; gap: 10px; }
+        .editor-photo-preview { width: 100%; aspect-ratio: 3 / 4; object-fit: cover; background: var(--bg-gallery); border: 1px solid var(--hairline); }
+
+        .field-col { display: flex; flex-direction: column; gap: 12px; }
+        .field-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+        .lbl-mono {
+            font-family: var(--font-mono);
+            font-size: 0.60rem;
+            font-weight: 700;
+            letter-spacing: 0.10em;
             text-transform: uppercase;
             color: var(--ink-muted);
             margin-bottom: 4px;
             display: block;
         }
 
-        .admin-input {
-            width: 100%;
-            border: 1px solid var(--hairline-strong);
-            background: #FFFFFF;
-            padding: 10px 12px;
-            font-family: var(--font-sans);
-            font-size: 0.88rem;
-            color: var(--ink-black);
-            outline: none;
+        /* Selector visual de colores */
+        .color-picker-grid { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 6px; }
+        .color-chip-pick {
+            display: inline-flex; align-items: center; gap: 5px;
+            padding: 4px 8px; border: 1px solid var(--hairline-strong);
+            font-family: var(--font-mono); font-size: 0.60rem; background: #FFFFFF;
         }
-        .admin-input:focus { border-color: var(--meraki-vino); }
+        .color-chip-pick.active { border-color: var(--ink-black); background: var(--ink-black); color: #FFFFFF; }
 
-        /* ARRASTRADOR DE FOTOS (DROPZONE) */
-        .dropzone-box {
-            border: 2px dashed var(--hairline-strong);
-            background: #FFFFFF;
-            padding: 24px;
-            text-align: center;
-            cursor: pointer;
-            position: relative;
-            transition: border-color 0.2s, background 0.2s;
+        /* Selector visual de talles */
+        .size-picker-grid { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 6px; }
+        .size-chip-pick {
+            padding: 5px 10px; border: 1px solid var(--hairline-strong);
+            font-family: var(--font-mono); font-size: 0.64rem; font-weight: 700; background: #FFFFFF;
         }
-        .dropzone-box:hover { border-color: var(--ink-black); background: var(--bg-gallery); }
-        .dropzone-box input[type="file"] {
-            position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+        .size-chip-pick.active { background: var(--ink-black); color: #FFFFFF; border-color: var(--ink-black); }
+
+        .toggle-row {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 10px 12px; background: var(--bg-ivory); border: 1px solid var(--hairline);
+            font-size: 0.84rem; font-weight: 600; cursor: pointer;
         }
 
-        .products-table-wrap { width: 100%; overflow-x: auto; }
-        .admin-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; text-align: left; }
-        .admin-table th {
-            font-family: var(--font-mono); font-size: 0.60rem; letter-spacing: 0.12em; text-transform: uppercase;
-            background: var(--bg-gallery); color: var(--ink-muted); padding: 10px 12px; border-bottom: 1px solid var(--hairline-strong);
+        .toast-floating {
+            position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px);
+            background: var(--ink-black); color: #FFFFFF;
+            padding: 12px 22px; font-family: var(--font-mono); font-size: 0.70rem; font-weight: 700;
+            letter-spacing: 0.08em; text-transform: uppercase; z-index: 9999;
+            opacity: 0; pointer-events: none; transition: all 0.25s var(--ease);
         }
-        .admin-table td { padding: 12px; border-bottom: 1px solid var(--hairline); vertical-align: middle; }
-        .thumb-preview { width: 44px; height: 56px; object-fit: cover; background: var(--bg-gallery); }
-        .table-input { border: 1px solid transparent; background: transparent; font-family: inherit; font-size: inherit; color: inherit; width: 100%; padding: 4px; }
-        .table-input:focus { background: #FFFFFF; border-color: var(--meraki-vino); outline: none; }
-
-        .toast-msg {
-            position: fixed; bottom: 20px; right: 20px; background: var(--ink-black); color: #FFFFFF;
-            padding: 12px 20px; font-family: var(--font-mono); font-size: 0.70rem; font-weight: 700;
-            letter-spacing: 0.1em; text-transform: uppercase; z-index: 9999; opacity: 0; transform: translateY(15px); transition: all 0.25s ease;
-        }
-        .toast-msg.show { opacity: 1; transform: translateY(0); }
+        .toast-floating.show { opacity: 1; transform: translateX(-50%) translateY(0); }
     </style>
 </head>
 <body>
 
-    <main class="admin-shell">
-        <header class="admin-header">
-            <div>
-                <h1 class="admin-title">MeraKi · Panel &amp; Subidor Web</h1>
-                <span style="font-size: 0.75rem; color: var(--ink-muted);">Subida automática a WebP + GitHub</span>
-            </div>
-            <div class="admin-actions-top">
-                <a href="index.html" class="btn-admin-action btn-admin-outline" target="_blank">Ver Tienda ↗</a>
-                <button class="btn-admin-action" onclick="fetchCatalogData()">🔄 Recargar</button>
+    <!-- PANTALLA 1: LOGIN SIMPLE -->
+    <section id="loginScreen" class="login-screen">
+        <form class="login-card" onsubmit="attemptLogin(event)">
+            <span class="login-kicker">MeraKi · Puerto Iguazú</span>
+            <h1 class="login-title">Panel del Local</h1>
+            <p style="font-size:0.84rem; color:var(--ink-muted);">Ingresá tu clave para administrar fotos, precios y stock en vivo.</p>
+            <input type="password" id="adminPassInput" class="input-clean" placeholder="Contraseña de acceso" required autocomplete="current-password">
+            <button type="submit" id="loginBtn" class="btn-black" style="width:100%;">Ingresar al Panel</button>
+            <p id="loginErr" style="display:none; color:#B91C1C; font-size:0.78rem; font-weight:600;"></p>
+        </form>
+    </section>
+
+    <!-- PANTALLA 2: PANEL VISUAL -->
+    <div id="dashboardApp" style="display:none;">
+        <header class="admin-topbar">
+            <div class="topbar-inner">
+                <div class="brand-row">
+                    <span class="brand-badge">MeraKi Panel</span>
+                    <span class="live-pill">● En Vivo</span>
+                    <span id="homeCounterBadge" style="font-family:var(--font-mono); font-size:0.68rem; font-weight:700; color:var(--ink-muted);">Home: 0/6</span>
+                </div>
+
+                <div class="topbar-actions">
+                    <button class="btn-outline" onclick="syncGithubPhotos()" id="syncBtn">🔄 Detectar Fotos GitHub</button>
+                    <a href="index.html" target="_blank" class="btn-outline">Ver Tienda ↗</a>
+                    <button class="btn-black" onclick="openNewProductModal()">+ Nueva Prenda</button>
+                    <button class="btn-outline" onclick="logoutAdmin()" title="Cerrar sesión">Salir</button>
+                </div>
             </div>
         </header>
 
-        <!-- CONFIGURACIÓN DE TOKEN (SE GUARDA EN EL NAVEGADOR DE LA DUEÑA) -->
-        <section class="admin-card" style="padding: 16px; background: #FFFBEB; border-color: #FDE68A;">
-            <h3 style="font-family: var(--font-mono); font-size: 0.70rem; text-transform: uppercase; margin-bottom: 6px;">🔑 Configuración de Acceso GitHub (Solo 1 vez)</h3>
-            <div style="display: flex; gap: 8px;">
-                <input type="password" id="ghTokenInput" class="admin-input" placeholder="Pegá tu GitHub Personal Access Token (ghp_...)" style="background: #FFFFFF;">
-                <button class="btn-admin-action" onclick="saveGhToken()">Guardar Token</button>
+        <main class="admin-main">
+            <!-- SUBIDA RÁPIDA MÚLTIPLE -->
+            <div class="quick-drop-banner" id="batchDropBanner">
+                <input type="file" id="batchFileInput" accept="image/*" multiple onchange="handleBatchUpload(this.files)">
+                <div style="font-weight:700; font-size:0.95rem;">📸 Arrastrá 1 o varias fotos juntas aquí para subirlas</div>
+                <div style="font-size:0.78rem; color:var(--ink-muted); margin-top:4px;">Se comprimen automáticamente a formato WebP ultra rápido y aparecen abajo listas para ponerles precio.</div>
             </div>
-            <span style="font-size: 0.65rem; color: #78350F; margin-top: 2px; display: block;">Esto permite que el panel suba las fotos comprimidas directamente al repositorio sin que tengas que usar GitHub a mano.</span>
-        </section>
 
-        <!-- FORMULARIO CON ARRASTRADOR DE FOTOS Y COMPRESIÓN A WEBP -->
-        <section class="admin-card">
-            <h2 style="font-family: var(--font-mono); font-size: 0.76rem; letter-spacing: 0.1em; text-transform: uppercase;">+ Subir Nueva Foto &amp; Publicar</h2>
-            
-            <form id="addProductForm" class="form-grid-admin" onsubmit="handleUploadAndPublish(event)">
-                
-                <!-- ZONA DE ARRASTRE DE FOTO -->
-                <div class="form-group-full">
-                    <label class="admin-label">Arrastrá tu foto o hacé clic para seleccionar de la galería</label>
-                    <div class="dropzone-box" id="dropzoneBox">
-                        <input type="file" id="imageFilePicker" accept="image/*" onchange="handleImageSelected(this)" required>
-                        <span id="dropzoneText" style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--ink-muted);">📁 Elegir foto o arrastrar aquí (se convertirá a .webp automáticamente)</span>
+            <!-- BUSCADOR Y FILTROS -->
+            <div class="toolbar-row">
+                <div class="filter-pills" id="filterPills">
+                    <button class="pill-btn active" data-filter="ALL" onclick="setFilter('ALL', this)">Todos</button>
+                    <button class="pill-btn" data-filter="Indumentaria" onclick="setFilter('Indumentaria', this)">Indumentaria</button>
+                    <button class="pill-btn" data-filter="Deco & Home" onclick="setFilter('Deco & Home', this)">Deco &amp; Home</button>
+                    <button class="pill-btn" data-filter="Bazar" onclick="setFilter('Bazar', this)">Bazar</button>
+                    <button class="pill-btn" data-filter="Aromas" onclick="setFilter('Aromas', this)">Aromas</button>
+                    <button class="pill-btn" data-filter="HOME" onclick="setFilter('HOME', this)">⭐ En Home</button>
+                    <button class="pill-btn" data-filter="NOPRICE" onclick="setFilter('NOPRICE', this)">Sin Precio</button>
+                    <button class="pill-btn" data-filter="PAUSED" onclick="setFilter('PAUSED', this)">Pausados</button>
+                </div>
+                <input type="search" id="adminSearchInput" class="search-box" placeholder="Buscar por nombre, color, talle..." oninput="renderCards()">
+            </div>
+
+            <!-- GRILLA DE TARJETAS -->
+            <div class="cards-grid" id="cardsGrid"></div>
+        </main>
+    </div>
+
+    <!-- MODAL EDITOR DE PRODUCTO -->
+    <div class="modal-bg" id="editModal" onclick="if(event.target===this) closeEditModal()">
+        <div class="modal-panel">
+            <div class="modal-head">
+                <h2 id="modalTitle" style="font-size:1rem; font-weight:800; text-transform:uppercase;">Editar Producto</h2>
+                <button onclick="closeEditModal()" style="font-size:1.2rem; padding:4px;">✕</button>
+            </div>
+
+            <form class="modal-body" onsubmit="saveProductForm(event)">
+                <!-- COLUMNA FOTO -->
+                <div class="editor-photo-col">
+                    <img id="edPreviewImg" src="" alt="Vista previa" class="editor-photo-preview">
+                    <label class="btn-outline" style="position:relative; width:100%; cursor:pointer;">
+                        📷 Cambiar Foto
+                        <input type="file" id="edFileInput" accept="image/*" style="position:absolute; inset:0; opacity:0; cursor:pointer;" onchange="handleSinglePhotoChange(this)">
+                    </label>
+                    <span id="edPhotoStatus" style="font-family:var(--font-mono); font-size:0.62rem; color:var(--ink-muted); word-break:break-all;"></span>
+                </div>
+
+                <!-- COLUMNA DATOS -->
+                <div class="field-col">
+                    <div class="field-row-2">
+                        <div>
+                            <label class="lbl-mono">Rubro</label>
+                            <select id="edRubro" class="input-clean">
+                                <option value="Indumentaria">Indumentaria</option>
+                                <option value="Deco & Home">Deco &amp; Home</option>
+                                <option value="Bazar">Bazar</option>
+                                <option value="Aromas">Aromas</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="lbl-mono">Subcategoría</label>
+                            <input type="text" id="edSub" class="input-clean" placeholder="Mujer / Hogar / Mesa">
+                        </div>
                     </div>
-                    <!-- Vista previa -->
-                    <div id="previewContainer" style="margin-top: 10px; display: none; align-items: center; gap: 12px;">
-                        <img id="imagePreview" src="" alt="Preview" style="width: 60px; height: 75px; object-fit: cover; border: 1px solid var(--hairline);">
-                        <span id="previewFileInfo" style="font-family: var(--font-mono); font-size: 0.70rem; color: var(--ink-primary);"></span>
+
+                    <div>
+                        <label class="lbl-mono">Nombre (Para 2 prendas usá "/": Blusa / Pantalón)</label>
+                        <input type="text" id="edNombre" class="input-clean" required placeholder="Ej. Vestido Lino Natural">
                     </div>
-                </div>
 
-                <div>
-                    <label class="admin-label">Rubro (Categoría)</label>
-                    <select id="newRubro" class="admin-input" onchange="updateSubcatOptions()">
-                        <option value="Indumentaria">Indumentaria</option>
-                        <option value="Deco & Home">Deco & Home</option>
-                        <option value="Bazar">Bazar</option>
-                        <option value="Aromas">Aromas</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="admin-label">Subcategoría</label>
-                    <input type="text" id="newSubcat" class="admin-input" placeholder="Mujer / Hogar / etc." value="Mujer" required>
-                </div>
-                <div>
-                    <label class="admin-label">Nombre del Producto</label>
-                    <input type="text" id="newNombre" class="admin-input" placeholder="Ej. Vestido Lino Natural" required>
-                </div>
-                <div>
-                    <label class="admin-label">Precio ARS ($)</label>
-                    <input type="number" id="newArs" class="admin-input" placeholder="68000">
-                </div>
-                <div>
-                    <label class="admin-label">Precio PYG (₲)</label>
-                    <input type="number" id="newPyg" class="admin-input" placeholder="0">
-                </div>
-                <div>
-                    <label class="admin-label">Precio BRL (R$)</label>
-                    <input type="number" id="newBrl" class="admin-input" placeholder="0">
-                </div>
-                <div class="form-group-full">
-                    <label class="admin-label">Descripción</label>
-                    <input type="text" id="newDesc" class="admin-input" placeholder="Detalles de la pieza...">
-                </div>
-                <div>
-                    <label class="admin-label">Talles / Opciones</label>
-                    <input type="text" id="newTalles" class="admin-input" value="S, M, L, XL, A confirmar">
-                </div>
-                <div>
-                    <label class="admin-label">¿Destacar en el Home? (6 fotos)</label>
-                    <select id="newHome" class="admin-input">
-                        <option value="NO">NO</option>
-                        <option value="SI">SÍ (Mostrar en Home)</option>
-                    </select>
-                </div>
+                    <div class="field-row-2">
+                        <div>
+                            <label class="lbl-mono">Precio ARS ($ — o 35000 / 56000)</label>
+                            <input type="text" id="edArs" class="input-clean" placeholder="Ej. 38000">
+                        </div>
+                        <div>
+                            <label class="lbl-mono">Etiqueta (Opcional)</label>
+                            <input type="text" id="edTag" class="input-clean" placeholder="NEW / SALE / LOOK / 2 PIEZAS">
+                        </div>
+                    </div>
 
-                <div class="form-group-full" style="margin-top: 6px;">
-                    <button type="submit" id="publishBtn" class="btn-admin-action" style="width: 100%; padding: 14px;">Comprimir, Subir a GitHub y Publicar</button>
+                    <div class="field-row-2">
+                        <div>
+                            <label class="lbl-mono">Precio PYG ₲ (Opcional)</label>
+                            <input type="text" id="edPyg" class="input-clean" placeholder="Automático si queda vacío">
+                        </div>
+                        <div>
+                            <label class="lbl-mono">Precio BRL R$ (Opcional)</label>
+                            <input type="text" id="edBrl" class="input-clean" placeholder="Automático si queda vacío">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="lbl-mono">Colores Disponibles (Tocá para agregar/quitar)</label>
+                        <div class="color-picker-grid" id="colorPickerGrid"></div>
+                        <input type="text" id="edColores" class="input-clean" placeholder="Blanco, Negro, Beige...">
+                    </div>
+
+                    <div>
+                        <label class="lbl-mono">Talles Disponibles (Tocá o escribí)</label>
+                        <div class="size-picker-grid" id="sizePickerGrid"></div>
+                        <input type="text" id="edTalles" class="input-clean" placeholder="S, M, L, XL">
+                    </div>
+
+                    <div>
+                        <label class="lbl-mono">Descripción</label>
+                        <textarea id="edDesc" rows="2" class="input-clean" placeholder="Detalles de la tela o el producto..."></textarea>
+                    </div>
+
+                    <div class="field-row-2">
+                        <label class="toggle-row">
+                            <span>⭐ Destacar en Home</span>
+                            <input type="checkbox" id="edHome" style="width:18px; height:18px; accent-color:var(--meraki-vino);">
+                        </label>
+                        <label class="toggle-row">
+                            <span>👁️ Visible en Tienda</span>
+                            <input type="checkbox" id="edVisible" checked style="width:18px; height:18px; accent-color:var(--ink-black);">
+                        </label>
+                    </div>
+
+                    <div style="display:flex; gap:10px; margin-top:6px;">
+                        <button type="submit" id="edSaveBtn" class="btn-black" style="flex:1;">Guardar y Publicar</button>
+                        <button type="button" id="edDeleteBtn" class="btn-outline" style="color:#B91C1C; border-color:#FCA5A5;" onclick="deleteCurrentItem()">🗑️ Eliminar</button>
+                    </div>
                 </div>
             </form>
-        </section>
+        </div>
+    </div>
 
-        <!-- LISTADO DE PRODUCTOS EXISTENTES -->
-        <section class="admin-card" style="padding: 16px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                <h2 style="font-family: var(--font-mono); font-size: 0.76rem; letter-spacing: 0.1em; text-transform: uppercase;">Inventario Sincronizado</h2>
-                <span id="productCounter" style="font-family: var(--font-mono); font-size: 0.68rem; color: var(--ink-muted);">0 productos</span>
-            </div>
-            <div class="products-table-wrap">
-                <table class="admin-table">
-                    <thead>
-                        <tr>
-                            <th>Foto</th>
-                            <th>Rubro</th>
-                            <th>Nombre</th>
-                            <th>Precio ARS ($)</th>
-                            <th>Home</th>
-                            <th>Acción</th>
-                        </tr>
-                    </thead>
-                    <tbody id="adminTableBody">
-                        <tr><td colspan="6" style="text-align: center; padding: 24px; color: var(--ink-muted);">Cargando inventario...</td></tr>
-                    </tbody>
-                </table>
-            </div>
-        </section>
-    </main>
-
-    <div class="toast-msg" id="adminToast">Acción realizada con éxito</div>
+    <div class="toast-floating" id="toastBox">Guardado al instante</div>
 
     <script>
-        // CONFIGURACIÓN: Pegá acá tu enlace CSV de Google Sheets (pestaña MERAKI WEB)
-        const CATALOG_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSCgumzTKh4vjuCvuVdCPvgAyZyg_yYtaatwPvlJGbzpjz96tokUttkgTSE5_oHc0weHP3dEEyDwoj5/pub?gid=0&single=true&output=csv";
+        const GH_RAW_BASE = "https://raw.githubusercontent.com/linkuniversal/meraki_web/main/";
+        const PALETTE_PRESETS = [
+            ["Blanco", "#FFFFFF"], ["Natural", "#EFECE6"], ["Beige", "#D8C3A5"], ["Arena", "#DCCDB6"],
+            ["Nude", "#E3C5B0"], ["Camel", "#C19A6B"], ["Marrón", "#5C3A28"], ["Chocolate", "#3D2418"],
+            ["Negro", "#141414"], ["Gris", "#8E9196"], ["Jean", "#48698E"], ["Azul Marino", "#162642"],
+            ["Celeste", "#9EC4E8"], ["Verde", "#2E6B47"], ["Borravino", "#600000"], ["Amarillo", "#EBC23F"], ["Rosa", "#EBA4B5"]
+        ];
+        const SIZE_PRESETS = ["XS", "S", "M", "L", "XL", "XXL", "Único", "36", "38", "40", "42", "44", "46", "A confirmar"];
 
-        const GH_CONFIG = {
-            owner: "linkuniversal",
-            repo: "meraki_web",
-            branch: "main"
-        };
+        let adminPass = sessionStorage.getItem('meraki_admin_pass') || '';
+        let catalogItems = [];
+        let currentFilter = 'ALL';
+        let editingId = null;
+        let pendingNewBase64 = null;
+        let pendingNewExtPath = null;
 
-        let catalogData = [];
-        let selectedFileBlob = null;
-        let compressedWebpBase64 = null;
-        let generatedGithubPath = "";
-
-        window.addEventListener('DOMContentLoaded', () => {
-            const savedToken = localStorage.getItem('meraki_gh_token') || '';
-            if (savedToken) document.getElementById('ghTokenInput').value = savedToken;
-            fetchCatalogData();
-        });
-
-        function saveGhToken() {
-            const token = document.getElementById('ghTokenInput').value.trim();
-            localStorage.setItem('meraki_gh_token', token);
-            showToast("Token de GitHub guardado con éxito");
+        function imgUrl(rel) {
+            if (!rel) return '';
+            if (rel.startsWith('http') || rel.startsWith('data:')) return rel;
+            return GH_RAW_BASE + rel.split('/').map(encodeURIComponent).join('/');
         }
 
-        // COMPRESIÓN AUTOMÁTICA EN CLIENTE A .WEBP (MÁX 1400PX, CALIDAD 82)
-        function handleImageSelected(input) {
-            const file = input.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const img = new Image();
-                img.onload = function() {
-                    const canvas = document.createElement('canvas');
-                    let width = img.width;
-                    let height = img.height;
-                    const maxDim = 1400;
-
-                    if (width > maxDim || height > maxDim) {
-                        if (width > height) {
-                            height = Math.round((height * maxDim) / width);
-                            width = maxDim;
-                        } else {
-                            width = Math.round((width * maxDim) / height);
-                            height = maxDim;
-                        }
-                    }
-
-                    canvas.width = width;
-                    canvas.height = height;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0, width, height);
-
-                    // Convertir a WebP con calidad 0.82
-                    const dataUrl = canvas.toDataURL('image/webp', 0.82);
-                    compressedWebpBase64 = dataUrl.split(',')[1];
-
-                    // Mostrar vista previa
-                    const preview = document.getElementById('imagePreview');
-                    preview.src = dataUrl;
-                    document.getElementById('previewContainer').style.display = 'flex';
-                    
-                    const sizeKb = Math.round((compressedWebpBase64.length * 3) / 4 / 1024);
-                    document.getElementById('previewFileInfo').innerText = `${file.name} ➔ Optimizado a .webp (~${sizeKb} KB)`;
-                    document.getElementById('dropzoneText').innerText = '✓ Foto procesada y lista para subir';
-                };
-                img.src = e.target.result;
-            };
-            reader.readAsDataURL(file);
+        function showToast(msg) {
+            const t = document.getElementById('toastBox');
+            t.innerText = msg;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 2400);
         }
 
-        function updateSubcatOptions() {
-            const rubro = document.getElementById('newRubro').value;
-            const subInput = document.getElementById('newSubcat');
-            if (rubro === 'Indumentaria') subInput.value = 'Mujer';
-            else if (rubro === 'Deco & Home') subInput.value = 'Hogar';
-            else if (rubro === 'Bazar') subInput.value = 'Mesa & Cocina';
-            else if (rubro === 'Aromas') subInput.value = 'Ritual & Sahumado';
+        async function apiCall(url, options = {}) {
+            const headers = Object.assign({}, options.headers || {}, { 'x-admin-pass': adminPass });
+            if (options.body && !headers['Content-Type']) headers['Content-Type'] = 'application/json';
+            return fetch(url, { ...options, headers, cache: 'no-store' });
         }
 
-        async function handleUploadAndPublish(e) {
+        // =========================================================
+        // 1. LOGIN & ARRANQUE
+        // =========================================================
+        async function attemptLogin(e) {
             e.preventDefault();
-            const token = localStorage.getItem('meraki_gh_token');
-            if (!token) {
-                alert("Por favor configurá y guardá tu Token de GitHub arriba antes de subir fotos.");
-                return;
-            }
-            if (!compressedWebpBase64) {
-                alert("Seleccioná una imagen primero.");
-                return;
-            }
-
-            const btn = document.getElementById('publishBtn');
-            btn.innerText = "SUBIENDO FOTO A GITHUB...";
+            const pass = document.getElementById('adminPassInput').value.trim();
+            const btn = document.getElementById('loginBtn');
+            const err = document.getElementById('loginErr');
+            err.style.display = 'none';
+            btn.innerText = 'VERIFICANDO...';
             btn.disabled = true;
 
-            const rubro = document.getElementById('newRubro').value;
-            const subcat = document.getElementById('newSubcat').value.trim().toLowerCase();
-            const nombre = document.getElementById('newNombre').value.trim();
-            const cleanFilename = nombre.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9\-_]/g, '') + '-' + Date.now() + '.webp';
-
-            let folderPath = 'media/indumentaria/mujer/';
-            if (rubro === 'Indumentaria') {
-                folderPath = subcat.includes('hombre') ? 'media/indumentaria/hombre/' : 'media/indumentaria/mujer/';
-            } else if (rubro === 'Deco & Home') folderPath = 'media/deco-home/';
-            else if (rubro === 'Bazar') folderPath = 'media/bazar/';
-            else if (rubro === 'Aromas') folderPath = 'media/aromas/';
-
-            const fullGithubPath = folderPath + cleanFilename;
-
             try {
-                // 1. Subir a GitHub vía API
-                const ghUrl = `https://api.github.com/repos/${GH_CONFIG.owner}/${GH_CONFIG.repo}/contents/${fullGithubPath}`;
-                const ghRes = await fetch(ghUrl, {
-                    method: 'PUT',
-                    headers: {
-                        'Authorization': `token ${token}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        message: `Admin upload: ${nombre}`,
-                        content: compressedWebpBase64,
-                        branch: GH_CONFIG.branch
-                    })
-                });
-
-                if (!ghRes.ok) throw new Error('Error al subir a GitHub. Verificá tu token.');
-
-                // 2. Agregar a la tabla local de catálogo
-                const newRow = [
-                    rubro,
-                    document.getElementById('newSubcat').value.trim(),
-                    nombre,
-                    document.getElementById('newArs').value,
-                    document.getElementById('newPyg').value,
-                    document.getElementById('newBrl').value,
-                    document.getElementById('newDesc').value,
-                    fullGithubPath,
-                    '',
-                    document.getElementById('newTalles').value,
-                    document.getElementById('newHome').value
-                ];
-
-                catalogData.push(newRow);
-                renderTable();
-                document.getElementById('addProductForm').reset();
-                document.getElementById('previewContainer').style.display = 'none';
-                document.getElementById('dropzoneText').innerText = '✓ Foto elegida o arrastrar aquí';
-                showToast("¡Foto comprimida, subida a GitHub y publicada!");
-
-            } catch (err) {
-                alert("Error: " + err.message);
+                const res = await fetch('/api/catalog?check=1', { headers: { 'x-admin-pass': pass }, cache: 'no-store' });
+                if (!res.ok) throw new Error('Contraseña incorrecta');
+                adminPass = pass;
+                sessionStorage.setItem('meraki_admin_pass', pass);
+                enterDashboard();
+            } catch (ex) {
+                err.innerText = ex.message || 'No se pudo conectar';
+                err.style.display = 'block';
             } finally {
-                btn.innerText = "Comprimir, Subir a GitHub y Publicar";
+                btn.innerText = 'Ingresar al Panel';
                 btn.disabled = false;
             }
         }
 
-        async function fetchCatalogData() {
-            if (!CATALOG_CSV_URL) {
-                document.getElementById('adminTableBody').innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 24px; color: var(--meraki-vino);"><b>Falta configurar CATALOG_CSV_URL</b> en el admin.html</td></tr>`;
-                return;
-            }
-            try {
-                const res = await fetch(CATALOG_CSV_URL + '&cacheBuster=' + Date.now());
-                const text = await res.text();
-                catalogData = parseCSV(text);
-                renderTable();
-            } catch(e) {
-                document.getElementById('adminTableBody').innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 24px; color: var(--meraki-vino);">Error al conectar con Google Sheets.</td></tr>`;
+        function logoutAdmin() {
+            sessionStorage.removeItem('meraki_admin_pass');
+            location.reload();
+        }
+
+        async function enterDashboard() {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('dashboardApp').style.display = 'block';
+            await loadItemsFromD1();
+        }
+
+        async function loadItemsFromD1() {
+            const res = await apiCall('/api/catalog');
+            const data = await res.json();
+            if (data.ok && Array.isArray(data.items)) {
+                catalogItems = data.items;
+                renderCards();
             }
         }
 
-        function renderTable() {
-            const tbody = document.getElementById('adminTableBody');
-            const counter = document.getElementById('productCounter');
-            
-            if (catalogData.length <= 1) {
-                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 24px; color: var(--ink-muted);">No hay productos registrados todavía.</td></tr>`;
-                counter.innerText = '0 productos';
+        async function saveCatalogToD1(toastMsg = '✓ Publicado al instante en la web') {
+            const res = await apiCall('/api/catalog', {
+                method: 'POST',
+                body: JSON.stringify({ items: catalogItems })
+            });
+            if (!res.ok) {
+                alert('Error al guardar cambios en la base de datos.');
+                return false;
+            }
+            renderCards();
+            showToast(toastMsg);
+            return true;
+        }
+
+        // =========================================================
+        // 2. RENDER DE GRILLA VISUAL
+        // =========================================================
+        function setFilter(f, btn) {
+            currentFilter = f;
+            document.querySelectorAll('#filterPills .pill-btn').forEach(b => b.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+            renderCards();
+        }
+
+        function colorHexFromName(name) {
+            const low = name.trim().toLowerCase();
+            const found = PALETTE_PRESETS.find(p => p[0].toLowerCase() === low);
+            return found ? found[1] : '#D8D4CE';
+        }
+
+        function renderCards() {
+            const q = (document.getElementById('adminSearchInput').value || '').trim().toLowerCase();
+            const homeCount = catalogItems.filter(i => i.destacado && i.visible !== false).length;
+            document.getElementById('homeCounterBadge').innerText = `En Home: ${homeCount}/6`;
+
+            const filtered = catalogItems.filter(item => {
+                if (currentFilter === 'HOME' && !item.destacado) return false;
+                else if (currentFilter === 'PAUSED' && item.visible !== false) return false;
+                else if (currentFilter === 'NOPRICE' && String(item.precioARS || '').trim() !== '') return false;
+                else if (!['ALL', 'HOME', 'PAUSED', 'NOPRICE'].includes(currentFilter) && item.rubro !== currentFilter) return false;
+
+                if (!q) return true;
+                return [item.nombre, item.rubro, item.subcategoria, item.colores, item.talles, item.descripcion]
+                    .some(v => String(v || '').toLowerCase().includes(q));
+            });
+
+            const grid = document.getElementById('cardsGrid');
+            if (!filtered.length) {
+                grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:48px; color:var(--ink-muted);">No hay prendas con este filtro.</div>`;
                 return;
             }
 
-            const rows = catalogData.slice(1);
-            counter.innerText = `${rows.length} productos`;
-
-            tbody.innerHTML = rows.map((row, idx) => {
-                const rubro = row[0] || '';
-                const nombre = row[2] || '';
-                const precio = row[3] || '';
-                const foto = row[7] || '';
-                const home = row[10] || 'NO';
-                const resolvedImg = foto.startsWith('http') ? foto : `https://raw.githubusercontent.com/${GH_CONFIG.owner}/${GH_CONFIG.repo}/${GH_CONFIG.branch}/${foto}`;
+            grid.innerHTML = filtered.map(item => {
+                const colorsArr = String(item.colores || '').split(',').map(s => s.trim()).filter(Boolean);
+                const priceTxt = String(item.precioARS || '').trim() ? `$ ${item.precioARS}` : 'Consultar';
 
                 return `
-                    <tr>
-                        <td><img src="${resolvedImg}" class="thumb-preview" onerror="this.src='chica1.webp'"></td>
-                        <td style="font-family: var(--font-mono); font-size: 0.65rem; text-transform: uppercase;">${rubro}</td>
-                        <td><input type="text" class="table-input" value="${nombre}" onchange="updateCell(${idx + 1}, 2, this.value)"></td>
-                        <td><input type="number" class="table-input" value="${precio}" onchange="updateCell(${idx + 1}, 3, this.value)" style="font-family:var(--font-mono);"></td>
-                        <td>
-                            <select class="table-input" onchange="updateCell(${idx + 1}, 10, this.value)" style="font-family:var(--font-mono);">
-                                <option value="SI" ${home.toUpperCase() === 'SI' ? 'selected' : ''}>SÍ</option>
-                                <option value="NO" ${home.toUpperCase() !== 'SI' ? 'selected' : ''}>NO</option>
-                            </select>
-                        </td>
-                        <td><button class="btn-admin-outline" style="padding: 4px 8px; font-size: 0.58rem;" onclick="deleteRow(${idx + 1})">Eliminar</button></td>
-                    </tr>
+                    <article class="prod-card ${item.visible === false ? 'is-hidden' : ''}">
+                        <div class="prod-thumb-wrap" onclick="openEditModal('${item.id}')">
+                            ${item.destacado ? `<span class="badge-home">⭐ Home</span>` : ''}
+                            ${item.visible === false ? `<span class="badge-paused">Pausado</span>` : ''}
+                            <img src="${imgUrl(item.foto)}" alt="${item.nombre}" loading="lazy">
+                        </div>
+                        <div class="prod-body" onclick="openEditModal('${item.id}')" style="cursor:pointer;">
+                            <span class="prod-kicker">${item.rubro} · ${item.subcategoria}</span>
+                            <div class="prod-name">${item.nombre}</div>
+                            <div class="prod-price">${priceTxt}</div>
+                            <div class="swatch-mini-row">
+                                ${colorsArr.slice(0, 5).map(c => `<span class="swatch-dot" style="background:${colorHexFromName(c)};" title="${c}"></span>`).join('')}
+                                <span style="font-family:var(--font-mono); font-size:0.58rem; color:var(--ink-muted); margin-left:2px;">${item.talles || ''}</span>
+                            </div>
+                        </div>
+                        <div class="prod-actions">
+                            <button class="act-btn" onclick="openEditModal('${item.id}')">✏️ Editar</button>
+                            <button class="act-btn ${item.destacado ? 'home-on' : ''}" onclick="quickToggleHome('${item.id}')" title="Destacar en Home">⭐</button>
+                            <button class="act-btn" onclick="quickToggleVisible('${item.id}')" title="Mostrar/Ocultar">${item.visible === false ? '🚫' : '👁️'}</button>
+                        </div>
+                    </article>
                 `;
             }).join('');
         }
 
-        function updateCell(rowIdx, colIdx, val) {
-            if (catalogData[rowIdx]) {
-                catalogData[rowIdx][colIdx] = val;
-                showToast("Cambio guardado en memoria");
+        async function quickToggleHome(id) {
+            const item = catalogItems.find(i => i.id === id);
+            if (!item) return;
+            item.destacado = !item.destacado;
+            await saveCatalogToD1(item.destacado ? '⭐ Destacado en Home' : 'Quitado del Home');
+        }
+
+        async function quickToggleVisible(id) {
+            const item = catalogItems.find(i => i.id === id);
+            if (!item) return;
+            item.visible = item.visible === false;
+            await saveCatalogToD1(item.visible ? '👁️ Visible en la tienda' : 'Producto pausado');
+        }
+
+        // =========================================================
+        // 3. COMPRESIÓN WEBP EN NAVEGADOR + SUBIDA / BORRADO EN GITHUB
+        // =========================================================
+        function compressImageToWebP(file, maxDim = 1200, quality = 0.84) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onerror = reject;
+                reader.onload = e => {
+                    const img = new Image();
+                    img.onerror = reject;
+                    img.onload = () => {
+                        let w = img.width, h = img.height;
+                        if (w > maxDim || h > maxDim) {
+                            if (w > h) { h = Math.round((h * maxDim) / w); w = maxDim; }
+                            else { w = Math.round((w * maxDim) / h); h = maxDim; }
+                        }
+                        const canvas = document.createElement('canvas');
+                        canvas.width = w; canvas.height = h;
+                        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+                        const dataUrl = canvas.toDataURL('image/webp', quality);
+                        resolve({ dataUrl, base64: dataUrl.split(',')[1] });
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function folderForRubro(rubro, sub) {
+            if (rubro === 'Deco & Home') return 'media/deco-home';
+            if (rubro === 'Bazar') return 'media/bazar';
+            if (rubro === 'Aromas') return 'media/aromas';
+            return String(sub || '').toLowerCase().includes('hombre') ? 'media/indumentaria/hombre' : 'media/indumentaria/mujer';
+        }
+
+        async function handleBatchUpload(fileList) {
+            const files = Array.from(fileList || []);
+            if (!files.length) return;
+            showToast(`Comprimiendo y subiendo ${files.length} foto(s)...`);
+
+            const defaultRubro = ['Indumentaria', 'Deco & Home', 'Bazar', 'Aromas'].includes(currentFilter) ? currentFilter : 'Indumentaria';
+            const folder = folderForRubro(defaultRubro, 'Mujer');
+
+            for (let i = 0; i < files.length; i++) {
+                try {
+                    const { base64 } = await compressImageToWebP(files[i]);
+                    const slug = files[i].name.replace(/\.[^/.]+$/, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 28);
+                    const path = `${folder}/${slug}-${Date.now() + i}.webp`;
+
+                    const upRes = await apiCall('/api/media', {
+                        method: 'POST',
+                        body: JSON.stringify({ path, base64, message: `Subida múltiple: ${slug}` })
+                    });
+                    if (!upRes.ok) continue;
+
+                    catalogItems.unshift({
+                        id: `mk-${Date.now()}-${i}`,
+                        rubro: defaultRubro,
+                        subcategoria: defaultRubro === 'Indumentaria' ? 'Mujer' : 'General',
+                        nombre: 'Nueva Prenda (Editar nombre)',
+                        precioARS: '',
+                        precioPYG: '',
+                        precioBRL: '',
+                        descripcion: 'Pieza seleccionada de nuestra colección en Puerto Iguazú.',
+                        foto: path,
+                        etiqueta: 'NEW',
+                        talles: defaultRubro === 'Indumentaria' ? 'S, M, L' : 'Único',
+                        colores: '',
+                        destacado: false,
+                        visible: true
+                    });
+                } catch (_) {}
+            }
+
+            document.getElementById('batchFileInput').value = '';
+            await saveCatalogToD1(`✓ ${files.length} foto(s) subidas y listas`);
+        }
+
+        // =========================================================
+        // 4. MODAL DE EDICIÓN VISUAL (COLORES, TALLES Y REEMPLAZO DE FOTO)
+        // =========================================================
+        function buildVisualPickers() {
+            const cGrid = document.getElementById('colorPickerGrid');
+            const currentColors = String(document.getElementById('edColores').value || '')
+                .split(',').map(s => s.trim().toLowerCase()).filter(Boolean);
+
+            cGrid.innerHTML = PALETTE_PRESETS.map(([name, hex]) => {
+                const isAct = currentColors.includes(name.toLowerCase());
+                return `
+                    <button type="button" class="color-chip-pick ${isAct ? 'active' : ''}" onclick="toggleColorPreset('${name}')">
+                        <span class="swatch-dot" style="background:${hex};"></span>
+                        <span>${name}</span>
+                    </button>
+                `;
+            }).join('');
+
+            const sGrid = document.getElementById('sizePickerGrid');
+            const currentSizes = String(document.getElementById('edTalles').value || '')
+                .split(',').map(s => s.trim().toLowerCase()).filter(Boolean);
+
+            sGrid.innerHTML = SIZE_PRESETS.map(sz => {
+                const isAct = currentSizes.includes(sz.toLowerCase());
+                return `
+                    <button type="button" class="size-chip-pick ${isAct ? 'active' : ''}" onclick="toggleSizePreset('${sz}')">${sz}</button>
+                `;
+            }).join('');
+        }
+
+        function toggleColorPreset(name) {
+            const input = document.getElementById('edColores');
+            const list = input.value.split(',').map(s => s.trim()).filter(Boolean);
+            const idx = list.findIndex(c => c.toLowerCase() === name.toLowerCase());
+            if (idx > -1) list.splice(idx, 1);
+            else list.push(name);
+            input.value = list.join(', ');
+            buildVisualPickers();
+        }
+
+        function toggleSizePreset(sz) {
+            const input = document.getElementById('edTalles');
+            const list = input.value.split(',').map(s => s.trim()).filter(Boolean);
+            const idx = list.findIndex(s => s.toLowerCase() === sz.toLowerCase());
+            if (idx > -1) list.splice(idx, 1);
+            else list.push(sz);
+            input.value = list.join(', ');
+            buildVisualPickers();
+        }
+
+        function openNewProductModal() {
+            editingId = null;
+            pendingNewBase64 = null;
+            pendingNewExtPath = null;
+            document.getElementById('modalTitle').innerText = '+ Nueva Prenda / Producto';
+            document.getElementById('edPreviewImg').src = '';
+            document.getElementById('edPhotoStatus').innerText = 'Seleccioná una foto arriba';
+            document.getElementById('edRubro').value = 'Indumentaria';
+            document.getElementById('edSub').value = 'Mujer';
+            document.getElementById('edNombre').value = '';
+            document.getElementById('edArs').value = '';
+            document.getElementById('edPyg').value = '';
+            document.getElementById('edBrl').value = '';
+            document.getElementById('edTag').value = '';
+            document.getElementById('edColores').value = '';
+            document.getElementById('edTalles').value = 'S, M, L';
+            document.getElementById('edDesc').value = 'Prenda seleccionada de nuestra colección en Puerto Iguazú.';
+            document.getElementById('edHome').checked = false;
+            document.getElementById('edVisible').checked = true;
+            document.getElementById('edDeleteBtn').style.display = 'none';
+            buildVisualPickers();
+            document.getElementById('editModal').classList.add('open');
+        }
+
+        function openEditModal(id) {
+            const item = catalogItems.find(i => i.id === id);
+            if (!item) return;
+            editingId = id;
+            pendingNewBase64 = null;
+            pendingNewExtPath = null;
+
+            document.getElementById('modalTitle').innerText = 'Editar Producto';
+            document.getElementById('edPreviewImg').src = imgUrl(item.foto);
+            document.getElementById('edPhotoStatus').innerText = item.foto || '';
+            document.getElementById('edRubro').value = item.rubro || 'Indumentaria';
+            document.getElementById('edSub').value = item.subcategoria || 'Mujer';
+            document.getElementById('edNombre').value = item.nombre || '';
+            document.getElementById('edArs').value = item.precioARS || '';
+            document.getElementById('edPyg').value = item.precioPYG || '';
+            document.getElementById('edBrl').value = item.precioBRL || '';
+            document.getElementById('edTag').value = item.etiqueta || '';
+            document.getElementById('edColores').value = item.colores || '';
+            document.getElementById('edTalles').value = item.talles || '';
+            document.getElementById('edDesc').value = item.descripcion || '';
+            document.getElementById('edHome').checked = Boolean(item.destacado);
+            document.getElementById('edVisible').checked = item.visible !== false;
+            document.getElementById('edDeleteBtn').style.display = 'inline-flex';
+
+            buildVisualPickers();
+            document.getElementById('editModal').classList.add('open');
+        }
+
+        function closeEditModal() {
+            document.getElementById('editModal').classList.remove('open');
+            document.getElementById('edFileInput').value = '';
+        }
+
+        async function handleSinglePhotoChange(input) {
+            const file = input.files[0];
+            if (!file) return;
+            document.getElementById('edPhotoStatus').innerText = 'Optimizando a WebP...';
+            const { dataUrl, base64 } = await compressImageToWebP(file);
+            document.getElementById('edPreviewImg').src = dataUrl;
+            pendingNewBase64 = base64;
+            const slug = file.name.replace(/\.[^/.]+$/, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 28);
+            const folder = folderForRubro(document.getElementById('edRubro').value, document.getElementById('edSub').value);
+            pendingNewExtPath = `${folder}/${slug}-${Date.now()}.webp`;
+            document.getElementById('edPhotoStatus').innerText = `✓ Lista: ${pendingNewExtPath}`;
+        }
+
+        async function saveProductForm(e) {
+            e.preventDefault();
+            const btn = document.getElementById('edSaveBtn');
+            btn.innerText = 'GUARDANDO...';
+            btn.disabled = true;
+
+            try {
+                const existing = editingId ? catalogItems.find(i => i.id === editingId) : null;
+                let finalFoto = existing ? existing.foto : '';
+
+                if (pendingNewBase64 && pendingNewExtPath) {
+                    const upRes = await apiCall('/api/media', {
+                        method: 'POST',
+                        body: JSON.stringify({ path: pendingNewExtPath, base64: pendingNewBase64 })
+                    });
+                    if (!upRes.ok) throw new Error('No se pudo subir la nueva foto a GitHub');
+
+                    // Borra la foto anterior de GitHub si no la comparte otro producto
+                    if (existing && existing.foto && existing.foto.startsWith('media/')) {
+                        const shared = catalogItems.filter(p => p.foto === existing.foto).length;
+                        if (shared <= 1) {
+                            await apiCall('/api/media', { method: 'DELETE', body: JSON.stringify({ path: existing.foto }) });
+                        }
+                    }
+                    finalFoto = pendingNewExtPath;
+                }
+
+                if (!finalFoto) {
+                    alert('Elegí una foto para el producto.');
+                    return;
+                }
+
+                const payload = {
+                    id: existing ? existing.id : `mk-${Date.now()}`,
+                    rubro: document.getElementById('edRubro').value,
+                    subcategoria: document.getElementById('edSub').value.trim() || 'Mujer',
+                    nombre: document.getElementById('edNombre').value.trim(),
+                    precioARS: document.getElementById('edArs').value.trim(),
+                    precioPYG: document.getElementById('edPyg').value.trim(),
+                    precioBRL: document.getElementById('edBrl').value.trim(),
+                    etiqueta: document.getElementById('edTag').value.trim(),
+                    colores: document.getElementById('edColores').value.trim(),
+                    talles: document.getElementById('edTalles').value.trim(),
+                    descripcion: document.getElementById('edDesc').value.trim(),
+                    foto: finalFoto,
+                    destacado: document.getElementById('edHome').checked,
+                    visible: document.getElementById('edVisible').checked
+                };
+
+                if (existing) {
+                    const idx = catalogItems.findIndex(i => i.id === existing.id);
+                    catalogItems[idx] = payload;
+                } else {
+                    catalogItems.unshift(payload);
+                }
+
+                await saveCatalogToD1('✓ Cambios publicados al instante');
+                closeEditModal();
+            } catch (ex) {
+                alert(ex.message || 'Error al guardar');
+            } finally {
+                btn.innerText = 'Guardar y Publicar';
+                btn.disabled = false;
             }
         }
 
-        function deleteRow(rowIdx) {
-            if (confirm("¿Eliminar este producto de la lista?")) {
-                catalogData.splice(rowIdx, 1);
-                renderTable();
-                showToast("Producto eliminado");
+        async function deleteCurrentItem() {
+            if (!editingId) return;
+            const target = catalogItems.find(i => i.id === editingId);
+            if (!target) return;
+            if (!confirm(`¿Eliminar "${target.nombre}" y borrar su foto de GitHub?`)) return;
+
+            const btn = document.getElementById('edDeleteBtn');
+            btn.innerText = 'BORRANDO...';
+            btn.disabled = true;
+
+            try {
+                if (target.foto && target.foto.startsWith('media/')) {
+                    const shared = catalogItems.filter(p => p.foto === target.foto).length;
+                    if (shared <= 1) {
+                        await apiCall('/api/media', { method: 'DELETE', body: JSON.stringify({ path: target.foto }) });
+                    }
+                }
+                catalogItems = catalogItems.filter(i => i.id !== editingId);
+                await saveCatalogToD1('🗑️ Producto y foto eliminados');
+                closeEditModal();
+            } finally {
+                btn.innerText = '🗑️ Eliminar';
+                btn.disabled = false;
             }
         }
 
-        function showToast(msg) {
-            const t = document.getElementById('adminToast');
-            t.innerText = msg;
-            t.classList.add('show');
-            setTimeout(() => t.classList.remove('show'), 2500);
+        // =========================================================
+        // 5. DETECTOR AUTOMÁTICO DE FOTOS SUBIDAS DIRECTO A GITHUB
+        // =========================================================
+        async function syncGithubPhotos() {
+            const btn = document.getElementById('syncBtn');
+            btn.innerText = 'Escaneando...';
+            btn.disabled = true;
+
+            try {
+                const res = await apiCall('/api/sync');
+                const data = await res.json();
+                if (!data.ok) throw new Error();
+
+                const existingPaths = new Set(catalogItems.map(i => i.foto));
+                const newFiles = (data.files || []).filter(p => !existingPaths.has(p));
+
+                if (newFiles.length === 0) {
+                    showToast('✓ Todo está sincronizado (no hay fotos nuevas)');
+                    return;
+                }
+
+                newFiles.forEach((p, idx) => {
+                    const parts = p.split('/');
+                    const folder = (parts[1] || '').toLowerCase();
+                    let rubro = 'Indumentaria', sub = 'Mujer';
+                    if (folder === 'deco-home') { rubro = 'Deco & Home'; sub = 'Hogar'; }
+                    else if (folder === 'bazar') { rubro = 'Bazar'; sub = 'Mesa'; }
+                    else if (folder === 'aromas') { rubro = 'Aromas'; sub = 'Textil & Sahumado'; }
+                    else if (parts[2] === 'hombre') { sub = 'Hombre'; }
+
+                    const rawName = parts[parts.length - 1].replace(/\.[^/.]+$/, '').replace(/[-_]+/g, ' ');
+                    const cleanName = rawName.replace(/\b\w/g, l => l.toUpperCase());
+
+                    catalogItems.unshift({
+                        id: `gh-${Date.now()}-${idx}`,
+                        rubro, subcategoria: sub, nombre: cleanName,
+                        precioARS: '', precioPYG: '', precioBRL: '',
+                        descripcion: 'Pieza seleccionada de nuestra colección en Puerto Iguazú.',
+                        foto: p, etiqueta: 'NEW',
+                        talles: rubro === 'Indumentaria' ? 'S, M, L' : 'Único',
+                        colores: '', destacado: false, visible: true
+                    });
+                });
+
+                await saveCatalogToD1(`✓ ${newFiles.length} foto(s) nuevas importadas de GitHub`);
+            } catch (_) {
+                alert('No se pudo escanear GitHub.');
+            } finally {
+                btn.innerText = '🔄 Detectar Fotos GitHub';
+                btn.disabled = false;
+            }
+        }
+
+        // Auto-ingreso si ya inició sesión en esta pestaña
+        if (adminPass) {
+            fetch('/api/catalog?check=1', { headers: { 'x-admin-pass': adminPass } })
+                .then(r => { if (r.ok) enterDashboard(); });
         }
     </script>
 </body>
