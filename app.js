@@ -61,14 +61,15 @@ function initHeroVideo() {
 
 function pushHistoryState(modalId) {
     modalStateStack.push(modalId);
-    history.pushState({ modalOpen: true, modalId }, '');
+    if (!history.state || !history.state.modalOpen) {
+        history.pushState({ modalOpen: true, modalId }, '');
+    }
 }
 
-window.addEventListener('popstate', (event) => {
+window.addEventListener('popstate', () => {
     if (modalStateStack.length > 0) {
-        event.preventDefault();
-        const topModal = modalStateStack.pop();
-        closeOverlayWithoutHistory(topModal);
+        modalStateStack = [];
+        closeOverlayWithoutHistory();
     }
 });
 
@@ -287,11 +288,14 @@ function handleRouteFromHash() {
     const h = decodeURIComponent(location.hash || '');
     if (h.startsWith('#categoria/')) {
         const targetRubro = h.replace('#categoria/', '');
+        if (currentView === 'category' && activeRubro === targetRubro) return;
         if (targetRubro === 'Todo' || PRODUCTS.some(p => p.rubro === targetRubro)) {
             navigateToCategory(targetRubro);
         }
     } else if (['#bienestar', '#contacto', '#ubicacion'].includes(h)) {
         scrollToSection(null, h.replace('#', ''));
+    } else if (!h && currentView === 'category') {
+        navigateToHome();
     }
 }
 window.addEventListener('hashchange', handleRouteFromHash);
@@ -747,7 +751,7 @@ function addCurrentPdpToBag() {
     if (!currentPdpProduct) return;
     playTap();
     pushToBag(currentPdpProduct, currentPdpSize, currentPdpComboSelection);
-    closeAllOverlays();
+    closeAllOverlays(false);
     openBagDrawer();
 }
 
@@ -883,18 +887,22 @@ function openMenuDrawer() {
     pushHistoryState('menuDrawer');
 }
 
-function closeAllOverlays() {
+function closeAllOverlays(popHistory = true) {
     document.getElementById('globalBackdrop').classList.remove('open');
     document.getElementById('pdpModal').classList.remove('open');
     document.getElementById('bagDrawer').classList.remove('open');
     document.getElementById('menuDrawer').classList.remove('open');
-    modalStateStack = [];
+    if (popHistory && modalStateStack.length > 0) {
+        modalStateStack = [];
+        if (history.state && history.state.modalOpen) history.back();
+    } else {
+        modalStateStack = [];
+    }
 }
 
-function closeOverlayWithoutHistory(modalId) {
+function closeOverlayWithoutHistory() {
     document.getElementById('globalBackdrop').classList.remove('open');
-    const el = document.getElementById(modalId);
-    if (el) el.classList.remove('open');
+    document.getElementById('pdpModal').classList.remove('open');
     document.getElementById('bagDrawer').classList.remove('open');
     document.getElementById('menuDrawer').classList.remove('open');
 }
