@@ -11,7 +11,7 @@ const CONFIG = {
     API_CATALOG_URL: "/api/catalog",
     APPS_SCRIPT_URL: "",
 
-    CACHE_KEY: "meraki_d1_cache_v2",
+    CACHE_KEY: "meraki_d1_cache_v3",
 
     RATES: {
         ARS_TO_PYG: 6.5,
@@ -109,7 +109,10 @@ function resolveAssetUrl(relPath) {
     if (!relPath) return '';
     if (relPath.startsWith('http://') || relPath.startsWith('https://') || relPath.startsWith('data:')) return relPath;
     const encoded = relPath.split('/').map(seg => encodeURIComponent(seg)).join('/');
-    return `https://raw.githubusercontent.com/${CONFIG.GITHUB_OWNER}/${CONFIG.GITHUB_REPO}/${CONFIG.GITHUB_BRANCH}/${encoded}`;
+    if (window.location.protocol === 'file:') {
+        return `https://raw.githubusercontent.com/${CONFIG.GITHUB_OWNER}/${CONFIG.GITHUB_REPO}/${CONFIG.GITHUB_BRANCH}/${encoded}`;
+    }
+    return encoded;
 }
 
 function getProductPrice(item, curr = activeCurrency) {
@@ -174,6 +177,7 @@ function mapApiItemsToProducts(rawItems) {
                 descripcion: it.descripcion || '',
                 imagen: resolvedFotos[0] || '',
                 imagenes: resolvedFotos,
+                fotos: resolvedFotos,
                 etiqueta: it.etiqueta || (hasTwoPrices ? 'LOOK / 2 PIEZAS' : ''),
                 talles: finalTalles,
                 tallesLabel: finalTalles.join(' · '),
