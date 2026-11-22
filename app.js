@@ -1,9 +1,9 @@
 /* ==========================================================================
-   MERAKI · MOTOR INTERACTIVO, HISTORY API, MULTI-FOTO, VIDEO & ENCUADRE INTELIGENTE
+   MERAKI · MOTOR INTERACTIVO, HISTORY API, MULTI-FOTO, VIDEO Y URL LIMPIA
    ========================================================================== */
 
 let activeCurrency = localStorage.getItem('meraki_currency') || 'ARS';
-let currentView = 'home';
+let currentView = 'home'; // 'home' | 'category'
 let activeRubro = 'Todo';
 let activeSubcat = 'Todas';
 let activeHomeSection = 'home';
@@ -21,14 +21,8 @@ function isVideoPath(p) {
 }
 
 function applySmartFit(el) {
-    if (!el) return;
-    const w = el.naturalWidth || el.videoWidth || 0;
-    const h = el.naturalHeight || el.videoHeight || 0;
-    if (w > 0 && h > 0 && (w / h) > 0.82) {
-        el.classList.add('fit-contain');
-    } else {
-        el.classList.remove('fit-contain');
-    }
+    // Con object-fit: contain en CSS, las fotos y almohadones horizontales se ven enteros sin recortarse
+    if (el) el.classList.add('fit-contain');
 }
 
 function pushHistoryState(modalId) {
@@ -168,7 +162,8 @@ function navigateToHome(e) {
     document.getElementById('searchExpandBar').classList.remove('open');
     document.getElementById('pageCategoryView').classList.remove('active');
     document.getElementById('pageHomeView').classList.add('active');
-    if (location.hash !== '#inicio') history.replaceState(null, '', '#inicio');
+    // URL limpia sin redundancias (#inicio)
+    if (location.hash) history.replaceState(null, '', window.location.pathname);
     setActiveHeaderTab('home');
     window.scrollTo({ top: 0, behavior: 'smooth' });
     updateFloatingVisibility();
