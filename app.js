@@ -1,9 +1,9 @@
 /* ==========================================================================
-   MERAKI · MOTOR INTERACTIVO, HISTORY API (BOTÓN ATRÁS SEGURO) & WHATSAPP
+   MERAKI · MOTOR INTERACTIVO, GALERÍA MULTI-FOTO, HISTORY API & PAGINACIÓN
    ========================================================================== */
 
 let activeCurrency = localStorage.getItem('meraki_currency') || 'ARS';
-let currentView = 'home'; // 'home' | 'category'
+let currentView = 'home';
 let activeRubro = 'Todo';
 let activeSubcat = 'Todas';
 let activeHomeSection = 'home';
@@ -12,8 +12,13 @@ let shoppingBag = JSON.parse(localStorage.getItem('meraki_bag') || '[]');
 let currentPdpProduct = null;
 let currentPdpSize = 'A confirmar';
 let currentPdpComboSelection = 'all';
+let currentPdpPhotos = [];
+let currentPdpPhotoIdx = 0;
 
-// Historial de navegación seguro para móviles (Evita que el botón "Atrás" saque de la web)
+// Paginación progresiva para soportar 1.000+ prendas sin ralentizar jamás
+const PAGE_BATCH_SIZE = 24;
+let currentCatLimit = PAGE_BATCH_SIZE;
+
 let modalStateStack = [];
 
 function pushHistoryState(modalId) {
@@ -51,9 +56,7 @@ function setCurrency(curr) {
     playTap();
     activeCurrency = curr;
     localStorage.setItem('meraki_currency', curr);
-    document.querySelectorAll('.curr-btn').forEach(b => {
-        b.classList.toggle('active', b.dataset.curr === curr);
-    });
+    document.querySelectorAll('.curr-btn').forEach(b => b.classList.toggle('active', b.dataset.curr === curr));
     if (PRODUCTS.length > 0) {
         renderHomeCuratedGrid();
         if (currentView === 'category') renderCategoryGrid();
@@ -77,7 +80,12 @@ function getOrderedRubros() {
 function afterCatalogLoaded() {
     buildTopBarAndUniverses();
     renderHomeCuratedGrid();
-    handleRouteFromHash();
+    if (currentView === 'category') {
+        renderCategoryPageHeaderAndSubcats();
+        renderCategoryGrid();
+    } else {
+        handleRouteFromHash();
+    }
 }
 
 function buildTopBarAndUniverses() {
@@ -165,6 +173,7 @@ function navigateToCategory(rubro) {
     activeRubro = rubro;
     activeSubcat = 'Todas';
     searchQuery = '';
+    currentCatLimit = PAGE_BATCH_SIZE;
     const input = document.getElementById('catalogSearchInput');
     if (input) input.value = '';
     document.getElementById('searchExpandBar').classList.remove('open');
@@ -246,33 +255,17 @@ function buildSwatchesHTML(colores) {
 
 function resolveComboDetails(item, comboChoice = 'all') {
     if (!item.isCombo || !item.subItems || item.subItems.length < 2) {
-        return {
-            displayName: item.nombre,
-            priceARS: item.precioARS || 0,
-            comboKey: 'base'
-        };
+        return { displayName: item.nombre, priceARS: item.precioARS || 0, comboKey: 'base' };
     }
     if (comboChoice === 'all' || comboChoice === null || comboChoice === undefined) {
         const total = item.subItems.reduce((acc, sub) => acc + (sub.priceARS || 0), 0);
-        return {
-            displayName: `Look Completo (${item.nombre})`,
-            priceARS: total,
-            comboKey: 'all'
-        };
+        return { displayName: `Look Completo (${item.nombre})`, priceARS: total, comboKey: 'all' };
     }
     const idx = Number(comboChoice);
     if (!Number.isNaN(idx) && item.subItems[idx]) {
-        return {
-            displayName: item.subItems[idx].name,
-            priceARS: item.subItems[idx].priceARS || 0,
-            comboKey: idx
-        };
+        return { displayName: item.subItems[idx].name, priceARS: item.subItems[idx].priceARS || 0, comboKey: idx };
     }
-    return {
-        displayName: item.nombre,
-        priceARS: item.precioARS || 0,
-        comboKey: 'all'
-    };
+    return { displayName: item.nombre, priceARS: item.precioARS || 0, comboKey: 'all' };
 }
 
 function formatPriceDisplay(item) {
@@ -289,12 +282,16 @@ function createProductCardHTML(item, idx = 99) {
     const priceStr = formatPriceDisplay(item);
     const subLabel = [item.rubro, item.subcategoria].filter(Boolean).join(' · ');
     const fetchAttr = idx < 4 ? 'fetchpriority="high"' : 'loading="lazy"';
+    const fotos = item.imagenes && item.imagenes.length ? item.imagenes : [item.imagen];
+    const hasMulti = fotos.length > 1;
 
     return `
         <article class="product-card-minimal" onclick="openPdpModal('${item.id}')">
-            <div class="product-image-stage">
+            <div class="product-image-stage ${hasMulti ? 'has-multi-photo' : ''}">
                 ${item.etiqueta ? `<span class="product-tag-minimal">${item.etiqueta}</span>` : ''}
-                <img src="${item.imagen}" alt="${item.nombre}" ${fetchAttr} decoding="async">
+                <img src="${fotos[0]}" alt="${item.nombre}" ${fetchAttr} decoding="async" class="product-img-primary">
+                ${hasMulti ? `<img src="${fotos[1]}" alt="${item.nombre} ángulo 2" loading="lazy" decoding="async" class="product-img-hover">` : ''}
+                ${hasMulti ? `<span class="product-multi-badge">1/${fotos.length}</span>` : ''}
                 <button class="product-quick-add" title="Agregar" onclick="quickAddBag(event, '${item.id}')">+</button>
             </div>
             <div class="product-meta-block">
@@ -345,6 +342,7 @@ function renderCategoryPageHeaderAndSubcats() {
 function selectSubcat(sub) {
     playTap();
     activeSubcat = sub;
+    currentCatLimit = PAGE_BATCH_SIZE;
     renderCategoryPageHeaderAndSubcats();
     renderCategoryGrid();
 }
@@ -359,12 +357,41 @@ function renderCategoryGrid() {
         const matchSearch = !q || p.nombre.toLowerCase().includes(q) || p.descripcion.toLowerCase().includes(q) || p.rubro.toLowerCase().includes(q) || p.subcategoria.toLowerCase().includes(q);
         return matchRubro && matchSub && matchSearch;
     });
+
     counterEl.innerText = `${filtered.length} ${filtered.length === 1 ? 'pieza disponible' : 'piezas disponibles'} · ${activeCurrency}`;
+
     if (!filtered.length) {
         grid.innerHTML = `<div class="empty-catalog-state">No encontramos piezas con ese filtro. Probá limpiando la búsqueda.</div>`;
+        removeLoadMoreBtn();
         return;
     }
-    grid.innerHTML = filtered.map((p, i) => createProductCardHTML(p, i)).join('');
+
+    const visibleSlice = filtered.slice(0, currentCatLimit);
+    grid.innerHTML = visibleSlice.map((p, i) => createProductCardHTML(p, i)).join('');
+    renderLoadMoreBtn(filtered.length);
+}
+
+function removeLoadMoreBtn() {
+    const old = document.getElementById('catLoadMoreWrap');
+    if (old) old.remove();
+}
+
+function renderLoadMoreBtn(totalCount) {
+    removeLoadMoreBtn();
+    if (currentCatLimit >= totalCount) return;
+    const grid = document.getElementById('categoryProductsGrid');
+    const rem = totalCount - currentCatLimit;
+    const wrap = document.createElement('div');
+    wrap.id = 'catLoadMoreWrap';
+    wrap.style.cssText = 'text-align:center; padding:32px 0 12px;';
+    wrap.innerHTML = `<button class="btn-luxury-outline" onclick="loadMoreCategoryItems()">Ver más prendas (${rem} restantes)</button>`;
+    grid.parentNode.appendChild(wrap);
+}
+
+function loadMoreCategoryItems() {
+    playTap();
+    currentCatLimit += PAGE_BATCH_SIZE;
+    renderCategoryGrid();
 }
 
 function toggleSearchBar() {
@@ -376,21 +403,17 @@ function toggleSearchBar() {
 
 function handleSearch(val) {
     searchQuery = val.trim();
-    if (searchQuery.length > 0) {
-        if (currentView !== 'category') {
-            activeRubro = 'Todo';
-            activeSubcat = 'Todas';
-            currentView = 'category';
-            document.getElementById('pageHomeView').classList.remove('active');
-            document.getElementById('pageCategoryView').classList.add('active');
-            setActiveHeaderTab('');
-        }
-        renderCategoryPageHeaderAndSubcats();
-        renderCategoryGrid();
-    } else {
-        renderCategoryPageHeaderAndSubcats();
-        renderCategoryGrid();
+    currentCatLimit = PAGE_BATCH_SIZE;
+    if (searchQuery.length > 0 && currentView !== 'category') {
+        activeRubro = 'Todo';
+        activeSubcat = 'Todas';
+        currentView = 'category';
+        document.getElementById('pageHomeView').classList.remove('active');
+        document.getElementById('pageCategoryView').classList.add('active');
+        setActiveHeaderTab('');
     }
+    renderCategoryPageHeaderAndSubcats();
+    renderCategoryGrid();
 }
 
 function clearSearch() {
@@ -401,8 +424,69 @@ function clearSearch() {
 }
 
 // ==========================================================================
-// QUICK-VIEW PDP MODAL
+// QUICK-VIEW PDP MODAL CON GALERÍA MULTI-FOTO Y SWIPE TÁCTIL
 // ==========================================================================
+function ensurePdpGalleryControls() {
+    const col = document.querySelector('.pdp-media-col');
+    if (!col || document.getElementById('pdpGalleryNav')) return;
+
+    col.style.position = 'relative';
+    const nav = document.createElement('div');
+    nav.id = 'pdpGalleryNav';
+    nav.className = 'pdp-gallery-nav';
+    nav.innerHTML = `
+        <button type="button" class="pdp-gal-arrow pdp-gal-prev" onclick="stepPdpPhoto(-1)" aria-label="Foto anterior">‹</button>
+        <button type="button" class="pdp-gal-arrow pdp-gal-next" onclick="stepPdpPhoto(1)" aria-label="Siguiente foto">›</button>
+        <span class="pdp-gal-counter" id="pdpGalCounter">1 / 1</span>
+        <div class="pdp-gal-thumbs" id="pdpGalThumbs"></div>
+    `;
+    col.appendChild(nav);
+
+    let sx = 0;
+    col.addEventListener('touchstart', e => { sx = e.changedTouches[0].clientX; }, { passive: true });
+    col.addEventListener('touchend', e => {
+        if (currentPdpPhotos.length < 2) return;
+        const diff = e.changedTouches[0].clientX - sx;
+        if (Math.abs(diff) > 36) stepPdpPhoto(diff < 0 ? 1 : -1);
+    });
+}
+
+function renderPdpPhotoState() {
+    const imgEl = document.getElementById('pdpImg');
+    if (imgEl && currentPdpPhotos[currentPdpPhotoIdx]) {
+        imgEl.src = currentPdpPhotos[currentPdpPhotoIdx];
+    }
+
+    const nav = document.getElementById('pdpGalleryNav');
+    if (!nav) return;
+
+    if (currentPdpPhotos.length <= 1) {
+        nav.style.display = 'none';
+        return;
+    }
+
+    nav.style.display = 'block';
+    document.getElementById('pdpGalCounter').innerText = `${currentPdpPhotoIdx + 1} / ${currentPdpPhotos.length}`;
+    document.getElementById('pdpGalThumbs').innerHTML = currentPdpPhotos.map((src, i) => `
+        <button type="button" class="pdp-gal-thumb ${i === currentPdpPhotoIdx ? 'active' : ''}" onclick="setPdpPhoto(${i})" aria-label="Ver foto ${i + 1}">
+            <img src="${src}" alt="">
+        </button>
+    `).join('');
+}
+
+function stepPdpPhoto(delta) {
+    if (currentPdpPhotos.length < 2) return;
+    playTap();
+    currentPdpPhotoIdx = (currentPdpPhotoIdx + delta + currentPdpPhotos.length) % currentPdpPhotos.length;
+    renderPdpPhotoState();
+}
+
+function setPdpPhoto(idx) {
+    playTap();
+    currentPdpPhotoIdx = idx;
+    renderPdpPhotoState();
+}
+
 function openPdpModal(id) {
     playTap();
     const item = PRODUCTS.find(p => p.id === id);
@@ -411,8 +495,12 @@ function openPdpModal(id) {
     currentPdpProduct = item;
     currentPdpSize = item.talles[0] || 'A confirmar';
     currentPdpComboSelection = item.isCombo ? 'all' : 'base';
+    currentPdpPhotos = (item.imagenes && item.imagenes.length) ? item.imagenes : [item.imagen];
+    currentPdpPhotoIdx = 0;
 
-    document.getElementById('pdpImg').src = item.imagen;
+    ensurePdpGalleryControls();
+    renderPdpPhotoState();
+
     document.getElementById('pdpKicker').innerText = [item.rubro, item.subcategoria].filter(Boolean).join(' · ');
     document.getElementById('pdpTitle').innerText = item.nombre;
 
@@ -529,7 +617,7 @@ function updatePdpWppLink() {
 }
 
 // ==========================================================================
-// BOLSA DE SELECCIÓN (CON SOPORTE PARA COMBOS Y BOTÓN ELIMINAR)
+// BOLSA DE SELECCIÓN
 // ==========================================================================
 function quickAddBag(e, id) {
     e.stopPropagation();
@@ -554,16 +642,8 @@ function pushToBag(item, size, comboChoice = 'all') {
         b.size === size &&
         (b.comboKey ?? 'all') === details.comboKey
     );
-    if (existing) {
-        existing.qty += 1;
-    } else {
-        shoppingBag.push({
-            id: item.id,
-            size,
-            comboKey: details.comboKey,
-            qty: 1
-        });
-    }
+    if (existing) existing.qty += 1;
+    else shoppingBag.push({ id: item.id, size, comboKey: details.comboKey, qty: 1 });
     saveBag();
     showToast(`"${details.displayName}" agregado`);
 }
@@ -688,9 +768,6 @@ function closeOverlayWithoutHistory(modalId) {
     document.getElementById('menuDrawer').classList.remove('open');
 }
 
-// ==========================================================================
-// 7 DÍAS · 7 INTENCIONES
-// ==========================================================================
 const intencionesData = {
     abundancia: {
         title: "Momento de Abundancia",
@@ -726,13 +803,9 @@ function selectIntencion(key, btn) {
     }
 }
 
-// ==========================================================================
-// FORMULARIO DE CONTACTO (APPS SCRIPT + RESPALDO WHATSAPP)
-// ==========================================================================
 async function submitContactForm(e) {
     e.preventDefault();
     playTap();
-
     const btn = document.getElementById('contactSubmitBtn');
     const feedback = document.getElementById('contactFeedback');
     const payload = {
@@ -743,30 +816,14 @@ async function submitContactForm(e) {
         mensaje: document.getElementById('contactMessage').value.trim(),
         fecha: new Date().toLocaleString('es-AR')
     };
-
     btn.innerText = 'ENVIANDO...';
     btn.disabled = true;
-
     try {
-        if (CONFIG.APPS_SCRIPT_URL) {
-            await fetch(CONFIG.APPS_SCRIPT_URL, {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: { 'Content-Type': 'text/plain' },
-                body: JSON.stringify(payload)
-            });
-            feedback.innerText = '✓ ¡Gracias! Tu consulta fue enviada correctamente.';
-        } else {
-            // Si aún no configuraste APPS_SCRIPT_URL, deriva la consulta a WhatsApp para no perderla
-            const wppMsg = `¡Hola MeraKi! ✨ Te escribo desde el formulario de la web:\n\n• *Nombre:* ${payload.nombre}\n• *Contacto:* ${payload.contacto}\n• *Asunto:* ${payload.asunto}\n• *Mensaje:* ${payload.mensaje}`;
-            window.open(`https://wa.me/${CONFIG.WHATSAPP_NUMBER}?text=${encodeURIComponent(wppMsg)}`, '_blank', 'noopener,noreferrer');
-            feedback.innerText = '✓ Redirigiendo tu consulta a WhatsApp...';
-        }
+        const wppMsg = `¡Hola MeraKi! ✨ Te escribo desde el formulario de la web:\n\n• *Nombre:* ${payload.nombre}\n• *Contacto:* ${payload.contacto}\n• *Asunto:* ${payload.asunto}\n• *Mensaje:* ${payload.mensaje}`;
+        window.open(`https://wa.me/${CONFIG.WHATSAPP_NUMBER}?text=${encodeURIComponent(wppMsg)}`, '_blank', 'noopener,noreferrer');
+        feedback.innerText = '✓ Redirigiendo tu consulta a WhatsApp...';
         feedback.classList.add('visible');
         document.getElementById('contactForm').reset();
-    } catch (err) {
-        feedback.innerText = '✓ No pudimos enviar por email; escribinos directo por WhatsApp.';
-        feedback.classList.add('visible');
     } finally {
         btn.innerText = 'ENVIAR CONSULTA';
         btn.disabled = false;
@@ -774,9 +831,6 @@ async function submitContactForm(e) {
     }
 }
 
-// ==========================================================================
-// ESTADO SHOWROOM & ANIMACIONES DE SCROLL
-// ==========================================================================
 function updateStoreStatus() {
     const dot = document.getElementById('statusDot');
     const txt = document.getElementById('statusText');
@@ -808,7 +862,6 @@ function initScrollAnimations() {
             }
         });
     }, { threshold: 0.05 });
-
     blocks.forEach(el => observer.observe(el));
 }
 
