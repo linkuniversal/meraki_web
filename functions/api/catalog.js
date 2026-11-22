@@ -66,60 +66,103 @@ function buildSeedItems() {
     }));
 }
 
-const HEADERS_JSON = {
+const HEADERS_NO_STORE = {
     "Content-Type": "application/json; charset=utf-8",
     "Cache-Control": "no-store, no-cache, must-revalidate"
+};
+
+const HEADERS_EDGE_FAST = {
+    "Content-Type": "application/json; charset=utf-8",
+    "Cache-Control": "public, max-age=30, stale-while-revalidate=300"
 };
 
 export async function onRequest(context) {
     const { request, env } = context;
     const url = new URL(request.url);
+    const cacheKey = new Request(url.origin + "/api/catalog", { method: "GET" });
 
     // Verificación rápida de contraseña al hacer login
     if (url.searchParams.get("check") === "1") {
         const pass = request.headers.get("x-admin-pass") || "";
         if (!env.ADMIN_PASS || pass !== env.ADMIN_PASS) {
-            return new Response(JSON.stringify({ ok: false, error: "Contraseña incorrecta" }), { status: 401, headers: HEADERS_JSON });
+            return new Response(JSON.stringify({ ok: false, error: "Contraseña incorrecta" }), { status: 401, headers: HEADERS_NO_STORE });
         }
-        return new Response(JSON.stringify({ ok: true }), { status: 200, headers: HEADERS_JSON });
+        return new Response(JSON.stringify({ ok: true }), { status: 200, headers: HEADERS_NO_STORE });
     }
 
     if (!env.DB) {
-        return new Response(JSON.stringify({ ok: false, error: "Falta vincular la base D1 como DB en Cloudflare." }), { status: 500, headers: HEADERS_JSON });
+        return new Response(JSON.stringify({ ok: false, error: "Falta vincular la base D1 como DB en Cloudflare." }), { status: 500, headers: HEADERS_NO_STORE });
     }
 
-    await env.DB.prepare(
-        "CREATE TABLE IF NOT EXISTS meraki_store (id TEXT PRIMARY KEY, data TEXT NOT NULL, updated_at INTEGER NOT NULL)"
-    ).run();
-
     if (request.method === "GET") {
-        let row = await env.DB.prepare("SELECT data, updated_at FROM meraki_store WHERE id = ?").bind("catalog").first();
+        const isAdminReq = request.headers.has("x-admin-pass");
+
+        if (!isAdminReq) {
+            try {
+                const cachedEdge = await caches.default.match(cacheKey);
+                if (cachedEdge) return cachedEdge;
+            } catch (_) {}
+        }
+
+        let row = null;
+        try {
+            row = await env.DB.prepare("SELECT data, updated_at FROM meraki_store WHERE id = ?").bind("catalog").first();
+        } catch (_) {
+            await env.DB.prepare(
+                "CREATE TABLE IF NOT EXISTS meraki_store (id TEXT PRIMARY KEY, data TEXT NOT NULL, updated_at INTEGER NOT NULL)"
+            ).run();
+        }
+
         if (!row) {
+            await env.DB.prepare(
+                "CREATE TABLE IF NOT EXISTS meraki_store (id TEXT PRIMARY KEY, data TEXT NOT NULL, updated_at INTEGER NOT NULL)"
+            ).run();
             const seed = buildSeedItems();
             const now = Date.now();
             await env.DB.prepare(
                 "INSERT INTO meraki_store (id, data, updated_at) VALUES (?, ?, ?) ON CONFLICT(id) DO UPDATE SET data = excluded.data, updated_at = excluded.updated_at"
             ).bind("catalog", JSON.stringify(seed), now).run();
-            return new Response(JSON.stringify({ ok: true, items: seed, updatedAt: now }), { status: 200, headers: HEADERS_JSON });
+            const seedRes = new Response(JSON.stringify({ ok: true, items: seed, updatedAt: now }), {
+                status: 200,
+                headers: isAdminReq ? HEADERS_NO_STORE : HEADERS_EDGE_FAST
+            });
+            if (!isAdminReq) {
+                try { context.waitUntil(caches.default.put(cacheKey, seedRes.clone())); } catch (_) {}
+            }
+            return seedRes;
         }
-        return new Response(JSON.stringify({ ok: true, items: JSON.parse(row.data), updatedAt: row.updated_at }), { status: 200, headers: HEADERS_JSON });
+
+        const outRes = new Response(JSON.stringify({ ok: true, items: JSON.parse(row.data), updatedAt: row.updated_at }), {
+            status: 200,
+            headers: isAdminReq ? HEADERS_NO_STORE : HEADERS_EDGE_FAST
+        });
+
+        if (!isAdminReq) {
+            try { context.waitUntil(caches.default.put(cacheKey, outRes.clone())); } catch (_) {}
+        }
+        return outRes;
     }
 
     if (request.method === "POST") {
         const pass = request.headers.get("x-admin-pass") || "";
         if (!env.ADMIN_PASS || pass !== env.ADMIN_PASS) {
-            return new Response(JSON.stringify({ ok: false, error: "No autorizado" }), { status: 401, headers: HEADERS_JSON });
+            return new Response(JSON.stringify({ ok: false, error: "No autorizado" }), { status: 401, headers: HEADERS_NO_STORE });
         }
         const body = await request.json();
         if (!Array.isArray(body.items)) {
-            return new Response(JSON.stringify({ ok: false, error: "Formato inválido" }), { status: 400, headers: HEADERS_JSON });
+            return new Response(JSON.stringify({ ok: false, error: "Formato inválido" }), { status: 400, headers: HEADERS_NO_STORE });
         }
+        await env.DB.prepare(
+            "CREATE TABLE IF NOT EXISTS meraki_store (id TEXT PRIMARY KEY, data TEXT NOT NULL, updated_at INTEGER NOT NULL)"
+        ).run();
         const now = Date.now();
         await env.DB.prepare(
             "INSERT INTO meraki_store (id, data, updated_at) VALUES (?, ?, ?) ON CONFLICT(id) DO UPDATE SET data = excluded.data, updated_at = excluded.updated_at"
         ).bind("catalog", JSON.stringify(body.items), now).run();
 
-        return new Response(JSON.stringify({ ok: true, count: body.items.length, updatedAt: now }), { status: 200, headers: HEADERS_JSON });
+        try { context.waitUntil(caches.default.delete(cacheKey)); } catch (_) {}
+
+        return new Response(JSON.stringify({ ok: true, count: body.items.length, updatedAt: now }), { status: 200, headers: HEADERS_NO_STORE });
     }
 
     return new Response("Method Not Allowed", { status: 405 });
