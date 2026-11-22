@@ -11,7 +11,7 @@ const CONFIG = {
     API_CATALOG_URL: "/api/catalog",
     APPS_SCRIPT_URL: "",
 
-    CACHE_KEY: "meraki_d1_cache_v3",
+    CACHE_KEY: "meraki_d1_cache_v4",
 
     RATES: {
         ARS_TO_PYG: 6.5,
@@ -204,7 +204,7 @@ async function loadCatalog() {
     if (!rendered && typeof renderSkeletonStates === 'function') renderSkeletonStates();
 
     try {
-        const res = await fetch(`${CONFIG.API_CATALOG_URL}?t=${Date.now()}`, { cache: 'no-store' });
+        const res = await fetch(CONFIG.API_CATALOG_URL);
         if (!res.ok) throw new Error();
         const json = await res.json();
         if (json.ok && Array.isArray(json.items)) {
