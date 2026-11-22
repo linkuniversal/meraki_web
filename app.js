@@ -49,7 +49,11 @@ function loadHoverMedia(cardEl) {
 
 function initHeroVideo() {
     const vid = document.getElementById('heroVideoPlayer');
-    if (!vid || vid.dataset.loaded === '1') return;
+    if (!vid) return;
+    if (vid.dataset.loaded === '1') {
+        vid.play().catch(() => {});
+        return;
+    }
     const src = vid.getAttribute('data-src');
     const fb = vid.getAttribute('data-fallback');
     if (!src) return;
@@ -237,6 +241,8 @@ function navigateToHome(e) {
 
 function navigateToCategory(rubro) {
     playTap();
+    const heroVid = document.getElementById('heroVideoPlayer');
+    if (heroVid && !heroVid.paused) heroVid.pause();
     currentView = 'category';
     activeRubro = rubro;
     activeSubcat = 'Todas';
@@ -377,7 +383,7 @@ function getMediaList(item) {
 function createProductCardHTML(item, idx = 99) {
     const priceStr = formatPriceDisplay(item);
     const subLabel = [item.rubro, item.subcategoria].filter(Boolean).join(' · ');
-    const fetchAttr = idx < 4 ? 'fetchpriority="high"' : '';
+    const fetchAttr = idx < 8 ? 'fetchpriority="high"' : 'fetchpriority="auto"';
     const mediaList = getMediaList(item);
     const coverMedia = mediaList[0] || item.imagen || '';
     const hoverMedia = mediaList.length > 1 ? mediaList[1] : '';
@@ -386,7 +392,7 @@ function createProductCardHTML(item, idx = 99) {
     const isCoverVid = isVideoPath(coverMedia);
     const coverMarkup = isCoverVid
         ? `<video src="${coverMedia}" autoplay loop muted playsinline preload="metadata" onloadedmetadata="applySmartFit(this)"></video>`
-        : `<img src="${coverMedia}" alt="${item.nombre}" ${fetchAttr} onload="applySmartFit(this)" onerror="fallbackToGithubRaw(this)">`;
+        : `<img src="${coverMedia}" alt="${item.nombre}" loading="eager" ${fetchAttr} onerror="fallbackToGithubRaw(this)">`;
 
     let hoverMarkup = '';
     if (hasMulti) {
@@ -540,6 +546,8 @@ function handleSearch(val) {
     searchQuery = val.trim();
     if (searchQuery.length > 0) {
         if (currentView !== 'category') {
+            const heroVid = document.getElementById('heroVideoPlayer');
+            if (heroVid && !heroVid.paused) heroVid.pause();
             activeRubro = 'Todo';
             activeSubcat = 'Todas';
             currentView = 'category';
