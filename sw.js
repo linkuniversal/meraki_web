@@ -73,9 +73,8 @@ self.addEventListener('fetch', (event) => {
         return;
     }
 
-    // 2. CATÁLOGO D1 Y RECURSOS ESTÁTICOS (CSS/JS/FUENTES): Stale-While-Revalidate
+    // 2. RECURSOS ESTÁTICOS (CSS/JS/FUENTES): Stale-While-Revalidate
     if (
-        url.pathname === '/api/catalog' ||
         /\.(css|js|woff2?)$/i.test(url.pathname) ||
         url.hostname === 'fonts.googleapis.com' ||
         url.hostname === 'fonts.gstatic.com'
