@@ -26,7 +26,6 @@ function isVideoPath(p) {
 }
 
 function applySmartFit(el) {
-    // Con object-fit: contain en CSS, las fotos y almohadones horizontales se ven enteros sin recortarse
     if (el) el.classList.add('fit-contain');
 }
 
@@ -110,7 +109,7 @@ function setCurrency(curr) {
 }
 
 function getOrderedRubros() {
-    const orderedPriority = ['Indumentaria', 'Deco & Home', 'Bazar', 'Aromas'];
+    const orderedPriority = ['Indumentaria', 'Deco & Home', 'Accesorios', 'Carteras y Calzados'];
     const existing = [...new Set(PRODUCTS.map(p => p.rubro).filter(Boolean))];
     return existing.sort((a, b) => {
         const ia = orderedPriority.indexOf(a), ib = orderedPriority.indexOf(b);
@@ -143,10 +142,10 @@ function buildTopBarAndUniverses() {
 
     const portalsGrid = document.getElementById('universesPortalGrid');
     const tileClasses = {
-        'Indumentaria': { cls: 'tile-indumentaria', sub: 'Tendencia & Básicas' },
-        'Deco & Home':  { cls: 'tile-deco',         sub: 'Refugio & Diseño' },
-        'Bazar':        { cls: 'tile-bazar',        sub: 'Mesa & Detalles' },
-        'Aromas':       { cls: 'tile-aromas',       sub: 'Textil & Sahumado' }
+        'Indumentaria':        { cls: 'tile-indumentaria', sub: 'Tendencia & Básicas' },
+        'Deco & Home':         { cls: 'tile-deco',         sub: 'Refugio & Diseño' },
+        'Accesorios':          { cls: 'tile-bazar',        sub: 'Detalles & Estilo' },
+        'Carteras y Calzados': { cls: 'tile-aromas',       sub: 'Carteras, Bolsos & Calzados' }
     };
 
     portalsGrid.innerHTML = rubros.map((r, i) => {
@@ -229,7 +228,6 @@ function navigateToHome(e) {
         renderHomeCuratedGrid();
     }
     initHeroVideo();
-    // URL limpia sin redundancias (#inicio)
     if (location.hash) history.replaceState(null, '', window.location.pathname);
     setActiveHeaderTab('home');
     window.scrollTo({ top: 0, behavior: 'smooth' });
