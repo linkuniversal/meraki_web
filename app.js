@@ -14,6 +14,11 @@ let currentPdpSize = 'A confirmar';
 let currentPdpComboSelection = 'all';
 let currentPdpGalleryIndex = 0;
 
+const CATEGORY_BATCH_SIZE = 12;
+let currentCategoryFiltered = [];
+let currentCategoryRenderedCount = 0;
+let categoryBatchObserver = null;
+
 let modalStateStack = [];
 
 function isVideoPath(p) {
@@ -370,7 +375,7 @@ function getMediaList(item) {
 function createProductCardHTML(item, idx = 99) {
     const priceStr = formatPriceDisplay(item);
     const subLabel = [item.rubro, item.subcategoria].filter(Boolean).join(' · ');
-    const fetchAttr = idx < 8 ? 'fetchpriority="high"' : 'loading="lazy"';
+    const fetchAttr = idx < 4 ? 'fetchpriority="high"' : '';
     const mediaList = getMediaList(item);
     const coverMedia = mediaList[0] || item.imagen || '';
     const hoverMedia = mediaList.length > 1 ? mediaList[1] : '';
@@ -379,14 +384,14 @@ function createProductCardHTML(item, idx = 99) {
     const isCoverVid = isVideoPath(coverMedia);
     const coverMarkup = isCoverVid
         ? `<video src="${coverMedia}" autoplay loop muted playsinline preload="metadata" onloadedmetadata="applySmartFit(this)"></video>`
-        : `<img src="${coverMedia}" alt="${item.nombre}" ${fetchAttr} decoding="async" onload="applySmartFit(this)" onerror="fallbackToGithubRaw(this)">`;
+        : `<img src="${coverMedia}" alt="${item.nombre}" ${fetchAttr} onload="applySmartFit(this)" onerror="fallbackToGithubRaw(this)">`;
 
     let hoverMarkup = '';
     if (hasMulti) {
         const isHoverVid = isVideoPath(hoverMedia);
         hoverMarkup = isHoverVid
             ? `<video data-hover-src="${hoverMedia}" class="product-img-hover" autoplay loop muted playsinline preload="none" onloadedmetadata="applySmartFit(this)"></video>`
-            : `<img data-hover-src="${hoverMedia}" alt="${item.nombre}" class="product-img-hover" decoding="async" onload="applySmartFit(this)" onerror="fallbackToGithubRaw(this)">`;
+            : `<img data-hover-src="${hoverMedia}" alt="${item.nombre}" class="product-img-hover" onload="applySmartFit(this)" onerror="fallbackToGithubRaw(this)">`;
     }
 
     return `
@@ -451,22 +456,75 @@ function selectSubcat(sub) {
     renderCategoryGrid();
 }
 
+function appendCategoryBatch() {
+    const grid = document.getElementById('categoryProductsGrid');
+    if (!grid) return;
+
+    const existingSentinel = document.getElementById('catLoadSentinel');
+    if (existingSentinel) existingSentinel.remove();
+
+    const nextSlice = currentCategoryFiltered.slice(
+        currentCategoryRenderedCount,
+        currentCategoryRenderedCount + CATEGORY_BATCH_SIZE
+    );
+    if (nextSlice.length === 0) return;
+
+    const batchHtml = nextSlice
+        .map((p, i) => createProductCardHTML(p, currentCategoryRenderedCount + i))
+        .join('');
+    grid.insertAdjacentHTML('beforeend', batchHtml);
+    currentCategoryRenderedCount += nextSlice.length;
+
+    if (currentCategoryRenderedCount < currentCategoryFiltered.length) {
+        const sentinel = document.createElement('div');
+        sentinel.id = 'catLoadSentinel';
+        sentinel.style.cssText = 'grid-column: 1 / -1; width: 100%; height: 1px;';
+        grid.appendChild(sentinel);
+        if (categoryBatchObserver) categoryBatchObserver.observe(sentinel);
+    }
+}
+
 function renderCategoryGrid() {
     const grid = document.getElementById('categoryProductsGrid');
     const counterEl = document.getElementById('catPageCounter');
-    const filtered = PRODUCTS.filter(p => {
+
+    if (categoryBatchObserver) {
+        categoryBatchObserver.disconnect();
+        categoryBatchObserver = null;
+    }
+
+    currentCategoryFiltered = PRODUCTS.filter(p => {
         const matchRubro = activeRubro === 'Todo' || p.rubro === activeRubro;
         const matchSub = activeSubcat === 'Todas' || p.subcategoria === activeSubcat;
         const q = searchQuery.toLowerCase();
         const matchSearch = !q || p.nombre.toLowerCase().includes(q) || p.descripcion.toLowerCase().includes(q) || p.rubro.toLowerCase().includes(q) || p.subcategoria.toLowerCase().includes(q);
         return matchRubro && matchSub && matchSearch;
     });
-    counterEl.innerText = `${filtered.length} ${filtered.length === 1 ? 'pieza disponible' : 'piezas disponibles'} · ${activeCurrency}`;
-    if (!filtered.length) {
+    currentCategoryRenderedCount = 0;
+
+    counterEl.innerText = `${currentCategoryFiltered.length} ${currentCategoryFiltered.length === 1 ? 'pieza disponible' : 'piezas disponibles'} · ${activeCurrency}`;
+    if (!currentCategoryFiltered.length) {
         grid.innerHTML = `<div class="empty-catalog-state">No encontramos piezas con ese filtro. Probá limpiando la búsqueda.</div>`;
         return;
     }
-    grid.innerHTML = filtered.map((p, i) => createProductCardHTML(p, i)).join('');
+
+    grid.innerHTML = '';
+
+    if ('IntersectionObserver' in window) {
+        categoryBatchObserver = new IntersectionObserver((entries) => {
+            if (currentView !== 'category') return;
+            for (const entry of entries) {
+                if (entry.isIntersecting) {
+                    appendCategoryBatch();
+                    break;
+                }
+            }
+        }, { rootMargin: '420px 0px' });
+        appendCategoryBatch();
+    } else {
+        grid.innerHTML = currentCategoryFiltered.map((p, i) => createProductCardHTML(p, i)).join('');
+        currentCategoryRenderedCount = currentCategoryFiltered.length;
+    }
 }
 
 function toggleSearchBar() {
