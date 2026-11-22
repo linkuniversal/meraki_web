@@ -1,5 +1,5 @@
 /* ==========================================================================
-   MERAKI · MOTOR DE CATÁLOGO (ESTILO BOUTIQUE INTERNACIONAL)
+   MERAKI · MOTOR DE CATÁLOGO INSTANTÁNEO (CLOUDFLARE D1 + CACHÉ SWR)
    ========================================================================== */
 
 const CONFIG = {
@@ -8,11 +8,10 @@ const CONFIG = {
     GITHUB_REPO: "meraki_web",
     GITHUB_BRANCH: "main",
 
-    GOOGLE_SHEETS_CSV_URL: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSCgumzTKh4vjuCvuVdCPvgAyZyg_yYtaatwPvlJGbzpjz96tokUttkgTSE5_oHc0weHP3dEEyDwoj5/pub?gid=0&single=true&output=csv",
+    API_CATALOG_URL: "/api/catalog",
     APPS_SCRIPT_URL: "",
 
-    CACHE_KEY: "meraki_sheets_cache_v6",
-    CACHE_TTL_MS: 3 * 60 * 1000,
+    CACHE_KEY: "meraki_d1_cache_v1",
 
     RATES: {
         ARS_TO_PYG: 6.5,
@@ -79,8 +78,7 @@ function parseTalles(raw) {
 
 function parseTitleAndExtractMeta(rawTitle) {
     let title = String(rawTitle || "").trim();
-    let extractedColors = [];
-    let extractedTalles = [];
+    let extractedColors = [], extractedTalles = [];
 
     const colorMatch = title.match(/\(?color:\s*([^)]+)\)?/i);
     if (colorMatch) {
@@ -102,13 +100,9 @@ function parsePriceCell(val) {
     const str = String(val || "").trim();
     if (!str) return [0];
     if (str.includes('/')) {
-        return str.split('/').map(p => {
-            const clean = p.replace(/[.,]\d{2}$/, '').replace(/[^0-9]/g, '');
-            return Number(clean) || 0;
-        });
+        return str.split('/').map(p => Number(p.replace(/[.,]\d{2}$/, '').replace(/[^0-9]/g, '')) || 0);
     }
-    const clean = str.replace(/[.,]\d{2}$/, '').replace(/[^0-9]/g, '');
-    return [Number(clean) || 0];
+    return [Number(str.replace(/[.,]\d{2}$/, '').replace(/[^0-9]/g, '')) || 0];
 }
 
 function resolveAssetUrl(relPath) {
@@ -134,111 +128,52 @@ function formatMoney(amount, curr = activeCurrency) {
     return '$ ' + amount;
 }
 
-function parseCSV(csvText) {
-    const rows = [];
-    let currentRow = [], currentVal = '', inQuotes = false;
-    for (let i = 0; i < csvText.length; i++) {
-        const char = csvText[i], nextChar = csvText[i + 1];
-        if (inQuotes) {
-            if (char === '"' && nextChar === '"') { currentVal += '"'; i++; }
-            else if (char === '"') { inQuotes = false; }
-            else { currentVal += char; }
-        } else {
-            if (char === '"') { inQuotes = true; }
-            else if (char === ',') { currentRow.push(currentVal.trim()); currentVal = ''; }
-            else if (char === '\n' || (char === '\r' && nextChar === '\n')) {
-                if (char === '\r') i++;
-                currentRow.push(currentVal.trim());
-                if (currentRow.some(v => v !== '')) rows.push(currentRow);
-                currentRow = []; currentVal = '';
-            } else { currentVal += char; }
-        }
-    }
-    if (currentVal || currentRow.length) {
-        currentRow.push(currentVal.trim());
-        if (currentRow.some(v => v !== '')) rows.push(currentRow);
-    }
-    return rows;
-}
+function mapApiItemsToProducts(rawItems) {
+    return rawItems
+        .filter(it => it && it.visible !== false)
+        .map((it, idx) => {
+            const { cleanTitle, extractedColors, extractedTalles } = parseTitleAndExtractMeta(it.nombre || '');
+            const prices = parsePriceCell(it.precioARS);
+            const pygVal = parsePriceCell(it.precioPYG)[0] || 0;
+            const brlVal = parsePriceCell(it.precioBRL)[0] || 0;
 
-function mapSheetRowsToProducts(rows) {
-    const headers = rows[0].map(h => h.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""));
-    const idx = {
-        rubro: headers.findIndex(h => h.includes('rubro') || h.includes('categoria')),
-        sub: headers.findIndex(h => h.includes('sub')),
-        nombre: headers.findIndex(h => h.includes('nombre') || h.includes('producto') || h.includes('titulo')),
-        ars: headers.findIndex(h => h.includes('ars') || h === 'precio'),
-        pyg: headers.findIndex(h => h.includes('pyg') || h.includes('guarani')),
-        brl: headers.findIndex(h => h.includes('brl') || h.includes('real')),
-        desc: headers.findIndex(h => h.includes('desc')),
-        foto: headers.findIndex(h => h.includes('foto') || h.includes('imagen')),
-        tag: headers.findIndex(h => h.includes('etiqueta') || h.includes('tag')),
-        talles: headers.findIndex(h => h.includes('talle')),
-        colores: headers.findIndex(h => h.includes('color')),
-        destacado: headers.findIndex(h => h.includes('destacado') || h.includes('home')),
-        estado: headers.findIndex(h => h.includes('estado') || h.includes('mostrar'))
-    };
+            let finalTalles = it.talles ? parseTalles(it.talles).list : [];
+            if (extractedTalles.length > 0) finalTalles = [...new Set([...finalTalles, ...extractedTalles])];
+            if (finalTalles.length === 0) finalTalles = ["A confirmar"];
 
-    const list = [];
-    for (let r = 1; r < rows.length; r++) {
-        const row = rows[r];
-        const estado = idx.estado > -1 ? (row[idx.estado] || '').toUpperCase() : 'SI';
-        if (estado === 'NO' || estado === 'OCULTO' || estado === '0') continue;
+            let finalColors = it.colores ? parseColors(it.colores) : [];
+            if (extractedColors.length > 0) finalColors = [...finalColors, ...extractedColors];
 
-        const rawTitle = idx.nombre > -1 ? row[idx.nombre] : '';
-        const foto = idx.foto > -1 ? row[idx.foto] : '';
-        if (!rawTitle && !foto) continue;
+            const hasTwoPrices = prices.length > 1;
+            let subItems = [];
+            if (hasTwoPrices) {
+                const names = cleanTitle.split('/').map(n => n.trim());
+                subItems = names.map((namePart, i) => ({
+                    name: namePart,
+                    priceARS: prices[i] || prices[0] || 0
+                }));
+            }
 
-        const { cleanTitle, extractedColors, extractedTalles } = parseTitleAndExtractMeta(rawTitle);
-        const prices = idx.ars > -1 ? parsePriceCell(row[idx.ars]) : [0];
-        const pygVal = idx.pyg > -1 ? parsePriceCell(row[idx.pyg])[0] || 0 : 0;
-        const brlVal = idx.brl > -1 ? parsePriceCell(row[idx.brl])[0] || 0 : 0;
-        const rubro = (idx.rubro > -1 && row[idx.rubro]) ? row[idx.rubro] : 'Indumentaria';
-
-        let finalTalles = idx.talles > -1 && row[idx.talles] ? parseTalles(row[idx.talles]).list : [];
-        if (extractedTalles.length > 0) finalTalles = [...new Set([...finalTalles, ...extractedTalles])];
-        if (finalTalles.length === 0) finalTalles = ["A confirmar"];
-
-        let finalColors = idx.colores > -1 && row[idx.colores] ? parseColors(row[idx.colores]) : [];
-        if (extractedColors.length > 0) finalColors = [...finalColors, ...extractedColors];
-
-        // Solo activa el selector de prendas por separado si hay 2 precios cargados (ej. "35000 / 56000")
-        const hasTwoPrices = prices.length > 1;
-        const isCombo = hasTwoPrices;
-        let subItems = [];
-        if (hasTwoPrices) {
-            const names = cleanTitle.split('/').map(n => n.trim());
-            subItems = names.map((namePart, i) => ({
-                name: namePart,
-                priceARS: prices[i] || prices[0] || 0
-            }));
-        }
-
-        const destVal = idx.destacado > -1 ? (row[idx.destacado] || '').toUpperCase() : '';
-        const isFeatured = ['SI', 'SÍ', 'YES', 'TRUE', '1', 'X'].includes(destVal);
-        const sheetTag = idx.tag > -1 ? (row[idx.tag] || '') : '';
-
-        list.push({
-            id: `sh-${r}`,
-            rubro,
-            subcategoria: (idx.sub > -1 && row[idx.sub]) ? row[idx.sub] : 'Mujer',
-            nombre: cleanTitle || 'Pieza Exclusiva MeraKi',
-            precioARS: prices[0] || 0,
-            precioPYG: pygVal,
-            precioBRL: brlVal,
-            preciosArray: prices,
-            isCombo,
-            subItems,
-            descripcion: (idx.desc > -1 && row[idx.desc]) ? row[idx.desc] : '',
-            imagen: resolveAssetUrl(foto),
-            etiqueta: sheetTag || (hasTwoPrices ? 'LOOK / 2 PIEZAS' : ''),
-            talles: finalTalles,
-            tallesLabel: finalTalles.join(' · '),
-            colores: finalColors,
-            destacado: isFeatured
+            return {
+                id: it.id || `mk-${idx}`,
+                rubro: it.rubro || 'Indumentaria',
+                subcategoria: it.subcategoria || 'Mujer',
+                nombre: cleanTitle || 'Pieza Exclusiva MeraKi',
+                precioARS: prices[0] || 0,
+                precioPYG: pygVal,
+                precioBRL: brlVal,
+                preciosArray: prices,
+                isCombo: hasTwoPrices,
+                subItems,
+                descripcion: it.descripcion || '',
+                imagen: resolveAssetUrl(it.foto),
+                etiqueta: it.etiqueta || (hasTwoPrices ? 'LOOK / 2 PIEZAS' : ''),
+                talles: finalTalles,
+                tallesLabel: finalTalles.join(' · '),
+                colores: finalColors,
+                destacado: Boolean(it.destacado)
+            };
         });
-    }
-    return list;
 }
 
 async function loadCatalog() {
@@ -258,16 +193,20 @@ async function loadCatalog() {
     if (!rendered && typeof renderSkeletonStates === 'function') renderSkeletonStates();
 
     try {
-        const res = await fetch(CONFIG.GOOGLE_SHEETS_CSV_URL, { cache: 'no-cache' });
+        const res = await fetch(`${CONFIG.API_CATALOG_URL}?t=${Date.now()}`, { cache: 'no-store' });
         if (!res.ok) throw new Error();
-        const rows = parseCSV(await res.text());
-        const fresh = mapSheetRowsToProducts(rows);
-        if (fresh.length > 0) {
-            PRODUCTS = fresh;
+        const json = await res.json();
+        if (json.ok && Array.isArray(json.items)) {
+            const fresh = mapApiItemsToProducts(json.items);
+            const freshSig = JSON.stringify(fresh);
+            const prevSig = PRODUCTS.length ? JSON.stringify(PRODUCTS) : '';
             localStorage.setItem(CONFIG.CACHE_KEY, JSON.stringify({ ts: Date.now(), data: fresh }));
-            afterCatalogLoaded();
+            if (!rendered || freshSig !== prevSig) {
+                PRODUCTS = fresh;
+                afterCatalogLoaded();
+            }
         }
     } catch (e) {
-        console.warn('Sheets temporalmente inaccesible');
+        console.warn('API D1 no disponible aún en este entorno');
     }
 }
