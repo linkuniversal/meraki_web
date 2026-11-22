@@ -136,11 +136,37 @@ function buildTopBarAndUniverses() {
         ${rubros.map(r => `
             <button onclick="navigateToCategory('${r}'); closeAllOverlays();" style="text-align:left; font-size:1.15rem; font-weight:700; padding:7px 0; border-bottom:1px solid var(--hairline); text-transform:uppercase;">${r}</button>
         `).join('')}
-        <div style="margin-top:16px; display:flex; flex-direction:column; gap:14px;">
-            <button onclick="scrollToSection(event, 'bienestar'); closeAllOverlays();" style="text-align:left; font-family:var(--font-mono); font-size:0.72rem; text-transform:uppercase; letter-spacing:0.1em;">✨ 7 Días · 7 Intenciones</button>
-            <button onclick="scrollToSection(event, 'contacto'); closeAllOverlays();" style="text-align:left; font-family:var(--font-mono); font-size:0.72rem; text-transform:uppercase; letter-spacing:0.1em;">✉️ Escribinos por Email</button>
-            <button onclick="scrollToSection(event, 'ubicacion'); closeAllOverlays();" style="text-align:left; font-family:var(--font-mono); font-size:0.72rem; text-transform:uppercase; letter-spacing:0.1em;">📍 Showroom Ushuaia 196</button>
-            <a href="https://wa.me/${CONFIG.WHATSAPP_NUMBER}" target="_blank" rel="noopener noreferrer" class="btn-wpp-solicitar" style="margin-top:8px;">Solicitar por WhatsApp</a>
+
+        <div class="drawer-menu-actions">
+            <span class="product-sub-kicker" style="color:var(--ink-light); margin-top:4px;">Experiencia &amp; Atención</span>
+            <button type="button" class="drawer-action-btn" onclick="scrollToSection(event, 'bienestar'); closeAllOverlays();">
+                <span class="drawer-action-left">
+                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+                    <span>7 Días · 7 Intenciones</span>
+                </span>
+                <span class="drawer-action-arrow">→</span>
+            </button>
+            <button type="button" class="drawer-action-btn" onclick="scrollToSection(event, 'contacto'); closeAllOverlays();">
+                <span class="drawer-action-left">
+                    <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><polyline points="3 7 12 13 21 7"/></svg>
+                    <span>Escribinos por Email</span>
+                </span>
+                <span class="drawer-action-arrow">→</span>
+            </button>
+            <button type="button" class="drawer-action-btn" onclick="scrollToSection(event, 'ubicacion'); closeAllOverlays();">
+                <span class="drawer-action-left">
+                    <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                    <span>Showroom Ushuaia 196</span>
+                </span>
+                <span class="drawer-action-arrow">→</span>
+            </button>
+        </div>
+
+        <div class="drawer-social-row">
+            <a href="https://wa.me/${CONFIG.WHATSAPP_NUMBER}" target="_blank" rel="noopener noreferrer" class="btn-wpp-solicitar" onclick="playTap()">Solicitar por WhatsApp</a>
+            <a href="https://www.instagram.com/merakicvm/" target="_blank" rel="noopener noreferrer" class="btn-ig-square" aria-label="Instagram MeraKi" onclick="playTap()">
+                <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+            </a>
         </div>
     `;
 }
@@ -296,6 +322,7 @@ function formatPriceDisplay(item) {
 }
 
 function getMediaList(item) {
+    if (Array.isArray(item.imagenes) && item.imagenes.length > 0) return item.imagenes.filter(Boolean);
     if (Array.isArray(item.fotos) && item.fotos.length > 0) return item.fotos.filter(Boolean);
     return item.imagen ? [item.imagen] : [];
 }
@@ -303,7 +330,7 @@ function getMediaList(item) {
 function createProductCardHTML(item, idx = 99) {
     const priceStr = formatPriceDisplay(item);
     const subLabel = [item.rubro, item.subcategoria].filter(Boolean).join(' · ');
-    const fetchAttr = idx < 4 ? 'fetchpriority="high"' : 'loading="lazy"';
+    const fetchAttr = idx < 4 ? 'fetchpriority="high"' : '';
     const mediaList = getMediaList(item);
     const coverMedia = mediaList[0] || item.imagen || '';
     const hoverMedia = mediaList.length > 1 ? mediaList[1] : '';
@@ -319,7 +346,7 @@ function createProductCardHTML(item, idx = 99) {
         const isHoverVid = isVideoPath(hoverMedia);
         hoverMarkup = isHoverVid
             ? `<video src="${hoverMedia}" class="product-img-hover" autoplay loop muted playsinline onloadedmetadata="applySmartFit(this)"></video>`
-            : `<img src="${hoverMedia}" alt="${item.nombre}" class="product-img-hover" loading="lazy" decoding="async" onload="applySmartFit(this)">`;
+            : `<img src="${hoverMedia}" alt="${item.nombre}" class="product-img-hover" decoding="async" onload="applySmartFit(this)">`;
     }
 
     return `
