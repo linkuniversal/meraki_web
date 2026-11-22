@@ -1,6 +1,6 @@
 const INITIAL_SEED = [
-    ["Aromas","Textil & Sahumado","Aromatizador Textil & Difusor","","Aromatización y bienestar para el hogar.","media/aromas/img-20261113-wa0078.webp","","Único","Natural","SI"],
-    ["Bazar","Mesa","Set de Mesa Contemporáneo","","Artículo funcional de bazar para tu hogar.","media/bazar/img-20261113-wa0078.webp","","Único","Blanco, Arena","SI"],
+    ["Accesorios","Textil & Sahumado","Aromatizador Textil & Difusor","","Aromatización y bienestar para el hogar.","media/aromas/img-20261113-wa0078.webp","","Único","Natural","SI"],
+    ["Carteras y Calzados","Mesa","Set de Mesa Contemporáneo","","Artículo funcional de bazar para tu hogar.","media/bazar/img-20261113-wa0078.webp","","Único","Blanco, Arena","SI"],
     ["Deco & Home","Hogar","Pieza Deco & Calidez","","Pieza de diseño y calidez para tu espacio.","media/deco-home/img-20261113-wa0078.webp","","Único","Crudo, Madera","SI"],
     ["Indumentaria","Mujer","Musculosa con puntilla","38000","Prenda seleccionada de nuestra colección en Puerto Iguazú.","media/indumentaria/mujer/img-20261113-wa0034.webp","","S, M, L, XL","marrón, beige","SI"],
     ["Indumentaria","Mujer","Blusita / Pantalón Lino","35000 / 56000","Prenda seleccionada de nuestra colección en Puerto Iguazú.","media/indumentaria/mujer/img-20261113-wa0035.webp","LOOK / 2 PIEZAS","M","blanco, natural","SI"],
