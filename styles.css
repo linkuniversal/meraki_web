@@ -32,7 +32,7 @@
     --promo-h: 30px;
     --header-h: 58px;
     --catbar-h: 42px;
-    --sticky-total-h: calc(var(--header-h) + var(--catbar-h) + 16px);
+    --sticky-total-h: calc(var(--header-h) + var(--catbar-h) + 28px);
 }
 
 *, *::before, *::after {
@@ -259,9 +259,10 @@ button { font-family: inherit; background: none; border: none; cursor: pointer; 
 }
 .bag-badge-count.visible { opacity: 1; transform: scale(1); }
 
+/* BARRA SUPERIOR DE PÁGINAS: TODAS VISIBLES EN MÓVIL (2 FILAS COMPACTAS) Y 1 FILA EN DESKTOP */
 .header-categories-bar {
     width: 100%;
-    height: var(--catbar-h);
+    min-height: var(--catbar-h);
     border-top: 1px solid var(--hairline);
     background: #FFFFFF;
     display: flex;
@@ -269,57 +270,49 @@ button { font-family: inherit; background: none; border: none; cursor: pointer; 
     position: relative;
 }
 
-.header-categories-bar::before,
-.header-categories-bar::after {
-    content: '';
-    position: absolute;
-    top: 0; bottom: 0;
-    width: 28px;
-    pointer-events: none;
-    z-index: 5;
-    transition: opacity 0.2s ease;
-}
-.header-categories-bar::before {
-    left: 0;
-    background: linear-gradient(90deg, rgba(255,255,255,0.95), rgba(255,255,255,0));
-}
-.header-categories-bar::after {
-    right: 0;
-    background: linear-gradient(270deg, rgba(255,255,255,0.95), rgba(255,255,255,0));
-}
-
 .categories-bar-inner {
     max-width: 1400px;
     width: 100%;
-    height: 100%;
     margin: 0 auto;
-    padding: 0 clamp(16px, 3vw, 36px);
+    padding: 6px 10px;
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
-    justify-content: flex-start;
-    gap: clamp(16px, 3vw, 32px);
-    overflow-x: auto;
-    scrollbar-width: none;
-    -webkit-overflow-scrolling: touch;
+    justify-content: center;
+    gap: 4px 12px;
 }
-@media (min-width: 840px) { .categories-bar-inner { justify-content: center; } }
-.categories-bar-inner::-webkit-scrollbar { display: none; }
 
 .top-cat-pill {
     font-family: var(--font-mono);
-    font-size: 0.66rem;
+    font-size: 0.59rem;
     font-weight: 600;
-    letter-spacing: 0.14em;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--ink-muted);
-    height: 100%;
     display: inline-flex;
     align-items: center;
-    padding: 0 2px;
+    padding: 5px 2px;
     white-space: nowrap;
     position: relative;
     flex-shrink: 0;
     transition: color 0.22s ease;
+}
+
+@media (min-width: 840px) {
+    .header-categories-bar { height: var(--catbar-h); }
+    .categories-bar-inner {
+        height: 100%;
+        padding: 0 clamp(16px, 3vw, 36px);
+        flex-wrap: nowrap;
+        justify-content: center;
+        gap: clamp(16px, 3vw, 32px);
+    }
+    .top-cat-pill {
+        height: 100%;
+        font-size: 0.66rem;
+        letter-spacing: 0.14em;
+        padding: 0 2px;
+    }
 }
 
 .top-cat-pill::after {
@@ -446,7 +439,7 @@ button { font-family: inherit; background: none; border: none; cursor: pointer; 
 
 .hero-body-text { font-size: 0.90rem; color: var(--ink-muted); line-height: 1.55; max-width: 440px; }
 
-.hero-cta-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; margin-top: 6px; width: 100%; }
+.hero-cta-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 12px; margin-top: 6px; width: 100%; }
 
 .btn-luxury-primary {
     background: var(--ink-black);
@@ -456,7 +449,7 @@ button { font-family: inherit; background: none; border: none; cursor: pointer; 
     font-weight: 700;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    padding: 14px 26px;
+    padding: 14px 24px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -480,15 +473,42 @@ button { font-family: inherit; background: none; border: none; cursor: pointer; 
     font-weight: 700;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    padding: 13px 22px;
+    padding: 13px 20px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    gap: 8px;
     transition: all 0.28s var(--ease-luxury);
 }
 .btn-luxury-outline:active { transform: scale(0.97); }
 @media (hover: hover) {
     .btn-luxury-outline:hover { background: var(--ink-black); color: #FFFFFF; transform: translateY(-2px); }
+}
+
+.btn-ig-outline {
+    border: 1px solid var(--hairline-strong);
+    color: var(--ink-black);
+    padding: 12px 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    font-family: var(--font-mono);
+    font-size: 0.64rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    background: #FFFFFF;
+    transition: all 0.25s var(--ease-luxury);
+}
+.btn-ig-outline svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 1.8; flex-shrink: 0; }
+.btn-ig-outline:active { transform: scale(0.96); }
+@media (hover: hover) {
+    .btn-ig-outline:hover {
+        border-color: var(--ink-black);
+        background: var(--bg-ivory);
+        transform: translateY(-2px);
+    }
 }
 
 .link-luxury-underline {
@@ -520,6 +540,7 @@ button { font-family: inherit; background: none; border: none; cursor: pointer; 
 }
 
 .live-dot { width: 7px; height: 7px; border-radius: 50%; background: #16A34A; flex-shrink: 0; }
+
 /* ==========================================================================
    5. PORTALES DE UNIVERSOS
    ========================================================================== */
@@ -1053,7 +1074,7 @@ button { font-family: inherit; background: none; border: none; cursor: pointer; 
 .footer-legal { font-family: var(--font-mono); font-size: 0.58rem; letter-spacing: 0.10em; color: var(--ink-light); text-transform: uppercase; margin-top: 6px; }
 
 /* ==========================================================================
-   9. MODALES, QUICK-VIEW MEJORADO, BOLSA & FLOATING WHATSAPP
+   9. MODALES, QUICK-VIEW MEJORADO, BOLSA & MENÚ PROFESIONAL
    ========================================================================== */
 .drawer-backdrop {
     position: fixed;
@@ -1102,9 +1123,6 @@ button { font-family: inherit; background: none; border: none; cursor: pointer; 
     z-index: 10;
 }
 .pdp-close-btn:hover { background: var(--ink-black); color: #FFFFFF; }
-
-.pdp-media-col { background: var(--bg-gallery); display: flex; align-items: center; justify-content: center; min-height: 260px; max-height: 540px; position: relative; }
-.pdp-media-col img { width: 100%; height: 100%; object-fit: contain; }
 
 .pdp-info-col {
     padding: 26px 24px;
@@ -1223,6 +1241,89 @@ button { font-family: inherit; background: none; border: none; cursor: pointer; 
 .drawer-title { font-family: var(--font-mono); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; }
 .drawer-body { flex: 1; overflow-y: auto; padding: 18px 22px; display: flex; flex-direction: column; gap: 14px; overscroll-behavior: contain; }
 
+/* BOTONES PROFESIONALES EN MENÚ MÓVIL */
+.drawer-menu-actions {
+    margin-top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.drawer-action-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 12px 14px;
+    background: var(--bg-ivory);
+    border: 1px solid var(--hairline-strong);
+    color: var(--ink-black);
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    text-align: left;
+    transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.15s ease;
+}
+
+.drawer-action-btn:active { transform: scale(0.98); }
+@media (hover: hover) {
+    .drawer-action-btn:hover {
+        background: var(--ink-black);
+        border-color: var(--ink-black);
+        color: #FFFFFF;
+    }
+    .drawer-action-btn:hover .drawer-action-arrow { color: #FFFFFF; transform: translateX(2px); }
+}
+
+.drawer-action-left {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+}
+
+.drawer-action-left svg {
+    width: 16px;
+    height: 16px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 1.75;
+    flex-shrink: 0;
+}
+
+.drawer-action-arrow {
+    font-size: 0.85rem;
+    color: var(--ink-muted);
+    flex-shrink: 0;
+    transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.drawer-social-row {
+    display: grid;
+    grid-template-columns: 1fr 48px;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.btn-ig-square {
+    height: 48px;
+    border: 1px solid var(--ink-black);
+    background: #FFFFFF;
+    color: var(--ink-black);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.25s ease, color 0.25s ease, transform 0.2s ease;
+}
+.btn-ig-square svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.8; }
+.btn-ig-square:active { transform: scale(0.95); }
+@media (hover: hover) {
+    .btn-ig-square:hover { background: var(--ink-black); color: #FFFFFF; }
+}
+
 .bag-item-row { display: flex; gap: 12px; padding-bottom: 14px; border-bottom: 1px solid var(--hairline); position: relative; }
 .bag-item-img { width: 68px; height: 86px; object-fit: contain; background: var(--bg-gallery); flex-shrink: 0; }
 .bag-item-info { flex: 1; display: flex; flex-direction: column; justify-content: space-between; min-width: 0; }
@@ -1252,46 +1353,87 @@ button { font-family: inherit; background: none; border: none; cursor: pointer; 
 .drawer-foot { padding: 18px 22px calc(22px + env(safe-area-inset-bottom, 0px)); border-top: 1px solid var(--hairline); background: var(--bg-ivory); display: flex; flex-direction: column; gap: 10px; }
 
 /* ==========================================================================
-   11. BOTÓN FLOTANTE WHATSAPP CONCIERGE (MINIMALISTA Y CIRCULAR)
+   11. DOCK FLOTANTE ESTÉTICO (INSTAGRAM + WHATSAPP)
    ========================================================================== */
-.floating-wpp-concierge {
+.floating-social-dock {
     position: fixed;
-    bottom: calc(20px + env(safe-area-inset-bottom, 0px));
-    right: 20px;
+    bottom: calc(18px + env(safe-area-inset-bottom, 0px));
+    right: 16px;
     z-index: 900;
-    width: 52px;
-    height: 52px;
-    border-radius: 50%;
-    background: #25D366;
-    color: #FFFFFF;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
-    box-shadow: 0 8px 25px rgba(37, 211, 102, 0.45);
+    gap: 10px;
     opacity: 0;
     pointer-events: none;
-    transform: translateY(18px) scale(0.8);
-    transition: opacity 0.35s ease, transform 0.35s var(--ease-luxury), background 0.25s ease;
+    transform: translateY(18px) scale(0.88);
+    transition: opacity 0.35s ease, transform 0.35s var(--ease-luxury);
 }
 
-.floating-wpp-concierge.is-visible {
+.floating-social-dock.is-visible {
     opacity: 1;
     pointer-events: auto;
     transform: translateY(0) scale(1);
 }
 
-@media (hover: hover) {
-    .floating-wpp-concierge:hover {
-        background: #20BA5A;
-        transform: translateY(-3px) scale(1.08);
-    }
+.floating-social-btn {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.25s var(--ease-luxury), background 0.25s ease, box-shadow 0.25s ease;
 }
 
-.floating-wpp-concierge svg {
-    width: 28px;
-    height: 28px;
+@media (min-width: 768px) {
+    .floating-social-dock { bottom: 22px; right: 22px; gap: 12px; }
+    .floating-social-btn { width: 50px; height: 50px; }
+}
+
+.floating-ig-btn {
+    background: rgba(255, 255, 255, 0.94);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    color: var(--ink-black);
+    border: 1px solid rgba(0, 0, 0, 0.14);
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.12);
+}
+
+.floating-ig-btn svg {
+    width: 21px;
+    height: 21px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 1.85;
+    display: block;
+}
+
+.floating-wpp-btn {
+    background: #25D366;
+    color: #FFFFFF;
+    box-shadow: 0 8px 24px rgba(37, 211, 102, 0.42);
+}
+
+.floating-wpp-btn svg {
+    width: 24px;
+    height: 24px;
     fill: currentColor;
     display: block;
+}
+
+.floating-social-btn:active { transform: scale(0.92); }
+@media (hover: hover) {
+    .floating-ig-btn:hover {
+        background: var(--ink-black);
+        color: #FFFFFF;
+        border-color: var(--ink-black);
+        transform: translateY(-2px) scale(1.06);
+    }
+    .floating-wpp-btn:hover {
+        background: #20BA5A;
+        transform: translateY(-2px) scale(1.06);
+    }
 }
 
 .toast-bar {
@@ -1317,11 +1459,6 @@ button { font-family: inherit; background: none; border: none; cursor: pointer; 
 /* ==========================================================================
    12. MULTI-FOTO EN GRILLA, GALERÍA EN MODAL & ENCUADRE ENTERO (CONTAIN)
    ========================================================================== */
-.product-card-minimal {
-    content-visibility: auto;
-    contain-intrinsic-size: 260px 410px;
-}
-
 .product-image-stage img,
 .product-image-stage video {
     width: 100%;
