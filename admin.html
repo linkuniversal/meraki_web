@@ -83,6 +83,7 @@
         .brand-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
         .brand-badge { background: var(--meraki-vino); color: #FFFFFF; font-family: var(--font-mono); font-size: 0.62rem; font-weight: 700; letter-spacing: 0.12em; padding: 4px 10px; text-transform: uppercase; }
         .live-pill { display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-mono); font-size: 0.64rem; font-weight: 700; color: #15803D; background: #DCFCE7; padding: 4px 10px; text-transform: uppercase; }
+        .home-counter-badge { font-family: var(--font-mono); font-size: 0.68rem; font-weight: 700; color: var(--ink-muted); }
         .topbar-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
 
         /* PRINCIPAL */
@@ -163,7 +164,7 @@
         @media (min-width: 680px) { .modal-body { grid-template-columns: 240px 1fr; } }
 
         .editor-photo-col { display: flex; flex-direction: column; gap: 10px; }
-        .editor-stage-wrap { width: 100%; aspect-ratio: 3 / 4; background: var(--bg-gallery); border: 1px solid var(--hairline); overflow: hidden; position: relative; }
+        .editor-stage-wrap { width: 100%; aspect-ratio: 3 / 4; background: var(--bg-gallery); border: 1px solid var(--hairline); overflow: hidden; position: relative; cursor: zoom-in; }
         .editor-photo-preview { width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; }
         .editor-photo-preview.fit-contain { object-fit: contain; }
 
@@ -222,6 +223,21 @@
         }
         .toast-floating.show { opacity: 1; pointer-events: auto; transform: translateX(-50%) translateY(0); }
         .toast-undo-btn { background: var(--meraki-sky); color: #000; padding: 4px 9px; font-weight: 800; cursor: pointer; }
+
+        /* VISOR LIGHTBOX PARA AGRANDAR FOTO */
+        .zoom-lightbox {
+            position: fixed; inset: 0; z-index: 3000; background: rgba(0,0,0,0.92);
+            display: none; align-items: center; justify-content: center; padding: 18px; cursor: zoom-out;
+        }
+        .zoom-lightbox.open { display: flex; }
+        .zoom-lightbox-close {
+            position: absolute; top: 16px; right: 18px; color: #FFFFFF; font-size: 2rem;
+            background: none; border: none; cursor: pointer; line-height: 1; z-index: 10;
+        }
+        .zoom-lightbox img, .zoom-lightbox video {
+            max-width: 92vw; max-height: 90vh; object-fit: contain; border-radius: 8px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.7); display: block;
+        }
     </style>
 </head>
 <body>
@@ -245,7 +261,7 @@
                 <div class="brand-row">
                     <span class="brand-badge">MeraKi Panel</span>
                     <span class="live-pill">● En Vivo</span>
-                    <span id="homeCounterBadge" style="font-family:var(--font-mono); font-size:0.68rem; font-weight:700; color:var(--ink-muted);">Home: 0/6</span>
+                    <span id="homeCounterBadge" class="home-counter-badge">Home: 0/6</span>
                 </div>
 
                 <div class="topbar-actions">
@@ -265,14 +281,14 @@
                 <div style="font-size:0.78rem; color:var(--ink-muted); margin-top:4px;">Fotos y videos quedan ordenados. Si subís varios ángulos, podés unirlos en una sola prenda con un clic.</div>
             </div>
 
-            <!-- BUSCADOR Y FILTROS -->
+            <!-- BUSCADOR Y FILTROS ACTUALIZADOS -->
             <div class="toolbar-row">
                 <div class="filter-pills" id="filterPills">
                     <button class="pill-btn active" data-filter="ALL" onclick="setFilter('ALL', this)">Todos</button>
                     <button class="pill-btn" data-filter="Indumentaria" onclick="setFilter('Indumentaria', this)">Indumentaria</button>
                     <button class="pill-btn" data-filter="Deco & Home" onclick="setFilter('Deco & Home', this)">Deco &amp; Home</button>
-                    <button class="pill-btn" data-filter="Bazar" onclick="setFilter('Bazar', this)">Bazar</button>
-                    <button class="pill-btn" data-filter="Aromas" onclick="setFilter('Aromas', this)">Aromas</button>
+                    <button class="pill-btn" data-filter="Accesorios" onclick="setFilter('Accesorios', this)">Accesorios</button>
+                    <button class="pill-btn" data-filter="Carteras y Calzados" onclick="setFilter('Carteras y Calzados', this)">Carteras y Calzados</button>
                     <button class="pill-btn" data-filter="HOME" onclick="setFilter('HOME', this)">⭐ En Home</button>
                     <button class="pill-btn" data-filter="NOPRICE" onclick="setFilter('NOPRICE', this)">Sin Precio</button>
                     <button class="pill-btn" data-filter="PAUSED" onclick="setFilter('PAUSED', this)">Pausados</button>
@@ -297,7 +313,7 @@
 
             <form class="modal-body" onsubmit="saveProductForm(event)">
                 <div class="editor-photo-col">
-                    <div class="editor-stage-wrap" id="edPreviewStage">
+                    <div class="editor-stage-wrap" id="edPreviewStage" title="Tocá para agrandar la foto" onclick="zoomCurrentEditorCover()">
                         <img id="edPreviewImg" src="" alt="Vista previa" class="editor-photo-preview" onload="applySmartFit(this)">
                     </div>
 
@@ -307,7 +323,7 @@
                     </label>
 
                     <div id="edMultiThumbsStrip" class="multi-thumbs-strip"></div>
-                    <span id="edPhotoStatus" style="font-family:var(--font-mono); font-size:0.62rem; color:var(--ink-muted);">Tocá una miniatura para hacerla Portada o borrarla.</span>
+                    <span id="edPhotoStatus" style="font-family:var(--font-mono); font-size:0.62rem; color:var(--ink-muted);">Tocá la imagen principal para agrandar. Las miniaturas permiten cambiar la portada.</span>
                 </div>
 
                 <div class="field-col">
@@ -317,19 +333,19 @@
                             <select id="edRubro" class="input-clean" onchange="markDirty()">
                                 <option value="Indumentaria">Indumentaria</option>
                                 <option value="Deco & Home">Deco &amp; Home</option>
-                                <option value="Bazar">Bazar</option>
-                                <option value="Aromas">Aromas</option>
+                                <option value="Accesorios">Accesorios</option>
+                                <option value="Carteras y Calzados">Carteras y Calzados</option>
                             </select>
                         </div>
                         <div>
                             <label class="lbl-mono">Subcategoría</label>
-                            <input type="text" id="edSub" class="input-clean" placeholder="Mujer / Hogar / Mesa" oninput="markDirty()">
+                            <input type="text" id="edSub" class="input-clean" placeholder="Mujer / Hogar / Accesorios" oninput="markDirty()">
                         </div>
                     </div>
 
                     <div>
                         <label class="lbl-mono">Nombre (Para 2 prendas usá "/": Blusa / Pantalón)</label>
-                        <input type="text" id="edNombre" class="input-clean" required placeholder="Ej. Almohadón Crochet / Vestido Lino" oninput="markDirty()">
+                        <input type="text" id="edNombre" class="input-clean" required placeholder="Ej. Bolso Cuero / Collar Dorado" oninput="markDirty()">
                     </div>
 
                     <div class="field-row-2">
@@ -368,7 +384,7 @@
 
                     <div>
                         <label class="lbl-mono">Descripción</label>
-                        <textarea id="edDesc" rows="2" class="input-clean" placeholder="Detalles de la tela o el producto..." oninput="markDirty()"></textarea>
+                        <textarea id="edDesc" rows="2" class="input-clean" placeholder="Detalles del material o medidas..." oninput="markDirty()"></textarea>
                     </div>
 
                     <div class="field-row-2">
@@ -432,6 +448,13 @@
         </div>
     </div>
 
+    <!-- MODAL 4: VISOR LIGHTBOX PARA AGRANDAR FOTO -->
+    <div class="zoom-lightbox" id="zoomLightbox" onclick="closeZoomModal()">
+        <button type="button" class="zoom-lightbox-close" onclick="closeZoomModal()" aria-label="Cerrar">✕</button>
+        <img id="zoomLightboxImg" src="" alt="Foto Agrandada" style="display:none;" onclick="event.stopPropagation()">
+        <video id="zoomLightboxVid" src="" controls autoplay loop playsinline style="display:none;" onclick="event.stopPropagation()"></video>
+    </div>
+
     <!-- TOAST -->
     <div class="toast-floating" id="toastBox">
         <span id="toastText">Cambios realizados</span>
@@ -482,6 +505,37 @@
             if (localPreviewCache[rel]) return localPreviewCache[rel];
             if (rel.startsWith('http') || rel.startsWith('data:') || rel.startsWith('blob:')) return rel;
             return GH_RAW_BASE + rel.split('/').map(encodeURIComponent).join('/');
+        }
+
+        function openZoomModal(src) {
+            if (!src) return;
+            const isVid = isVideoPath(src);
+            const box = document.getElementById('zoomLightbox');
+            const imgEl = document.getElementById('zoomLightboxImg');
+            const vidEl = document.getElementById('zoomLightboxVid');
+            if (isVid) {
+                vidEl.src = src;
+                vidEl.style.display = 'block';
+                imgEl.style.display = 'none';
+            } else {
+                imgEl.src = src;
+                imgEl.style.display = 'block';
+                vidEl.style.display = 'none';
+            }
+            box.classList.add('open');
+        }
+
+        function closeZoomModal() {
+            const box = document.getElementById('zoomLightbox');
+            box.classList.remove('open');
+            const vidEl = document.getElementById('zoomLightboxVid');
+            if (vidEl) { vidEl.pause(); vidEl.src = ''; }
+        }
+
+        function zoomCurrentEditorCover() {
+            if (editorPhotos && editorPhotos.length > 0) {
+                openZoomModal(editorPhotos[0].previewUrl);
+            }
         }
 
         function showToast(msg, canUndo = false) {
@@ -645,6 +699,7 @@
                             ${isVid ? `<span class="badge-multicount" style="left:8px; right:auto; bottom:8px;">🎬 Video</span>` : ''}
 
                             <div class="quick-corner-tools" onclick="event.stopPropagation()">
+                                <button type="button" class="corner-tool-btn" title="Agrandar foto" onclick="openZoomModal('${imgUrl(cover)}')">🔍</button>
                                 <button type="button" class="corner-tool-btn" title="Duplicar producto" onclick="duplicateProduct('${item.id}')">📑</button>
                                 <button type="button" class="corner-tool-btn del" title="Eliminar producto" onclick="askDeleteProduct('${item.id}', false)">✕</button>
                             </div>
@@ -769,8 +824,8 @@
 
         function folderForRubro(rubro, sub) {
             if (rubro === 'Deco & Home') return 'media/deco-home';
-            if (rubro === 'Bazar') return 'media/bazar';
-            if (rubro === 'Aromas') return 'media/aromas';
+            if (rubro === 'Accesorios') return 'media/accesorios';
+            if (rubro === 'Carteras y Calzados') return 'media/carteras y calzados';
             return String(sub || '').toLowerCase().includes('hombre') ? 'media/indumentaria/hombre' : 'media/indumentaria/mujer';
         }
 
@@ -885,8 +940,8 @@
             btn.innerText = 'Subiendo a la web...';
             btn.disabled = true;
 
-            const defaultRubro = ['Indumentaria', 'Deco & Home', 'Bazar', 'Aromas'].includes(currentFilter) ? currentFilter : 'Indumentaria';
-            const folder = folderForRubro(defaultRubro, 'Mujer');
+            const defaultRubro = ['Indumentaria', 'Deco & Home', 'Accesorios', 'Carteras y Calzados'].includes(currentFilter) ? currentFilter : 'Indumentaria';
+            const folder = folderForRubro(defaultRubro, 'General');
             let publishedCount = 0;
 
             for (let g = 0; g < pendingGroups.length; g++) {
@@ -998,6 +1053,9 @@
             editorPhotos = [];
             editorDirty = false;
 
+            const modalPanel = document.querySelector('#editModal .modal-panel');
+            if (modalPanel) modalPanel.scrollTop = 0;
+
             document.getElementById('modalTitle').innerText = '+ Nueva Prenda';
             document.getElementById('edRubro').value = 'Indumentaria';
             document.getElementById('edSub').value = 'Mujer';
@@ -1023,6 +1081,9 @@
             if (!item) return;
             editingId = id;
             editorDirty = false;
+
+            const modalPanel = document.querySelector('#editModal .modal-panel');
+            if (modalPanel) modalPanel.scrollTop = 0;
 
             const existingList = getItemPhotosList(item);
             editorPhotos = existingList.map(p => ({
@@ -1080,7 +1141,7 @@
                 </div>
             `).join('');
 
-            status.innerText = `${editorPhotos.length} foto(s)/video(s). La primera es la portada principal.`;
+            status.innerText = `${editorPhotos.length} foto(s)/video(s). Tocá la grande para verla agrandada. La primera es la portada principal.`;
         }
 
         function setCoverPhotoIndex(idx) {
@@ -1139,6 +1200,8 @@
         function closeEditModal() {
             document.getElementById('editModal').classList.remove('open');
             document.getElementById('edFileInput').value = '';
+            const modalPanel = document.querySelector('#editModal .modal-panel');
+            if (modalPanel) modalPanel.scrollTop = 0;
             editorDirty = false;
         }
 
@@ -1156,7 +1219,7 @@
             try {
                 const existing = editingId ? catalogItems.find(i => i.id === editingId) : null;
                 const defaultRubro = document.getElementById('edRubro').value;
-                const sub = document.getElementById('edSub').value.trim() || 'Mujer';
+                const sub = document.getElementById('edSub').value.trim() || 'General';
                 const folder = folderForRubro(defaultRubro, sub);
                 const finalMediaPaths = [];
 
@@ -1267,8 +1330,8 @@
                     const folder = (parts[1] || '').toLowerCase();
                     let rubro = 'Indumentaria', sub = 'Mujer';
                     if (folder === 'deco-home') { rubro = 'Deco & Home'; sub = 'Hogar'; }
-                    else if (folder === 'bazar') { rubro = 'Bazar'; sub = 'Mesa'; }
-                    else if (folder === 'aromas') { rubro = 'Aromas'; sub = 'Textil & Sahumado'; }
+                    else if (folder === 'accesorios') { rubro = 'Accesorios'; sub = 'Accesorios'; }
+                    else if (folder === 'carteras y calzados') { rubro = 'Carteras y Calzados'; sub = 'Carteras & Calzados'; }
                     else if (parts[2] === 'hombre') { sub = 'Hombre'; }
 
                     const rawName = parts[parts.length - 1].replace(/\.[^/.]+$/, '').replace(/[-_]+/g, ' ');
