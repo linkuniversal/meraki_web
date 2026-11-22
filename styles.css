@@ -115,7 +115,7 @@ button { font-family: inherit; background: none; border: none; cursor: pointer; 
 .skeleton-line3 { height: 12px; width: 40%; }
 
 /* ==========================================================================
-   3. CINTILLO SUPERIOR & HEADER STICKY DUAL
+   3. CINTILLO SUPERIOR & HEADER STICKY DUAL (CON NAVEGACIÓN TÁCTIL MEJORADA)
    ========================================================================== */
 .top-announcement-bar {
     width: 100%;
@@ -259,6 +259,7 @@ button { font-family: inherit; background: none; border: none; cursor: pointer; 
 }
 .bag-badge-count.visible { opacity: 1; transform: scale(1); }
 
+/* CONTENEDOR DE LA BARRA DE CATEGORÍAS CON GRADIENTES DE SCROLL */
 .header-categories-bar {
     width: 100%;
     height: var(--catbar-h);
@@ -266,6 +267,26 @@ button { font-family: inherit; background: none; border: none; cursor: pointer; 
     background: #FFFFFF;
     display: flex;
     align-items: center;
+    position: relative;
+}
+
+.header-categories-bar::before,
+.header-categories-bar::after {
+    content: '';
+    position: absolute;
+    top: 0; bottom: 0;
+    width: 28px;
+    pointer-events: none;
+    z-index: 5;
+    transition: opacity 0.2s ease;
+}
+.header-categories-bar::before {
+    left: 0;
+    background: linear-gradient(90deg, rgba(255,255,255,0.95), rgba(255,255,255,0));
+}
+.header-categories-bar::after {
+    right: 0;
+    background: linear-gradient(270deg, rgba(255,255,255,0.95), rgba(255,255,255,0));
 }
 
 .categories-bar-inner {
@@ -273,7 +294,7 @@ button { font-family: inherit; background: none; border: none; cursor: pointer; 
     width: 100%;
     height: 100%;
     margin: 0 auto;
-    padding: 0 clamp(10px, 3vw, 36px);
+    padding: 0 clamp(16px, 3vw, 36px);
     display: flex;
     align-items: center;
     justify-content: flex-start;
@@ -282,7 +303,7 @@ button { font-family: inherit; background: none; border: none; cursor: pointer; 
     scrollbar-width: none;
     -webkit-overflow-scrolling: touch;
 }
-@media (min-width: 768px) { .categories-bar-inner { justify-content: center; } }
+@media (min-width: 840px) { .categories-bar-inner { justify-content: center; } }
 .categories-bar-inner::-webkit-scrollbar { display: none; }
 
 .top-cat-pill {
@@ -660,13 +681,14 @@ button { font-family: inherit; background: none; border: none; cursor: pointer; 
 
 .product-image-stage {
     width: 100%;
-    aspect-ratio: 11 / 15; /* Proporción exacta de pasarela internacional (Etiqueta Negra / Zara) */
+    aspect-ratio: 11 / 15;
     background-color: var(--bg-gallery);
     overflow: hidden;
     position: relative;
 }
 
-.product-image-stage img {
+.product-image-stage img,
+.product-image-stage video {
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -674,7 +696,16 @@ button { font-family: inherit; background: none; border: none; cursor: pointer; 
     display: block;
     transition: transform 0.65s var(--ease-luxury), opacity 0.3s ease;
 }
-@media (hover: hover) { .product-card-minimal:hover .product-image-stage img { transform: scale(1.04); } }
+.product-image-stage img.fit-contain,
+.product-image-stage video.fit-contain {
+    object-fit: contain;
+    object-position: center;
+}
+
+@media (hover: hover) {
+    .product-card-minimal:hover .product-image-stage img,
+    .product-card-minimal:hover .product-image-stage video { transform: scale(1.04); }
+}
 
 .product-tag-minimal {
     position: absolute;
@@ -1074,8 +1105,8 @@ button { font-family: inherit; background: none; border: none; cursor: pointer; 
 }
 .pdp-close-btn:hover { background: var(--ink-black); color: #FFFFFF; }
 
-.pdp-media-col { background: var(--bg-gallery); display: flex; align-items: center; justify-content: center; min-height: 260px; max-height: 540px; }
-.pdp-media-col img { width: 100%; height: 100%; max-height: 540px; object-fit: cover; object-position: center 15%; }
+.pdp-media-col { background: var(--bg-gallery); display: flex; align-items: center; justify-content: center; min-height: 260px; max-height: 540px; position: relative; }
+.pdp-media-col img { width: 100%; height: 100%; object-fit: contain; }
 
 .pdp-info-col {
     padding: 26px 24px;
@@ -1195,7 +1226,7 @@ button { font-family: inherit; background: none; border: none; cursor: pointer; 
 .drawer-body { flex: 1; overflow-y: auto; padding: 18px 22px; display: flex; flex-direction: column; gap: 14px; overscroll-behavior: contain; }
 
 .bag-item-row { display: flex; gap: 12px; padding-bottom: 14px; border-bottom: 1px solid var(--hairline); position: relative; }
-.bag-item-img { width: 68px; height: 86px; object-fit: cover; background: var(--bg-gallery); flex-shrink: 0; }
+.bag-item-img { width: 68px; height: 86px; object-fit: contain; background: var(--bg-gallery); flex-shrink: 0; }
 .bag-item-info { flex: 1; display: flex; flex-direction: column; justify-content: space-between; min-width: 0; }
 .bag-item-top-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
 
@@ -1222,30 +1253,48 @@ button { font-family: inherit; background: none; border: none; cursor: pointer; 
 
 .drawer-foot { padding: 18px 22px calc(22px + env(safe-area-inset-bottom, 0px)); border-top: 1px solid var(--hairline); background: var(--bg-ivory); display: flex; flex-direction: column; gap: 10px; }
 
+/* ==========================================================================
+   11. BOTÓN FLOTANTE WHATSAPP CONCIERGE (MINIMALISTA Y CIRCULAR)
+   ========================================================================== */
 .floating-wpp-concierge {
     position: fixed;
-    bottom: calc(18px + env(safe-area-inset-bottom, 0px));
-    right: 16px;
+    bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+    right: 20px;
     z-index: 900;
-    display: inline-flex;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: #25D366;
+    color: #FFFFFF;
+    display: flex;
     align-items: center;
-    gap: 8px;
-    background: rgba(255, 255, 255, 0.94);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid var(--ink-black);
-    padding: 8px 14px 8px 12px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.14);
+    justify-content: center;
+    box-shadow: 0 8px 25px rgba(37, 211, 102, 0.45);
     opacity: 0;
     pointer-events: none;
-    transform: translateY(18px);
-    transition: opacity 0.35s ease, transform 0.35s var(--ease-luxury), background 0.25s ease, color 0.25s ease;
+    transform: translateY(18px) scale(0.8);
+    transition: opacity 0.35s ease, transform 0.35s var(--ease-luxury), background 0.25s ease;
 }
-.floating-wpp-concierge.is-visible { opacity: 1; pointer-events: auto; transform: translateY(0); }
-@media (hover: hover) { .floating-wpp-concierge:hover { background: var(--ink-black); color: #FFFFFF; transform: translateY(-3px); } }
 
-.floating-wpp-dot { width: 8px; height: 8px; border-radius: 50%; background: #25D366; box-shadow: 0 0 8px rgba(37, 211, 102, 0.7); }
-.floating-wpp-label { font-family: var(--font-mono); font-size: 0.62rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
+.floating-wpp-concierge.is-visible {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0) scale(1);
+}
+
+@media (hover: hover) {
+    .floating-wpp-concierge:hover {
+        background: #20BA5A;
+        transform: translateY(-3px) scale(1.08);
+    }
+}
+
+.floating-wpp-concierge svg {
+    width: 28px;
+    height: 28px;
+    fill: currentColor;
+    display: block;
+}
 
 .toast-bar {
     position: fixed;
@@ -1266,12 +1315,23 @@ button { font-family: inherit; background: none; border: none; cursor: pointer; 
     transition: all 0.25s var(--ease-luxury);
 }
 .toast-bar.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
 /* ==========================================================================
-   10. MULTI-FOTO EN GRILLA, GALERÍA EN MODAL & RENDIMIENTO 1.000+ PRENDAS
+   12. MULTI-FOTO EN GRILLA, GALERÍA EN MODAL & ENCUADRE ENTERO (CONTAIN)
    ========================================================================== */
 .product-card-minimal {
     content-visibility: auto;
     contain-intrinsic-size: 260px 410px;
+}
+
+.product-image-stage img,
+.product-image-stage video {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
+    display: block;
+    transition: transform 0.65s var(--ease-luxury), opacity 0.3s ease;
 }
 
 .product-img-hover {
@@ -1279,8 +1339,8 @@ button { font-family: inherit; background: none; border: none; cursor: pointer; 
     inset: 0;
     width: 100%;
     height: 100%;
-    object-fit: cover;
-    object-position: center 15%;
+    object-fit: contain;
+    object-position: center;
     opacity: 0;
     transition: opacity 0.35s ease, transform 0.65s var(--ease-luxury);
     z-index: 1;
@@ -1306,6 +1366,9 @@ button { font-family: inherit; background: none; border: none; cursor: pointer; 
     padding: 3px 7px;
     z-index: 2;
 }
+
+.pdp-media-col { background: var(--bg-gallery); display: flex; align-items: center; justify-content: center; min-height: 260px; max-height: none; position: relative; }
+.pdp-media-col img { width: 100%; height: 100%; max-height: none; object-fit: contain; object-position: center; }
 
 .pdp-gallery-nav {
     position: absolute;
@@ -1369,4 +1432,4 @@ button { font-family: inherit; background: none; border: none; cursor: pointer; 
     flex-shrink: 0;
 }
 .pdp-gal-thumb.active { opacity: 1; border-color: var(--ink-black); }
-.pdp-gal-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.pdp-gal-thumb img { width: 100%; height: 100%; object-fit: contain; display: block; }
