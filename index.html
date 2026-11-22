@@ -11,13 +11,14 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
 
     <!-- PRECONNECTS PARA CARGA INSTANTÁNEA -->
+    <link rel="preconnect" href="https://raw.githubusercontent.com" crossorigin>
     <link rel="preconnect" href="https://docs.google.com" crossorigin>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;1,500;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 
     <!-- HOJA DE ESTILOS MODULAR -->
-    <link rel="stylesheet" href="styles.css?v=20261122">
+    <link rel="stylesheet" href="styles.css?v=20261123">
 </head>
 <body>
 
@@ -110,10 +111,7 @@
         <!-- HERO EDITORIAL -->
         <section class="hero-editorial-section">
             <div class="hero-media-frame" id="heroMediaStage">
-                <video id="heroVideoPlayer" autoplay muted loop playsinline preload="metadata">
-                    <source src="media/editorial/moda.mp4" type="video/mp4">
-                    <source src="moda.mp4" type="video/mp4">
-                </video>
+                <video id="heroVideoPlayer" muted loop playsinline preload="none" data-src="media/editorial/moda.mp4" data-fallback="moda.mp4"></video>
                 <span class="hero-media-badge">Puerto Iguazú · Drop 2026</span>
             </div>
 
@@ -362,8 +360,17 @@
 
     <div class="toast-bar" id="toastBar">Agregado a tu bolsa</div>
 
+    <!-- REGISTRO SERVICE WORKER CACHÉ EXTREMA -->
+    <script>
+        if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js').catch(() => {});
+            });
+        }
+    </script>
+
     <!-- MOTORES JAVASCRIPT MODULARES -->
-    <script src="catalog.js?v=20261122" defer></script>
-    <script src="app.js?v=20261122" defer></script>
+    <script src="catalog.js?v=20261123" defer></script>
+    <script src="app.js?v=20261123" defer></script>
 </body>
 </html>
