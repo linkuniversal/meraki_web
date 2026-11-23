@@ -382,6 +382,9 @@ function getMediaList(item) {
 
 function createProductCardHTML(item, idx = 99) {
     const priceStr = formatPriceDisplay(item);
+    const hasPrice = item.isCombo
+        ? item.preciosArray.some(p => getProductPrice({ precioARS: p }) > 0)
+        : getProductPrice(item) > 0;
     const subLabel = [item.rubro, item.subcategoria].filter(Boolean).join(' · ');
     const fetchAttr = idx < 8 ? 'fetchpriority="high"' : 'fetchpriority="auto"';
     const mediaList = getMediaList(item);
@@ -402,6 +405,16 @@ function createProductCardHTML(item, idx = 99) {
             : `<img data-hover-src="${hoverMedia}" alt="${item.nombre}" class="product-img-hover" onload="applySmartFit(this)" onerror="fallbackToGithubRaw(this)">`;
     }
 
+    const directConsultMsg = `¡Hola MeraKi! ✨ Quisiera consultar el precio y disponibilidad de:\n\n• *Producto:* ${item.nombre}\n• *Categoría:* ${subLabel}`;
+    const directConsultUrl = `https://wa.me/${CONFIG.WHATSAPP_NUMBER}?text=${encodeURIComponent(directConsultMsg)}`;
+    const priceMarkup = hasPrice
+        ? `<span class="product-price-clean">${priceStr}</span>`
+        : `<a href="${directConsultUrl}" target="_blank" rel="noopener noreferrer" class="product-consult-wpp-btn" onclick="event.stopPropagation(); playTap();">
+               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.03 2c-5.52 0-10 4.48-10 10 0 1.77.46 3.45 1.28 4.92L2 22l5.25-1.38c1.41.77 3.03 1.2 4.78 1.2 5.52 0 10-4.48 10-10s-4.48-9.82-10-9.82zm5.81 14.1c-.24.69-1.41 1.32-1.95 1.4-.52.08-1.18.14-1.9-.09-.44-.14-1.01-.33-1.74-.64-3.05-1.32-5.04-4.4-5.19-4.6-.15-.21-1.24-1.65-1.24-3.15s.78-2.23 1.06-2.54c.28-.3.61-.38.81-.38.2 0 .41.01.58.02.19.01.44-.07.69.53.25.6.86 2.1.94 2.25.08.15.13.33.03.53-.1.2-.15.33-.3.5-.15.18-.32.4-.45.54-.15.15-.31.32-.13.62.18.3.8 1.32 1.71 2.14 1.18 1.05 2.17 1.38 2.47 1.53.3.15.48.13.66-.08.18-.2.76-.88.96-1.18.2-.3.4-.25.68-.15.28.1 1.77.83 2.07.99.3.15.51.23.58.36.08.12.08.73-.17 1.42z"/></svg>
+               <span>Consultar precio</span>
+               <span aria-hidden="true">↗</span>
+           </a>`;
+
     return `
         <article class="product-card-minimal" onmouseenter="loadHoverMedia(this)" onclick="openPdpModal('${item.id}')">
             <div class="product-image-stage ${hasMulti ? 'has-multi-photo' : ''}">
@@ -421,7 +434,7 @@ function createProductCardHTML(item, idx = 99) {
                 ${item.descripcion ? `<p class="product-desc-mini">${item.descripcion}</p>` : ''}
                 ${buildSwatchesHTML(item.colores)}
                 <div class="product-bottom-row">
-                    <span class="product-price-clean">${priceStr}</span>
+                    ${priceMarkup}
                 </div>
             </div>
         </article>
@@ -612,8 +625,13 @@ function openPdpModal(id) {
     updatePdpPrices(item);
     updatePdpWppLink();
 
+    const pdpModalEl = document.getElementById('pdpModal');
+    pdpModalEl.scrollTop = 0;
+    const infoCol = pdpModalEl.querySelector('.pdp-info-col');
+    if (infoCol) infoCol.scrollTop = 0;
+
     document.getElementById('globalBackdrop').classList.add('open');
-    document.getElementById('pdpModal').classList.add('open');
+    pdpModalEl.classList.add('open');
     pushHistoryState('pdpModal');
 }
 
@@ -628,8 +646,8 @@ function renderPdpMediaView() {
     const isVid = isVideoPath(currentMedia);
 
     let innerContent = isVid
-        ? `<video src="${currentMedia}" style="width:100%; height:100%; max-height:540px; display:block;" autoplay loop muted playsinline controls onloadedmetadata="applySmartFit(this)"></video>`
-        : `<img id="pdpImg" src="${currentMedia}" alt="${item.nombre}" style="width:100%; height:100%; max-height:540px; display:block;" onload="applySmartFit(this)" onerror="fallbackToGithubRaw(this)">`;
+        ? `<video src="${currentMedia}" autoplay loop muted playsinline controls onloadedmetadata="applySmartFit(this)"></video>`
+        : `<img id="pdpImg" src="${currentMedia}" alt="${item.nombre}" onload="applySmartFit(this)" onerror="fallbackToGithubRaw(this)">`;
 
     if (mediaList.length > 1) {
         innerContent += `
