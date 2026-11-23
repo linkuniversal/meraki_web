@@ -1028,7 +1028,7 @@ function updateStoreStatus() {
         txt.innerText = 'Abierto ahora · Ushuaia 196 esq. Jangadero';
     } else {
         dot.style.background = '#D97706';
-        txt.innerText = 'Ushuaia 196 · Consultas activas por WhatsApp';
+        txt.innerText = 'Ushuaia 196, esq. Jangadero · Consultas por WhatsApp';
     }
 }
 
